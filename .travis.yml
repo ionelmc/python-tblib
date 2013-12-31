@@ -41,10 +41,10 @@ script:
   - |
     if [[ $WITH_COVERAGE == yes ]]; then
       #strace -f -s 8000 -o "$LOG_NAME"
-      coverage run --source=src --parallel-mode tests/test_pth.py
+      coverage run --source=src --parallel-mode tests/test_tblib.py
     else
       #strace -f -s 8000 -o "$LOG_NAME"
-      python tests/test_pth.py
+      python tests/test_tblib.py
     fi
 
 after_failure:
