@@ -246,4 +246,4 @@ Much better !
 Credits
 =======
 
-* `mitsuhiko/jinja2 <https://github.com/mitsuhiko/jinja2>` for figuring a way to create traceback objects.
+* `mitsuhiko/jinja2 <https://github.com/mitsuhiko/jinja2>`_ for figuring a way to create traceback objects.
