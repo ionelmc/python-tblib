@@ -199,9 +199,9 @@ How's this useful ? Imagine you're using multiprocessing like this::
       File "<doctest README.rst[31]>", line 2, in <module>
         for i in pool.map(func_a, range(5)):
       File "/usr/lib/.../multiprocessing/pool.py", line ..., in map
-        return self.map_async(func, iterable, chunksize).get()
+        ...
       File "/usr/lib/.../multiprocessing/pool.py", line ..., in get
-        raise self._value
+        ...
     Exception: Guessing time !
     <BLANKLINE>
     >>> pool.terminate()
