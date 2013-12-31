@@ -33,6 +33,8 @@ before_install:
 install: 
   - if [[ $WITH_COVERAGE == yes ]]; then pip install coverage coveralls; fi
   - python setup.py develop
+  - sudo rmdir /dev/shm # see https://github.com/travis-ci/travis-core/issues/187
+  - sudo ln -Tsf /{run,dev}/shm
 
 script: 
   - python --version
