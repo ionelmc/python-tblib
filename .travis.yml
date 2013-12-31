@@ -32,6 +32,7 @@ before_install:
  
 install: 
   - if [[ $WITH_COVERAGE == yes ]]; then pip install coverage coveralls; fi
+  - python setup.py develop
 
 script: 
   - python --version
