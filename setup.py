@@ -13,8 +13,8 @@ setup(
     long_description = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author = 'Ionel Cristian Mărieș',
     author_email = 'contact@ionelmc.ro',
+    packages = find_packages('src'),
     package_dir = {'':'src'},
-    py_modules = ['pth'],
     include_package_data = True,
     zip_safe = False,
     classifiers = [

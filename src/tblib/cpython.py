@@ -3,6 +3,7 @@ Taken verbatim from Jinja2.
 
 https://github.com/mitsuhiko/jinja2/blob/master/jinja2/debug.py#L267
 """
+import sys
 
 def _init_ugly_crap():
     """This function implements a few ugly things so that we can patch the
@@ -69,5 +70,6 @@ tb_set_next = None
 try:
     tb_set_next = _init_ugly_crap()
 except:
-    pass
+    import traceback
+    traceback.print_exc()
 del _init_ugly_crap

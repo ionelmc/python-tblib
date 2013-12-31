@@ -15,6 +15,8 @@ import sys
 from types import CodeType
 from types import TracebackType
 
+PY3 = sys.version_info[0] == 3
+
 class __traceback_maker(Exception):
     pass
 
@@ -31,8 +33,7 @@ class Code(object):
 class Frame(object):
     def __init__(self, frame):
         self.f_globals = {
-            "__file__": frame.f_globals["__file__"],
-            "__name__": frame.f_globals["__name__"],
+            k: v for k, v in frame.f_globals.items() if k in ("__file__", "__name__")
         }
         self.f_code = Code(frame.f_code)
 
@@ -46,41 +47,43 @@ class Traceback(object):
             self.tb_next = Traceback(tb.tb_next)
 
     def as_traceback(self):
-        f_code = self.tb_frame.f_code
-        print self.tb_lineno
-        code = compile('\n' * (self.tb_lineno - 1) + 'raise __traceback_maker', self.tb_frame.f_code.co_filename, 'exec')
-        code = CodeType(
-            0,
-            f_code.co_nlocals,
-            f_code.co_stacksize,
-            f_code.co_flags,
-            code.co_code,
-            code.co_consts,
-            code.co_names,
-            code.co_varnames,
-            f_code.co_filename,
-            f_code.co_name,
-            code.co_firstlineno,
-            code.co_lnotab,
-            (),
-            ()
-        )
-        try:
-            exec(code, self.tb_frame.f_globals, {})
-        except:
-            tb = sys.exc_info()[2].tb_next
-            if tb_set_next:
-                tb_set_next(tb, self.tb_next and self.tb_next.as_traceback())
-            elif tproxy:
-                tb = tproxy(TracebackType, self.__tproxy_handler)
+        if tproxy:
+            return tproxy(TracebackType, self.__tproxy_handler)
+        elif tb_set_next:
+            f_code = self.tb_frame.f_code
+            code = compile('\n' * (self.tb_lineno - 1) + 'raise __traceback_maker', self.tb_frame.f_code.co_filename, 'exec')
+            if PY3:
+                code = CodeType(
+                    0, 0,
+                    f_code.co_nlocals, f_code.co_stacksize, f_code.co_flags,
+                    code.co_code, code.co_consts, code.co_names, code.co_varnames,
+                    f_code.co_filename, f_code.co_name,
+                    code.co_firstlineno, code.co_lnotab,
+                    (), ()
+                )
             else:
-                raise RuntimeError("Cannot re-create traceback !")
-            return tb
+                code = CodeType(
+                    0,
+                    f_code.co_nlocals, f_code.co_stacksize, f_code.co_flags,
+                    code.co_code, code.co_consts, code.co_names, code.co_varnames,
+                    f_code.co_filename, f_code.co_name,
+                    code.co_firstlineno, code.co_lnotab,
+                    (), ()
+                )
+
+            try:
+                exec(code, self.tb_frame.f_globals, {})
+            except:
+                tb = sys.exc_info()[2].tb_next
+                tb_set_next(tb, self.tb_next and self.tb_next.as_traceback())
+                return tb
+        else:
+            raise RuntimeError("Cannot re-create traceback !")
 
     def __tproxy_handler(self, operation, *args, **kwargs):
         if operation in ('__getattribute__', '__getattr__'):
             if args[0] == 'tb_next':
-                return self.tb_next and self.tb_next.as_traceback
+                return self.tb_next and self.tb_next.as_traceback()
             else:
                 return getattr(self, args[0])
         else:

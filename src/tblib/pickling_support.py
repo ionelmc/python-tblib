@@ -1,5 +1,8 @@
 import pickle
-import copy_reg
+try:
+    import copy_reg
+except ImportError:
+    import copyreg as copy_reg
 from types import TracebackType
 
 from . import Frame, Traceback
