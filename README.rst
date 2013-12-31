@@ -240,3 +240,5 @@ Not very useful is it? Let's sort this out::
     Exception: Guessing time !
     <BLANKLINE>
     >>> pool.terminate()
+
+Much better !
