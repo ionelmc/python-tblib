@@ -242,3 +242,8 @@ Not very useful is it? Let's sort this out::
     >>> pool.terminate()
 
 Much better !
+
+Credits
+=======
+
+* `mitsuhiko/jinja2 <https://github.com/mitsuhiko/jinja2>` for figuring a way to create traceback objects.
