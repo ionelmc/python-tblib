@@ -39,5 +39,4 @@ def apply_with_return_error(args):
         apply_with_return_error((func, 1, 2, 3)) - this will call func(1, 2, 3)
 
     """
-    print args[0]
     return args[0](*args[1:])
