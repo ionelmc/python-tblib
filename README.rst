@@ -250,3 +250,9 @@ Credits
 =======
 
 * `mitsuhiko/jinja2 <https://github.com/mitsuhiko/jinja2>`_ for figuring a way to create traceback objects.
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/ionelmc/python-tblib/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
