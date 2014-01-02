@@ -13,9 +13,11 @@
 .. image:: https://badge.fury.io/py/tblib.png
     :alt: PYPI Package
     :target: https://pypi.python.org/pypi/tblib
-
+    
 Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes. 
 This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
+
+Tested to run on Python 2.6, 3.2, 3.3 and PyPy.
 
 Pickling tracebacks
 ===================
