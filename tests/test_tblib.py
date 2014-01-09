@@ -6,8 +6,8 @@ import doctest
 #    pth.PathMustBeFile.__name__      = 'pth.' + pth.PathMustBeFile.__name__
 #    pth.PathMustBeDirectory.__name__ = 'pth.' + pth.PathMustBeDirectory.__name__
 #    pth.PathDoesNotExist.__name__    = 'pth.' + pth.PathDoesNotExist.__name__
-
-results = doctest.testfile('../README.rst', optionflags=doctest.ELLIPSIS)
-print(results)
-if results.failed:
-    sys.exit(1)
+if __name__ == '__main__':
+    results = doctest.testfile('../README.rst', optionflags=doctest.ELLIPSIS)
+    print(results)
+    if results.failed:
+        sys.exit(1)

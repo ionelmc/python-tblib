@@ -13,8 +13,8 @@
 .. image:: https://badge.fury.io/py/tblib.png
     :alt: PYPI Package
     :target: https://pypi.python.org/pypi/tblib
-    
-Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes. 
+
+Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes.
 This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
 
 Tested to run on Python 2.6, 3.2, 3.3 and PyPy.
@@ -174,9 +174,9 @@ return_error
       ...
       File "<doctest README.rst[26]>", line 1, in <module>
         e.reraise()
-      File ".../tblib/decorators.py", line 19, in reraise
+      File "...tblib...decorators.py", line 19, in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
-      File ".../tblib/decorators.py", line 25, in return_exceptions_wrapper
+      File "...tblib...decorators.py", line 25, in return_exceptions_wrapper
         return func(*args, **kwargs)
       File "<doctest README.rst[5]>", line 2, in inner_2
         inner_1()
@@ -201,9 +201,9 @@ How's this useful ? Imagine you're using multiprocessing like this::
     Traceback (most recent call last):
       File "<doctest README.rst[31]>", line 2, in <module>
         for i in pool.map(func_a, range(5)):
-      File ".../multiprocessing/pool.py", line ..., in map
+      File "...multiprocessing...pool.py", line ..., in map
         ...
-      File ".../multiprocessing/pool.py", line ..., in get
+      File "...multiprocessing...pool.py", line ..., in get
         ...
     Exception: Guessing time !
     <BLANKLINE>
@@ -226,19 +226,19 @@ Not very useful is it? Let's sort this out::
     Traceback (most recent call last):
       File "<doctest README.rst[36]>", line 4, in <module>
         i.reraise()
-      File ".../tblib/decorators.py", line ..., in reraise
+      File "...tblib...decorators.py", line ..., in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
-      File ".../tblib/decorators.py", line ..., in return_exceptions_wrapper
+      File "...tblib...decorators.py", line ..., in return_exceptions_wrapper
         return func(*args, **kwargs)
-      File ".../tblib/decorators.py", line ..., in apply_with_return_error
+      File "...tblib...decorators.py", line ..., in apply_with_return_error
         return args[0](*args[1:])
-      File ".../examples.py", line 2, in func_a
+      File "...examples.py", line 2, in func_a
         func_b()
-      File ".../examples.py", line 5, in func_b
+      File "...examples.py", line 5, in func_b
         func_c()
-      File ".../examples.py", line 8, in func_c
+      File "...examples.py", line 8, in func_c
         func_d()
-      File ".../examples.py", line 11, in func_d
+      File "...examples.py", line 11, in func_d
         raise Exception("Guessing time !")
     Exception: Guessing time !
     <BLANKLINE>
