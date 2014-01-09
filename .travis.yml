@@ -12,9 +12,9 @@ env:
     PYTHONUNBUFFERED=yes
     MANHOLE_TEST_TIMEOUT=30
   matrix:
-    - WITH_COVERAGE=no 
+    - WITH_COVERAGE=no
     - WITH_COVERAGE=yes
-    
+
 before_install:
   - |
     if python --version |& grep PyPy; then
@@ -28,14 +28,14 @@ before_install:
     uname -a
     lsb_release -a
     sudo apt-get install strace
- 
-install: 
+
+install:
   - if [[ $WITH_COVERAGE == yes ]]; then pip install coverage coveralls; fi
   - python setup.py develop
-  - sudo rmdir /dev/shm # see https://github.com/travis-ci/travis-core/issues/187
-  - sudo ln -Tsf /{run,dev}/shm
+  - sudo rmdir /dev/shm || true# see https://github.com/travis-ci/travis-core/issues/187
+  - sudo ln -Tsf /{run,dev}/shm || true
 
-script: 
+script:
   - python --version
   - rm .coverage* || true
   - stat /lib/x86_64-linux-gnu/libgcc_s.so.1
