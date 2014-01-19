@@ -129,6 +129,45 @@ Raising
         raise Exception('fail')
     Exception: fail
 
+What if we have a local stack, does it show correctly ?
+```````````````````````````````````````````````````````
+
+Yes it does::
+
+    >>> exc_info = pickle.loads(s3)
+    >>> def local_0():
+    ...     reraise(*exc_info)
+    ...
+    >>> def local_1():
+    ...     local_0()
+    ...
+    >>> def local_2():
+    ...     local_1()
+    ...
+    >>> local_2()
+    Traceback (most recent call last):
+      File "...doctest.py", line ..., in __run
+        compileflags, 1) in test.globs
+      File "<doctest README.rst[24]>", line 1, in <module>
+        local_2()
+      File "<doctest README.rst[23]>", line 2, in local_2
+        local_1()
+      File "<doctest README.rst[22]>", line 2, in local_1
+        local_0()
+      File "<doctest README.rst[21]>", line 2, in local_0
+        reraise(*exc_info)
+      File "<doctest README.rst[11]>", line 2, in <module>
+        inner_2()
+      File "<doctest README.rst[5]>", line 2, in inner_2
+        inner_1()
+      File "<doctest README.rst[4]>", line 2, in inner_1
+        inner_0()
+      File "<doctest README.rst[3]>", line 2, in inner_0
+        raise Exception('fail')
+    Exception: fail
+
+
+
 The tblib.Traceback object
 ==========================
 
@@ -199,7 +238,7 @@ How's this useful ? Imagine you're using multiprocessing like this::
     ...     print(traceback.format_exc())
     ...
     Traceback (most recent call last):
-      File "<doctest README.rst[31]>", line 2, in <module>
+      File "<doctest README.rst[36]>", line 2, in <module>
         for i in pool.map(func_a, range(5)):
       File "...multiprocessing...pool.py", line ..., in map
         ...
@@ -224,7 +263,7 @@ Not very useful is it? Let's sort this out::
     ...     print(traceback.format_exc())
     ...
     Traceback (most recent call last):
-      File "<doctest README.rst[36]>", line 4, in <module>
+      File "<doctest README.rst[41]>", line 4, in <module>
         i.reraise()
       File "...tblib...decorators.py", line ..., in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
@@ -246,6 +285,56 @@ Not very useful is it? Let's sort this out::
 
 Much better !
 
+What if we have a local call stack ?
+````````````````````````````````````
+
+::
+
+    >>> def local_0():
+    ...     pool = Pool()
+    ...     for i in pool.map(apply_with_return_error, zip(repeat(func_a), range(5))):
+    ...         if isinstance(i, Error):
+    ...             i.reraise()
+    ...         else:
+    ...             print(i)
+    ...
+    >>> def local_1():
+    ...     local_0()
+    ...
+    >>> def local_2():
+    ...     local_1()
+    ...
+    >>> try:
+    ...     local_2()
+    ... except:
+    ...     print(traceback.format_exc())
+    Traceback (most recent call last):
+      File "<doctest README.rst[46]>", line 2, in <module>
+        local_2()
+      File "<doctest README.rst[45]>", line 2, in local_2
+        local_1()
+      File "<doctest README.rst[44]>", line 2, in local_1
+        local_0()
+      File "<doctest README.rst[43]>", line 5, in local_0
+        i.reraise()
+      File "...tblib...decorators.py", line 19, in reraise
+        reraise(self.exc_type, self.exc_value, self.traceback)
+      File "...tblib...decorators.py", line 25, in return_exceptions_wrapper
+        return func(*args, **kwargs)
+      File "...tblib...decorators.py", line 42, in apply_with_return_error
+        return args[0](*args[1:])
+      File "...tests...examples.py", line 2, in func_a
+        func_b()
+      File "...tests...examples.py", line 5, in func_b
+        func_c()
+      File "...tests...examples.py", line 8, in func_c
+        func_d()
+      File "...tests...examples.py", line 11, in func_d
+        raise Exception("Guessing time !")
+    Exception: Guessing time !
+    <BLANKLINE>
+
+
 Credits
 =======
 
@@ -255,4 +344,3 @@ Credits
 .. image:: https://d2weczhvl823v0.cloudfront.net/ionelmc/python-tblib/trend.png
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
-
