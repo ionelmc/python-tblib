@@ -17,7 +17,11 @@
 Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes.
 This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
 
-Tested to run on Python 2.6, 3.2, 3.3 and PyPy.
+Requirements
+============
+
+:OS: Any
+:Runtime: Python 2.6, 2.7, 3.2, 3.3 and PyPy.
 
 Pickling tracebacks
 ===================
@@ -340,7 +344,3 @@ Credits
 
 * `mitsuhiko/jinja2 <https://github.com/mitsuhiko/jinja2>`_ for figuring a way to create traceback objects.
 
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/ionelmc/python-tblib/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
