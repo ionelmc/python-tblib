@@ -233,7 +233,11 @@ How's this useful ? Imagine you're using multiprocessing like this::
 
     >>> import traceback
     >>> from multiprocessing import Pool
+    >>> import multiprocessing.pool
     >>> from examples import func_a
+    >>> # Undo the fix for http://bugs.python.org/issue13831 so that we can
+    >>> # see the effects of our change.
+    >>> multiprocessing.pool.ExceptionWithTraceback = lambda e, t: e
     >>> pool = Pool()
     >>> try:
     ...     for i in pool.map(func_a, range(5)):
@@ -242,7 +246,7 @@ How's this useful ? Imagine you're using multiprocessing like this::
     ...     print(traceback.format_exc())
     ...
     Traceback (most recent call last):
-      File "<doctest README.rst[36]>", line 2, in <module>
+      File "<doctest README.rst[38]>", line 2, in <module>
         for i in pool.map(func_a, range(5)):
       File "...multiprocessing...pool.py", line ..., in map
         ...
@@ -267,7 +271,7 @@ Not very useful is it? Let's sort this out::
     ...     print(traceback.format_exc())
     ...
     Traceback (most recent call last):
-      File "<doctest README.rst[41]>", line 4, in <module>
+      File "<doctest README.rst[43]>", line 4, in <module>
         i.reraise()
       File "...tblib...decorators.py", line ..., in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
@@ -313,13 +317,13 @@ What if we have a local call stack ?
     ... except:
     ...     print(traceback.format_exc())
     Traceback (most recent call last):
-      File "<doctest README.rst[46]>", line 2, in <module>
+      File "<doctest README.rst[48]>", line 2, in <module>
         local_2()
-      File "<doctest README.rst[45]>", line 2, in local_2
+      File "<doctest README.rst[47]>", line 2, in local_2
         local_1()
-      File "<doctest README.rst[44]>", line 2, in local_1
+      File "<doctest README.rst[46]>", line 2, in local_1
         local_0()
-      File "<doctest README.rst[43]>", line 5, in local_0
+      File "<doctest README.rst[45]>", line 5, in local_0
         i.reraise()
       File "...tblib...decorators.py", line 19, in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
