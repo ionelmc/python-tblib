@@ -21,7 +21,7 @@ Requirements
 ============
 
 :OS: Any
-:Runtime: Python 2.6, 2.7, 3.2, 3.3 and PyPy.
+:Runtime: Python 2.6, 2.7, 3.2, 3.3, 3.4 and PyPy.
 
 Pickling tracebacks
 ===================
