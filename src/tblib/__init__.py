@@ -110,7 +110,7 @@ class Traceback(object):
             for k, v in self.tb_frame.f_code.__dict__.items()
             if k.startswith('co_')
         }
-        code['co_lnotab'] = code['co_lnotab'].decode('latin1')
+        code['co_lnotab'] = ''
         frame = {
             'f_globals': self.tb_frame.f_globals,
             'f_code': code
@@ -132,7 +132,6 @@ class Traceback(object):
             ('f_globals', dct['tb_frame']['f_globals']),
             ('f_code', _AttrDict((k, v) for k, v in dct['tb_frame']['f_code'].items()))
         ))
-        frame['f_code']['co_lnotab'] = frame['f_code']['co_lnotab'].encode('latin1')
         tb = _AttrDict((
             ('tb_frame', frame),
             ('tb_lineno', dct['tb_lineno']),
