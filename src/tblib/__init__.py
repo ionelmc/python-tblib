@@ -17,6 +17,15 @@ from types import TracebackType
 
 PY3 = sys.version_info[0] == 3
 
+
+class _AttrDict(dict):
+    def __getattr__(self, attr):
+        try:
+            return self[attr]
+        except KeyError:
+            raise AttributeError('No {} attribute'.format(attr))
+
+
 class __traceback_maker(Exception):
     pass
 
@@ -88,3 +97,47 @@ class Traceback(object):
                 return getattr(self, args[0])
         else:
             return getattr(self, operation)(*args, **kwargs)
+
+    def to_dict(self):
+        """Convert a Traceback into a dictionary representation"""
+        if self.tb_next is None:
+            tb_next = None
+        else:
+            tb_next = self.tb_next.to_dict()
+
+        code = {
+            k: v
+            for k, v in self.tb_frame.f_code.__dict__.items()
+            if k.startswith('co_')
+        }
+        code['co_lnotab'] = code['co_lnotab'].decode('latin1')
+        frame = {
+            'f_globals': self.tb_frame.f_globals,
+            'f_code': code
+        }
+        return {
+            'tb_frame': frame,
+            'tb_lineno': self.tb_lineno,
+            'tb_next': tb_next
+        }
+
+    @classmethod
+    def from_dict(cls, dct):
+        if dct['tb_next']:
+            tb_next = cls.from_dict(dct['tb_next'])
+        else:
+            tb_next = None
+
+        frame = _AttrDict((
+            ('f_globals', dct['tb_frame']['f_globals']),
+            ('f_code', _AttrDict((k, v) for k, v in dct['tb_frame']['f_code'].items()))
+        ))
+        frame['f_code']['co_lnotab'] = frame['f_code']['co_lnotab'].encode('latin1')
+        tb = _AttrDict((
+            ('tb_frame', frame),
+            ('tb_lineno', dct['tb_lineno']),
+            ('tb_next', tb_next)
+        ))
+        return cls(tb)
+
+

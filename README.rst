@@ -199,6 +199,39 @@ It is used by the ``pickling_support``. You can use it too if you want more flex
         raise Exception('fail')
     Exception: fail
 
+
+You can use the ``to_dict`` method and the ``from_dict`` classmethod to
+convert a Traceback into and from a dictionary serializable by the stdlib
+json.JSONDecoder::
+
+    >>> import json
+    >>> from tblib import Traceback
+    >>> try:
+    ...     inner_2()
+    ... except:
+    ...     et, ev, tb = sys.exc_info()
+    ...     tb = Traceback(tb)
+    ...     tb_json = json.dumps(tb.to_dict())
+    ...     tb_2 = Traceback.from_dict(json.loads(tb_json))
+    ...     reraise(et, ev, tb.as_traceback())
+    ...
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[21]>", line 6, in <module>
+        reraise(et, ev, tb.as_traceback())
+      File "<doctest README.rst[21]>", line 2, in <module>
+        inner_2()
+      File "<doctest README.rst[5]>", line 2, in inner_2
+        inner_1()
+      File "<doctest README.rst[4]>", line 2, in inner_1
+        inner_0()
+      File "<doctest README.rst[3]>", line 2, in inner_0
+        raise Exception('fail')
+    Exception: fail
+
+
+
+
 Decorators
 ==========
 
