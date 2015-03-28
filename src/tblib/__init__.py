@@ -20,10 +20,7 @@ PY3 = sys.version_info[0] == 3
 
 class _AttrDict(dict):
     def __getattr__(self, attr):
-        try:
-            return self[attr]
-        except KeyError:
-            raise AttributeError('No {} attribute'.format(attr))
+        return self[attr]
 
 
 class __traceback_maker(Exception):
