@@ -34,7 +34,7 @@ class Code(object):
         self.co_stacksize = code.co_stacksize
         self.co_flags = code.co_flags
         self.co_firstlineno = code.co_firstlineno
-        self.co_lnotab = code.co_lnotab
+        self.co_lnotab = ""
 
 class Frame(object):
     def __init__(self, frame):
@@ -64,7 +64,7 @@ class Traceback(object):
                     f_code.co_nlocals, f_code.co_stacksize, f_code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
                     f_code.co_filename, f_code.co_name,
-                    code.co_firstlineno, code.co_lnotab,
+                    code.co_firstlineno, b"",
                     (), ()
                 )
             else:
@@ -73,7 +73,7 @@ class Traceback(object):
                     f_code.co_nlocals, f_code.co_stacksize, f_code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
                     f_code.co_filename, f_code.co_name,
-                    code.co_firstlineno, code.co_lnotab,
+                    code.co_firstlineno, b"",
                     (), ()
                 )
 
@@ -107,7 +107,6 @@ class Traceback(object):
             for k, v in self.tb_frame.f_code.__dict__.items()
             if k.startswith('co_')
         }
-        code['co_lnotab'] = ''
         frame = {
             'f_globals': self.tb_frame.f_globals,
             'f_code': code
