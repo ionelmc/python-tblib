@@ -3,6 +3,7 @@ Taken verbatim from Jinja2.
 
 https://github.com/mitsuhiko/jinja2/blob/master/jinja2/debug.py#L267
 """
+import platform
 import sys
 
 def _init_ugly_crap():
@@ -68,7 +69,8 @@ def _init_ugly_crap():
 
 tb_set_next = None
 try:
-    tb_set_next = _init_ugly_crap()
+    if platform.python_implementation() == 'CPython':
+        tb_set_next = _init_ugly_crap()
 except Exception as exc:
     sys.stderr.write("Failed to initialize cpython support: {!r}".format(exc))
 del _init_ugly_crap
