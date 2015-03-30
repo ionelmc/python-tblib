@@ -69,7 +69,6 @@ def _init_ugly_crap():
 tb_set_next = None
 try:
     tb_set_next = _init_ugly_crap()
-except:
-    import traceback
-    traceback.print_exc()
+except Exception as exc:
+    sys.stderr.write("Failed to initialize cpython support: {!r}".format(exc))
 del _init_ugly_crap
