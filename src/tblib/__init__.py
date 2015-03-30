@@ -26,6 +26,7 @@ class _AttrDict(dict):
 class __traceback_maker(Exception):
     pass
 
+
 class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
@@ -34,7 +35,7 @@ class Code(object):
         self.co_stacksize = code.co_stacksize
         self.co_flags = code.co_flags
         self.co_firstlineno = code.co_firstlineno
-        self.co_lnotab = ""
+
 
 class Frame(object):
     def __init__(self, frame):
@@ -42,6 +43,7 @@ class Frame(object):
             k: v for k, v in frame.f_globals.items() if k in ("__file__", "__name__")
         }
         self.f_code = Code(frame.f_code)
+
 
 class Traceback(object):
     def __init__(self, tb):
@@ -72,7 +74,7 @@ class Traceback(object):
                     0,
                     f_code.co_nlocals, f_code.co_stacksize, f_code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
-                    f_code.co_filename, f_code.co_name,
+                    f_code.co_filename.encode(), f_code.co_name.encode(),
                     code.co_firstlineno, b"",
                     (), ()
                 )

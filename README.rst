@@ -206,15 +206,50 @@ json.JSONDecoder::
 
     >>> import json
     >>> from tblib import Traceback
+    >>> from pprint import pprint
     >>> try:
     ...     inner_2()
     ... except:
     ...     et, ev, tb = sys.exc_info()
     ...     tb = Traceback(tb)
-    ...     tb_json = json.dumps(tb.to_dict())
-    ...     tb_2 = Traceback.from_dict(json.loads(tb_json))
-    ...     reraise(et, ev, tb.as_traceback())
-    ...
+    ...     tb_dict = tb.to_dict()
+    ...     pprint(tb_dict)
+    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[30]>',
+                             'co_firstlineno': 1,
+                             'co_flags': ...,
+                             'co_name': '<module>',
+                             'co_nlocals': 0,
+                             'co_stacksize': ...},
+                  'f_globals': {'__name__': '__main__'}},
+     'tb_lineno': 2,
+     'tb_next': {'tb_frame': {'f_code': {'co_filename': ...
+                                         'co_firstlineno': 1,
+                                         'co_flags': ...,
+                                         'co_name': 'inner_2',
+                                         'co_nlocals': 0,
+                                         'co_stacksize': ...},
+                              'f_globals': {'__name__': '__main__'}},
+                 'tb_lineno': 2,
+                 'tb_next': {'tb_frame': {'f_code': {'co_filename': ...
+                                                     'co_firstlineno': 1,
+                                                     'co_flags': ...,
+                                                     'co_name': 'inner_1',
+                                                     'co_nlocals': 0,
+                                                     'co_stacksize': ...},
+                                          'f_globals': {'__name__': '__main__'}},
+                             'tb_lineno': 2,
+                             'tb_next': {'tb_frame': {'f_code': {'co_filename': ...
+                                                                 'co_firstlineno': 1,
+                                                                 'co_flags': ...,
+                                                                 'co_name': 'inner_0',
+                                                                 'co_nlocals': 0,
+                                                                 'co_stacksize': ...},
+                                                      'f_globals': {'__name__': '__main__'}},
+                                         'tb_lineno': 2,
+                                         'tb_next': None}}}}
+    >>> tb_json = json.dumps(tb_dict)    
+    >>> tb = Traceback.from_dict(json.loads(tb_json))
+    >>> reraise(et, ev, tb.as_traceback())
     Traceback (most recent call last):
       ...
       File "<doctest README.rst[21]>", line 6, in <module>
