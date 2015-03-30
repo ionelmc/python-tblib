@@ -5,7 +5,7 @@ import os
 
 setup(
     name="tblib",
-    version="0.2.0",
+    version="1.0.0",
     url='https://github.com/ionelmc/python-tblib',
     download_url='',
     license='BSD',
