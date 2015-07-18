@@ -35,14 +35,24 @@ class Code(object):
         self.co_stacksize = code.co_stacksize
         self.co_flags = code.co_flags
         self.co_firstlineno = code.co_firstlineno
+        
+        # Extras
+        self.co_lnotab = getattr(code, 'co_lnotab', None)
 
 
 class Frame(object):
     def __init__(self, frame):
-        self.f_globals = {
-            k: v for k, v in frame.f_globals.items() if k in ("__file__", "__name__")
-        }
         self.f_code = Code(frame.f_code)
+        self.f_locals = {}
+        self.f_globals = {}
+        
+        for local, value in getattr(frame, 'f_locals', {}).items():
+            if can_pickle(value):
+                self.f_locals[local] = value
+                
+        for local, value in getattr(frame, 'f_globals', {}).items():
+            if can_pickle(value):
+                self.f_globals[local] = value
 
 
 class Traceback(object):
@@ -53,6 +63,9 @@ class Traceback(object):
             self.tb_next = None
         else:
             self.tb_next = Traceback(tb.tb_next)
+            
+        # Extras
+        self.tb_lasti = getattr(tb, 'tb_lasti', None)
 
     def as_traceback(self):
         if tproxy:
@@ -109,14 +122,17 @@ class Traceback(object):
             for k, v in self.tb_frame.f_code.__dict__.items()
             if k.startswith('co_')
         }
+        code['co_lnotab'] = code['co_lnotab'].decode("utf-8")
         frame = {
-            'f_globals': self.tb_frame.f_globals,
+            'f_locals': {k:v for k,v in self.tb_frame.f_locals.items() if can_jsonify(v)},
+            'f_globals': {k:v for k,v in self.tb_frame.f_globals.items() if can_jsonify(v)},
             'f_code': code
         }
         return {
             'tb_frame': frame,
             'tb_lineno': self.tb_lineno,
-            'tb_next': tb_next
+            'tb_next': tb_next,
+            'tb_lasti': self.tb_lasti
         }
 
     @classmethod
@@ -125,16 +141,37 @@ class Traceback(object):
             tb_next = cls.from_dict(dct['tb_next'])
         else:
             tb_next = None
-
+        
+        dct['tb_frame']['f_code']['co_lnotab'] = dct['tb_frame']['f_code']['co_lnotab'].encode("utf-8")
         frame = _AttrDict((
             ('f_globals', dct['tb_frame']['f_globals']),
+            ('f_locals', dct['tb_frame']['f_locals']),
             ('f_code', _AttrDict((k, v) for k, v in dct['tb_frame']['f_code'].items()))
         ))
         tb = _AttrDict((
             ('tb_frame', frame),
+            ('tb_lasti', dct['tb_lasti']),
             ('tb_lineno', dct['tb_lineno']),
             ('tb_next', tb_next)
         ))
         return cls(tb)
 
-
+def can_pickle(val):
+    import pickle
+    if isinstance(val, TracebackType):
+        return True
+    try:
+        pickle.dumps(val)
+    except:
+        return False
+    else:
+        return True
+        
+def can_jsonify(val):
+    import json
+    try:
+        json.dumps(val)
+    except:
+        return False
+    else:
+        return True
