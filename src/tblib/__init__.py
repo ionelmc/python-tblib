@@ -39,9 +39,7 @@ class Code(object):
 
 class Frame(object):
     def __init__(self, frame):
-        self.f_globals = {
-            k: v for k, v in frame.f_globals.items() if k in ("__file__", "__name__")
-        }
+        self.f_globals = dict([(k, v) for k, v in frame.f_globals.items() if k in ("__file__", "__name__")])
         self.f_code = Code(frame.f_code)
 
 
@@ -104,11 +102,11 @@ class Traceback(object):
         else:
             tb_next = self.tb_next.to_dict()
 
-        code = {
-            k: v
+        code = dict([
+            (k, v)
             for k, v in self.tb_frame.f_code.__dict__.items()
             if k.startswith('co_')
-        }
+            ])
         frame = {
             'f_globals': self.tb_frame.f_globals,
             'f_code': code
