@@ -106,11 +106,11 @@ class Traceback(object):
         else:
             tb_next = self.tb_next.to_dict()
 
-        code = {
-            k: v
+        code = dict([
+            (k, v)
             for k, v in self.tb_frame.f_code.__dict__.items()
             if k.startswith('co_')
-        }
+        ])
         frame = {
             'f_globals': self.tb_frame.f_globals,
             'f_code': code
