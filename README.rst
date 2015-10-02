@@ -1,30 +1,95 @@
-==========================
-        python-tblib
-==========================
+=====
+tblib
+=====
 
-.. image:: https://secure.travis-ci.org/ionelmc/python-tblib.png?branch=master
-    :alt: Build Status
-    :target: http://travis-ci.org/ionelmc/python-tblib
+.. list-table::
+    :stub-columns: 1
 
-.. image:: https://coveralls.io/repos/ionelmc/python-tblib/badge.png?branch=master
+    * - docs
+      - |docs|
+    * - tests
+      - | |travis| |appveyor| |requires|
+        | |coveralls| |codecov|
+        | |landscape| |scrutinizer| |codacy| |codeclimate|
+    * - package
+      - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
+
+.. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
+    :target: https://readthedocs.org/projects/python-tblib
+    :alt: Documentation Status
+
+.. |travis| image:: https://travis-ci.org/ionelmc/python-tblib.svg?branch=master
+    :alt: Travis-CI Build Status
+    :target: https://travis-ci.org/ionelmc/python-tblib
+
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/python-tblib?branch=master&svg=true
+    :alt: AppVeyor Build Status
+    :target: https://ci.appveyor.com/project/ionelmc/python-tblib
+
+.. |requires| image:: https://requires.io/github/ionelmc/python-tblib/requirements.svg?branch=master
+    :alt: Requirements Status
+    :target: https://requires.io/github/ionelmc/python-tblib/requirements/?branch=master
+
+.. |coveralls| image:: https://coveralls.io/repos/ionelmc/python-tblib/badge.svg?branch=master&service=github
     :alt: Coverage Status
     :target: https://coveralls.io/r/ionelmc/python-tblib
 
-.. image:: https://badge.fury.io/py/tblib.png
-    :alt: PYPI Package
+.. |codecov| image:: https://codecov.io/github/ionelmc/python-tblib/coverage.svg?branch=master
+    :alt: Coverage Status
+    :target: https://codecov.io/github/ionelmc/python-tblib
+
+.. |landscape| image:: https://landscape.io/github/ionelmc/python-tblib/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/ionelmc/python-tblib/master
+    :alt: Code Quality Status
+
+.. |codacy| image:: https://img.shields.io/codacy/REPLACE_WITH_PROJECT_ID.svg?style=flat
+    :target: https://www.codacy.com/app/ionelmc/python-tblib
+    :alt: Codacy Code Quality Status
+
+.. |codeclimate| image:: https://codeclimate.com/github/ionelmc/python-tblib/badges/gpa.svg
+   :target: https://codeclimate.com/github/ionelmc/python-tblib
+   :alt: CodeClimate Quality Status
+.. |version| image:: https://img.shields.io/pypi/v/tblib.svg?style=flat
+    :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/tblib
+
+.. |downloads| image:: https://img.shields.io/pypi/dm/tblib.svg?style=flat
+    :alt: PyPI Package monthly downloads
+    :target: https://pypi.python.org/pypi/tblib
+
+.. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg?style=flat
+    :alt: PyPI Wheel
+    :target: https://pypi.python.org/pypi/tblib
+
+.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/tblib.svg?style=flat
+    :alt: Supported versions
+    :target: https://pypi.python.org/pypi/tblib
+
+.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tblib.svg?style=flat
+    :alt: Supported implementations
+    :target: https://pypi.python.org/pypi/tblib
+
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-tblib/master.svg?style=flat
+    :alt: Scrutinizer Status
+    :target: https://scrutinizer-ci.com/g/ionelmc/python-tblib/
 
 Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes.
 This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
 
-Requirements
+* Free software: BSD license
+
+Installation
 ============
 
-:OS: Any
-:Runtime: Python 2.6, 2.7, 3.2, 3.3, 3.4 and PyPy.
+::
+
+    pip install tblib
+
+Documentation
+=============
 
 Pickling tracebacks
-===================
+-------------------
 
 **Note**: The traceback objects that come out are stripped of some attributes (like variables). But you'll be able to raise exceptions with
 those tracebacks or print them - that should cover 99% of the usecases.
@@ -173,7 +238,7 @@ Yes it does::
 
 
 The tblib.Traceback object
-==========================
+--------------------------
 
 It is used by the ``pickling_support``. You can use it too if you want more flexibility::
 
@@ -247,7 +312,7 @@ json.JSONDecoder::
                                                       'f_globals': {'__name__': '__main__'}},
                                          'tb_lineno': 2,
                                          'tb_next': None}}}}
-    >>> tb_json = json.dumps(tb_dict)    
+    >>> tb_json = json.dumps(tb_dict)
     >>> tb = Traceback.from_dict(json.loads(tb_json))
     >>> reraise(et, ev, tb.as_traceback())
     Traceback (most recent call last):
@@ -268,7 +333,7 @@ json.JSONDecoder::
 
 
 Decorators
-==========
+----------
 
 return_error
 ------------
