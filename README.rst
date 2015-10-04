@@ -367,7 +367,7 @@ How's this useful ? Imagine you're using multiprocessing like this::
     >>> import traceback
     >>> from multiprocessing import Pool
     >>> from examples import func_a
-    >>> if sys.version_info[:2] == (3, 4):
+    >>> if sys.version_info[:2] >= (3, 4):
     ...     import multiprocessing.pool
     ...     # Undo the fix for http://bugs.python.org/issue13831 so that we can see the effects of our change.
     ...     # because Python 3.4 will show the remote traceback (but as a string sadly)
@@ -459,11 +459,11 @@ What if we have a local call stack ?
         local_0()
       File "<doctest README.rst[...]>", line 5, in local_0
         i.reraise()
-      File "...tblib...decorators.py", line 19, in reraise
+      File "...tblib...decorators.py", line 20, in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
-      File "...tblib...decorators.py", line 25, in return_exceptions_wrapper
+      File "...tblib...decorators.py", line 27, in return_exceptions_wrapper
         return func(*args, **kwargs)
-      File "...tblib...decorators.py", line 42, in apply_with_return_error
+      File "...tblib...decorators.py", line 47, in apply_with_return_error
         return args[0](*args[1:])
       File "...tests...examples.py", line 2, in func_a
         func_b()
