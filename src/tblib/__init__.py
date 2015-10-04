@@ -138,5 +138,3 @@ class Traceback(object):
             ('tb_next', tb_next)
         ))
         return cls(tb)
-
-

@@ -6,6 +6,7 @@ https://github.com/mitsuhiko/jinja2/blob/master/jinja2/debug.py#L267
 import platform
 import sys
 
+
 def _init_ugly_crap():
     """This function implements a few ugly things so that we can patch the
     traceback objects.  The function returned allows resetting `tb_next` on
@@ -24,6 +25,7 @@ def _init_ugly_crap():
     # regular python
     class _PyObject(ctypes.Structure):
         pass
+
     _PyObject._fields_ = [
         ('ob_refcnt', _Py_ssize_t),
         ('ob_type', ctypes.POINTER(_PyObject))
@@ -33,6 +35,7 @@ def _init_ugly_crap():
     if hasattr(sys, 'getobjects'):
         class _PyObject(ctypes.Structure):
             pass
+
         _PyObject._fields_ = [
             ('_ob_next', ctypes.POINTER(_PyObject)),
             ('_ob_prev', ctypes.POINTER(_PyObject)),
@@ -42,6 +45,7 @@ def _init_ugly_crap():
 
     class _Traceback(_PyObject):
         pass
+
     _Traceback._fields_ = [
         ('tb_next', ctypes.POINTER(_Traceback)),
         ('tb_frame', ctypes.POINTER(_PyObject)),
@@ -51,8 +55,7 @@ def _init_ugly_crap():
 
     def tb_set_next(tb, next):
         """Set the tb_next attribute of a traceback object."""
-        if not (isinstance(tb, TracebackType) and
-                (next is None or isinstance(next, TracebackType))):
+        if not (isinstance(tb, TracebackType) and (next is None or isinstance(next, TracebackType))):
             raise TypeError('tb_set_next arguments must be traceback objects')
         obj = _Traceback.from_address(id(tb))
         if tb.tb_next is not None:
@@ -66,6 +69,7 @@ def _init_ugly_crap():
             obj.tb_next = ctypes.pointer(next)
 
     return tb_set_next
+
 
 tb_set_next = None
 try:

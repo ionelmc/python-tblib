@@ -1,4 +1,3 @@
-import pickle
 try:
     import copy_reg
 except ImportError:
@@ -7,6 +6,7 @@ from types import TracebackType
 
 from . import Frame, Traceback
 
+
 def unpickle_traceback(tb_frame, tb_lineno, tb_next):
     ret = object.__new__(Traceback)
     ret.tb_frame = tb_frame
@@ -14,8 +14,10 @@ def unpickle_traceback(tb_frame, tb_lineno, tb_next):
     ret.tb_next = tb_next
     return ret.as_traceback()
 
+
 def pickle_traceback(tb):
     return unpickle_traceback, (Frame(tb.tb_frame), tb.tb_lineno, tb.tb_next and Traceback(tb.tb_next))
+
 
 def install():
     copy_reg.pickle(TracebackType, pickle_traceback)
