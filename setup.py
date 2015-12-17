@@ -26,7 +26,7 @@ def read(*names, **kwargs):
 
 setup(
     name='tblib',
-    version='1.1.0',
+    version='1.2.0',
     license='BSD',
     description='Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes. This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).',
     long_description='%s\n%s' % (read('README.rst'), re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))),
