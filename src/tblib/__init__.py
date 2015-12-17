@@ -19,30 +19,23 @@ PY3 = sys.version_info[0] == 3
 
 
 class _AttrDict(dict):
+    __slots__ = ()
     def __getattr__(self, attr):
         return self[attr]
-
-
-class __traceback_maker(Exception):
-    pass
 
 
 class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
-        self.co_nlocals = code.co_nlocals
-        self.co_stacksize = code.co_stacksize
-        self.co_flags = code.co_flags
-        self.co_firstlineno = code.co_firstlineno
 
 
 class Frame(object):
     def __init__(self, frame):
         self.f_globals = dict([
-            (k, v)
-            for k, v in frame.f_globals.items()
-            if k in ("__file__", "__name__")
+            (k, frame.f_globals[k])
+            for k in ("__file__", "__name__")
+            if k in frame.f_globals
         ])
         self.f_code = Code(frame.f_code)
 
@@ -61,24 +54,22 @@ class Traceback(object):
             return tproxy(TracebackType, self.__tproxy_handler)
         elif tb_set_next:
             f_code = self.tb_frame.f_code
-            code = compile('\n' * (self.tb_lineno - 1) + 'raise __traceback_maker', self.tb_frame.f_code.co_filename, 'exec')
+            code = compile('\n' * (self.tb_lineno - 1) + 'raise Exception', self.tb_frame.f_code.co_filename, 'exec')
             if PY3:
                 code = CodeType(
-                    0, 0,
-                    f_code.co_nlocals, f_code.co_stacksize, f_code.co_flags,
+                    code.co_argcount, code.co_kwonlyargcount,
+                    code.co_nlocals, code.co_stacksize, code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
                     f_code.co_filename, f_code.co_name,
-                    code.co_firstlineno, b"",
-                    (), ()
+                    code.co_firstlineno, b"", (), ()
                 )
             else:
                 code = CodeType(
-                    0,
-                    f_code.co_nlocals, f_code.co_stacksize, f_code.co_flags,
+                    code.co_argcount,
+                    code.co_nlocals, code.co_stacksize, code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
                     f_code.co_filename.encode(), f_code.co_name.encode(),
-                    code.co_firstlineno, b"",
-                    (), ()
+                    code.co_firstlineno, b"", (), ()
                 )
 
             try:
@@ -106,19 +97,18 @@ class Traceback(object):
         else:
             tb_next = self.tb_next.to_dict()
 
-        code = dict([
-            (k, v)
-            for k, v in self.tb_frame.f_code.__dict__.items()
-            if k.startswith('co_')
-        ])
+        code = {
+            'co_filename': self.tb_frame.f_code.co_filename,
+            'co_name': self.tb_frame.f_code.co_name,
+        }
         frame = {
             'f_globals': self.tb_frame.f_globals,
-            'f_code': code
+            'f_code': code,
         }
         return {
             'tb_frame': frame,
             'tb_lineno': self.tb_lineno,
-            'tb_next': tb_next
+            'tb_next': tb_next,
         }
 
     @classmethod
@@ -128,13 +118,17 @@ class Traceback(object):
         else:
             tb_next = None
 
+        code = _AttrDict((
+            ('co_filename', dct['tb_frame']['f_code']['co_filename']),
+            ('co_name', dct['tb_frame']['f_code']['co_name']),
+        ))
         frame = _AttrDict((
             ('f_globals', dct['tb_frame']['f_globals']),
-            ('f_code', _AttrDict((k, v) for k, v in dct['tb_frame']['f_code'].items()))
+            ('f_code', code),
         ))
         tb = _AttrDict((
             ('tb_frame', frame),
             ('tb_lineno', dct['tb_lineno']),
-            ('tb_next', tb_next)
+            ('tb_next', tb_next),
         ))
         return cls(tb)
