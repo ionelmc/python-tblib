@@ -15,6 +15,8 @@ import sys
 from types import CodeType
 from types import TracebackType
 
+__version__ = '1.1.0'
+
 PY3 = sys.version_info[0] == 3
 
 
