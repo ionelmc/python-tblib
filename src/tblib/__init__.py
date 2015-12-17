@@ -20,6 +20,7 @@ PY3 = sys.version_info[0] == 3
 
 class _AttrDict(dict):
     __slots__ = ()
+
     def __getattr__(self, attr):
         return self[attr]
 
