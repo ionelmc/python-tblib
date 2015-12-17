@@ -58,19 +58,19 @@ class Traceback(object):
             code = compile('\n' * (self.tb_lineno - 1) + 'raise Exception', self.tb_frame.f_code.co_filename, 'exec')
             if PY3:
                 code = CodeType(
-                    code.co_argcount, code.co_kwonlyargcount,
+                    0, code.co_kwonlyargcount,
                     code.co_nlocals, code.co_stacksize, code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
                     f_code.co_filename, f_code.co_name,
-                    code.co_firstlineno, b"", (), ()
+                    code.co_firstlineno, code.co_lnotab, (), ()
                 )
             else:
                 code = CodeType(
-                    code.co_argcount,
+                    0,
                     code.co_nlocals, code.co_stacksize, code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
                     f_code.co_filename.encode(), f_code.co_name.encode(),
-                    code.co_firstlineno, b"", (), ()
+                    code.co_firstlineno, code.co_lnotab, (), ()
                 )
 
             try:
