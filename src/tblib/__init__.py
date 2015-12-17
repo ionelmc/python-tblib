@@ -25,6 +25,10 @@ class _AttrDict(dict):
         return self[attr]
 
 
+class __traceback_maker(Exception):
+    pass
+
+
 class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
@@ -55,7 +59,7 @@ class Traceback(object):
             return tproxy(TracebackType, self.__tproxy_handler)
         elif tb_set_next:
             f_code = self.tb_frame.f_code
-            code = compile('\n' * (self.tb_lineno - 1) + 'raise Exception', self.tb_frame.f_code.co_filename, 'exec')
+            code = compile('\n' * (self.tb_lineno - 1) + 'raise __traceback_maker', self.tb_frame.f_code.co_filename, 'exec')
             if PY3:
                 code = CodeType(
                     0, code.co_kwonlyargcount,
