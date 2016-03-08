@@ -24,7 +24,7 @@ def read(*names, **kwargs):
 
 setup(
     name='tblib',
-    version='1.2.0',
+    version='1.3.0',
     license='BSD',
     description='Traceback serialization library.',
     long_description='%s\n%s' % (
