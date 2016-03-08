@@ -4,7 +4,8 @@ except ImportError:
     import copyreg as copy_reg
 from types import TracebackType
 
-from . import Frame, Traceback
+from . import Frame
+from . import Traceback
 
 
 def unpickle_traceback(tb_frame, tb_lineno, tb_next):

@@ -1,3 +1,8 @@
+import sys
+
+from types import CodeType
+from types import TracebackType
+
 try:
     from __pypy__ import tproxy
 except ImportError:
@@ -9,11 +14,6 @@ except ImportError:
 
 if not tb_set_next and not tproxy:
     raise ImportError("Cannot use tblib. Runtime not supported.")
-
-import sys
-
-from types import CodeType
-from types import TracebackType
 
 __version__ = '1.2.0'
 
