@@ -1,6 +1,8 @@
-=====
-tblib
-=====
+========
+Overview
+========
+
+.. start-badges
 
 .. list-table::
     :stub-columns: 1
@@ -49,6 +51,7 @@ tblib
 .. |codeclimate| image:: https://codeclimate.com/github/ionelmc/python-tblib/badges/gpa.svg
    :target: https://codeclimate.com/github/ionelmc/python-tblib
    :alt: CodeClimate Quality Status
+
 .. |version| image:: https://img.shields.io/pypi/v/tblib.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/tblib
@@ -73,8 +76,12 @@ tblib
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/ionelmc/python-tblib/
 
-Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes.
-This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
+
+.. end-badges
+
+Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in
+different processes. This allows better error handling when running code over multiple processes (imagine
+multiprocessing, billiard, futures, celery etc).
 
 * Free software: BSD license
 
