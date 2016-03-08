@@ -100,8 +100,11 @@ Installation
 Documentation
 =============
 
+.. contents::
+   :local:
+
 Pickling tracebacks
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 **Note**: The traceback objects that come out are stripped of some attributes (like variables). But you'll be able to raise exceptions with
 those tracebacks or print them - that should cover 99% of the usecases.
@@ -148,7 +151,7 @@ those tracebacks or print them - that should cover 99% of the usecases.
     True
 
 Unpickling
-----------
+~~~~~~~~~~
 
 ::
 
@@ -162,7 +165,7 @@ Unpickling
     (<...Exception'>, Exception('fail',), <traceback object at ...>)
 
 Raising
--------
+~~~~~~~
 
 ::
 
@@ -211,7 +214,7 @@ Raising
     Exception: fail
 
 What if we have a local stack, does it show correctly ?
-```````````````````````````````````````````````````````
+-------------------------------------------------------
 
 Yes it does::
 
@@ -247,10 +250,60 @@ Yes it does::
         raise Exception('fail')
     Exception: fail
 
+It also supports more contrived scenarios
+-----------------------------------------
 
+Like tracebacks with syntax errors::
 
-The tblib.Traceback object
---------------------------
+    >>> from tblib import Traceback
+    >>> from examples import bad_syntax
+    >>> try:
+    ...     bad_syntax()
+    ... except:
+    ...     et, ev, tb = sys.exc_info()
+    ...     tb = Traceback(tb)
+    ...
+    >>> reraise(et, ev, tb.as_traceback())
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[58]>", line 1, in <module>
+        reraise(et, ev, tb.as_traceback())
+      File "<doctest README.rst[57]>", line 2, in <module>
+        bad_syntax()
+      File "...tests...examples.py", line 18, in bad_syntax
+        import badsyntax
+      File "...tests...badsyntax.py", line 5
+        is very bad
+         ^
+    SyntaxError: invalid syntax
+
+Or other import failures::
+
+    >>> from examples import bad_module
+    >>> try:
+    ...     bad_module()
+    ... except:
+    ...     et, ev, tb = sys.exc_info()
+    ...     tb = Traceback(tb)
+    ...
+    >>> reraise(et, ev, tb.as_traceback())
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[61]>", line 1, in <module>
+        reraise(et, ev, tb.as_traceback())
+      File "<doctest README.rst[60]>", line 2, in <module>
+        bad_module()
+      File "...tests...examples.py", line 23, in bad_module
+        import badmodule
+      File "...tests...badmodule.py", line 3, in <module>
+        raise Exception("boom!")
+    Exception: boom!
+
+Reference
+~~~~~~~~~
+
+tblib.Traceback
+---------------
 
 It is used by the ``pickling_support``. You can use it too if you want more flexibility::
 
@@ -276,13 +329,14 @@ It is used by the ``pickling_support``. You can use it too if you want more flex
         raise Exception('fail')
     Exception: fail
 
+tblib.Traceback.to_dict
+```````````````````````
 
 You can use the ``to_dict`` method and the ``from_dict`` classmethod to
 convert a Traceback into and from a dictionary serializable by the stdlib
 json.JSONDecoder::
 
     >>> import json
-    >>> from tblib import Traceback
     >>> from pprint import pprint
     >>> try:
     ...     inner_2()
@@ -291,7 +345,7 @@ json.JSONDecoder::
     ...     tb = Traceback(tb)
     ...     tb_dict = tb.to_dict()
     ...     pprint(tb_dict)
-    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[31]>',
+    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[37]>',
                              'co_name': '<module>'},
                   'f_globals': {'__name__': '__main__'}},
      'tb_lineno': 2,
@@ -308,6 +362,12 @@ json.JSONDecoder::
                                                       'f_globals': {'__name__': '__main__'}},
                                          'tb_lineno': 2,
                                          'tb_next': None}}}}
+
+tblib.Traceback.from_dict
+`````````````````````````
+
+Building on the previous example::
+
     >>> tb_json = json.dumps(tb_dict)
     >>> tb = Traceback.from_dict(json.loads(tb_json))
     >>> reraise(et, ev, tb.as_traceback())
@@ -325,14 +385,71 @@ json.JSONDecoder::
         raise Exception('fail')
     Exception: fail
 
+tblib.Traceback.from_string
+```````````````````````````
+
+::
+
+    >>> tb = Traceback.from_string("""
+    ... File "skipped.py", line 123, in func_123
+    ... Traceback (most recent call last):
+    ...   File "tests/examples.py", line 2, in func_a
+    ...     func_b()
+    ...   File "tests/examples.py", line 6, in func_b
+    ...     func_c()
+    ...   File "tests/examples.py", line 10, in func_c
+    ...     func_d()
+    ...   File "tests/examples.py", line 14, in func_d
+    ... Doesn't: matter
+    ... """)
+    >>> reraise(et, ev, tb.as_traceback())
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[42]>", line 6, in <module>
+        reraise(et, ev, tb.as_traceback())
+      File "...examples.py", line 2, in func_a
+        func_b()
+      File "...examples.py", line 6, in func_b
+        func_c()
+      File "...examples.py", line 10, in func_c
+        func_d()
+      File "...examples.py", line 14, in func_d
+        raise Exception("Guessing time !")
+    Exception: fail
 
 
+If you use the ``strict=False`` option then parsing is a bit more lax::
 
-Decorators
-----------
+    >>> tb = Traceback.from_string("""
+    ... File "bogus.py", line 123, in bogus
+    ... Traceback (most recent call last):
+    ...  File "tests/examples.py", line 2, in func_a
+    ...   func_b()
+    ...    File "tests/examples.py", line 6, in func_b
+    ...     func_c()
+    ...    File "tests/examples.py", line 10, in func_c
+    ...   func_d()
+    ...  File "tests/examples.py", line 14, in func_d
+    ... Doesn't: matter
+    ... """, strict=False)
+    >>> reraise(et, ev, tb.as_traceback())
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[42]>", line 6, in <module>
+        reraise(et, ev, tb.as_traceback())
+      File "bogus.py", line 123, in bogus
+      File "...examples.py", line 2, in func_a
+        func_b()
+      File "...examples.py", line 6, in func_b
+        func_c()
+      File "...examples.py", line 10, in func_c
+        func_d()
+      File "...examples.py", line 14, in func_d
+        raise Exception("Guessing time !")
+    Exception: fail
 
-return_error
-------------
+tblib.decorators.return_error
+-----------------------------
 
 ::
 
@@ -472,53 +589,6 @@ What if we have a local call stack ?
     Exception: Guessing time !
     <BLANKLINE>
 
-It also supports more contrived scenarios
-`````````````````````````````````````````
-
-Like tracebacks with syntax errors::
-
-    >>> from examples import bad_syntax
-    >>> try:
-    ...     bad_syntax()
-    ... except:
-    ...     et, ev, tb = sys.exc_info()
-    ...     tb = Traceback(tb)
-    ...
-    >>> reraise(et, ev, tb.as_traceback())
-    Traceback (most recent call last):
-      ...
-      File "<doctest README.rst[58]>", line 1, in <module>
-        reraise(et, ev, tb.as_traceback())
-      File "<doctest README.rst[57]>", line 2, in <module>
-        bad_syntax()
-      File "...tests...examples.py", line 18, in bad_syntax
-        import badsyntax
-      File "...tests...badsyntax.py", line 5
-        is very bad
-         ^
-    SyntaxError: invalid syntax
-
-Or other import failures::
-
-    >>> from examples import bad_module
-    >>> try:
-    ...     bad_module()
-    ... except:
-    ...     et, ev, tb = sys.exc_info()
-    ...     tb = Traceback(tb)
-    ...
-    >>> reraise(et, ev, tb.as_traceback())
-    Traceback (most recent call last):
-      ...
-      File "<doctest README.rst[61]>", line 1, in <module>
-        reraise(et, ev, tb.as_traceback())
-      File "<doctest README.rst[60]>", line 2, in <module>
-        bad_module()
-      File "...tests...examples.py", line 23, in bad_module
-        import badmodule
-      File "...tests...badmodule.py", line 3, in <module>
-        raise Exception("boom!")
-    Exception: boom!
 
 Credits
 =======
