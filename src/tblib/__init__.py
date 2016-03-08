@@ -16,6 +16,7 @@ if not tb_set_next and not tproxy:
     raise ImportError("Cannot use tblib. Runtime not supported.")
 
 __version__ = '1.2.0'
+__all__ = 'Traceback',
 
 PY3 = sys.version_info[0] == 3
 FRAME_RE = re.compile(r'^\s*File "(?P<co_filename>.+)", line (?P<tb_lineno>\d+)(, in (?P<co_name>.+))?$')
