@@ -44,7 +44,7 @@ Overview
     :target: https://landscape.io/github/ionelmc/python-tblib/master
     :alt: Code Quality Status
 
-.. |codacy| image:: https://img.shields.io/codacy/REPLACE_WITH_PROJECT_ID.svg?style=flat
+.. |codacy| image:: https://img.shields.io/codacy/a8f7891727784601931d715097b703ee.svg?style=flat
     :target: https://www.codacy.com/app/ionelmc/python-tblib
     :alt: Codacy Code Quality Status
 
