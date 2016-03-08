@@ -260,8 +260,8 @@ It is used by the ``pickling_support``. You can use it too if you want more flex
     ... except:
     ...     et, ev, tb = sys.exc_info()
     ...     tb = Traceback(tb)
-    ...     reraise(et, ev, tb.as_traceback())
     ...
+    >>> reraise(et, ev, tb.as_traceback())
     Traceback (most recent call last):
       ...
       File "<doctest README.rst[21]>", line 6, in <module>
@@ -291,7 +291,7 @@ json.JSONDecoder::
     ...     tb = Traceback(tb)
     ...     tb_dict = tb.to_dict()
     ...     pprint(tb_dict)
-    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[30]>',
+    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[31]>',
                              'co_name': '<module>'},
                   'f_globals': {'__name__': '__main__'}},
      'tb_lineno': 2,
@@ -411,11 +411,11 @@ Not very useful is it? Let's sort this out::
         return args[0](*args[1:])
       File "...examples.py", line 2, in func_a
         func_b()
-      File "...examples.py", line 5, in func_b
+      File "...examples.py", line 6, in func_b
         func_c()
-      File "...examples.py", line 8, in func_c
+      File "...examples.py", line 10, in func_c
         func_d()
-      File "...examples.py", line 11, in func_d
+      File "...examples.py", line 14, in func_d
         raise Exception("Guessing time !")
     Exception: Guessing time !
     <BLANKLINE>
@@ -463,15 +463,62 @@ What if we have a local call stack ?
         return args[0](*args[1:])
       File "...tests...examples.py", line 2, in func_a
         func_b()
-      File "...tests...examples.py", line 5, in func_b
+      File "...tests...examples.py", line 6, in func_b
         func_c()
-      File "...tests...examples.py", line 8, in func_c
+      File "...tests...examples.py", line 10, in func_c
         func_d()
-      File "...tests...examples.py", line 11, in func_d
+      File "...tests...examples.py", line 14, in func_d
         raise Exception("Guessing time !")
     Exception: Guessing time !
     <BLANKLINE>
 
+It also supports more contrived scenarios
+`````````````````````````````````````````
+
+Like tracebacks with syntax errors::
+
+    >>> from examples import bad_syntax
+    >>> try:
+    ...     bad_syntax()
+    ... except:
+    ...     et, ev, tb = sys.exc_info()
+    ...     tb = Traceback(tb)
+    ...
+    >>> reraise(et, ev, tb.as_traceback())
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[58]>", line 1, in <module>
+        reraise(et, ev, tb.as_traceback())
+      File "<doctest README.rst[57]>", line 2, in <module>
+        bad_syntax()
+      File "...tests...examples.py", line 18, in bad_syntax
+        import badsyntax
+      File "...tests...badsyntax.py", line 5
+        is very bad
+         ^
+    SyntaxError: invalid syntax
+
+Or other import failures::
+
+    >>> from examples import bad_module
+    >>> try:
+    ...     bad_module()
+    ... except:
+    ...     et, ev, tb = sys.exc_info()
+    ...     tb = Traceback(tb)
+    ...
+    >>> reraise(et, ev, tb.as_traceback())
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[61]>", line 1, in <module>
+        reraise(et, ev, tb.as_traceback())
+      File "<doctest README.rst[60]>", line 2, in <module>
+        bad_module()
+      File "...tests...examples.py", line 23, in bad_module
+        import badmodule
+      File "...tests...badmodule.py", line 3, in <module>
+        raise Exception("boom!")
+    Exception: boom!
 
 Credits
 =======

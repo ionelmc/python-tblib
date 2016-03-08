@@ -15,8 +15,10 @@ def func_d():
 
 
 def bad_syntax():
-    pass
+    import badsyntax
+    badsyntax
 
 
 def bad_module():
-    pass
+    import badmodule
+    badmodule
