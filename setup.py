@@ -11,7 +11,6 @@ from os.path import dirname
 from os.path import join
 from os.path import splitext
 
-
 from setuptools import find_packages
 from setuptools import setup
 
@@ -27,7 +26,7 @@ setup(
     name='tblib',
     version='1.2.0',
     license='BSD',
-    description='Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in different processes. This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).',
+    description='Traceback serialization library.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))

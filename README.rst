@@ -79,11 +79,16 @@ Overview
 
 .. end-badges
 
-Traceback fiddling library. For now allows you to pickle tracebacks and raise exceptions with pickled tracebacks in
-different processes. This allows better error handling when running code over multiple processes (imagine
-multiprocessing, billiard, futures, celery etc).
+Traceback serialization library.
 
 * Free software: BSD license
+
+It allows you to:
+
+* Pickle tracebacks and raise exceptions with pickled tracebacks in different processes.
+  This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures,
+  celery etc).
+* Parse traceback strings and raise with the parsed tracebacks.
 
 Installation
 ============

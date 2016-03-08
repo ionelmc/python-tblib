@@ -18,10 +18,7 @@ cookiecutter:
     landscape: 'yes'
     package_name: tblib
     project_name: tblib
-    project_short_description: Traceback fiddling library. For now allows you to pickle
-        tracebacks and raise exceptions with pickled tracebacks in different processes.
-        This allows better error handling when running code over multiple processes
-        (imagine multiprocessing, billiard, futures, celery etc).
+    project_short_description: Traceback serialization library.
     release_date: '2015-12-18'
     repo_name: python-tblib
     requiresio: 'yes'
