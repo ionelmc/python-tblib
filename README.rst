@@ -90,6 +90,8 @@ It allows you to:
   code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
 * Parse traceback strings and raise with the parsed tracebacks. *No pickling is used*.
 
+Again, note that using the pickle support is completely optional. 
+
 Installation
 ============
 
