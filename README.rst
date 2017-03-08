@@ -88,9 +88,12 @@ It allows you to:
 * `Pickle <https://docs.python.org/3/library/pickle.html>`_ tracebacks and raise exceptions 
   with pickled tracebacks in different processes. This allows better error handling when running 
   code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
-* Parse traceback strings and raise with the parsed tracebacks. *No pickling is used*.
+* Create traceback objects from strings (the ``from_string`` method). *No pickling is used*.
+* Serialize tracebacks to/from plain dicts (the ``from_dict`` and ``to_dict`` methods). *No pickling is used*.
+* Raise the tracebacks created from the aforementioned sources.
 
-Again, note that using the pickle support is completely optional. 
+**Again, note that using the pickle support is completely optional. You are solely responsible for
+security problems should you decide to use the pickle support.**
 
 Installation
 ============
