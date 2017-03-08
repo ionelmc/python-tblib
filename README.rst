@@ -85,10 +85,10 @@ Traceback serialization library.
 
 It allows you to:
 
-* Pickle tracebacks and raise exceptions with pickled tracebacks in different processes.
-  This allows better error handling when running code over multiple processes (imagine multiprocessing, billiard, futures,
-  celery etc).
-* Parse traceback strings and raise with the parsed tracebacks.
+* `Pickle <https://docs.python.org/3/library/pickle.html>`_ tracebacks and raise exceptions 
+  with pickled tracebacks in different processes. This allows better error handling when running 
+  code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
+* Parse traceback strings and raise with the parsed tracebacks. *No pickling is used*.
 
 Installation
 ============
