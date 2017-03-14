@@ -23,7 +23,7 @@ if os.getenv('SPELLCHECK'):
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'tblib'
-year = '2013-2016'
+year = '2013-2017'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
 version = release = '1.3.0'
@@ -43,7 +43,7 @@ html_theme_options = {
 
 html_use_smartypants = True
 html_last_updated_fmt = '%b %d, %Y'
-html_split_index = True
+html_split_index = False
 html_sidebars = {
    '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
 }

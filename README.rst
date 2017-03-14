@@ -14,7 +14,8 @@ Overview
         | |coveralls| |codecov|
         | |landscape| |scrutinizer| |codacy| |codeclimate|
     * - package
-      - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
+      - | |version| |wheel| |supported-versions| |supported-implementations|
+        | |commits-since|
 
 .. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
     :target: https://readthedocs.org/projects/python-tblib
@@ -52,27 +53,27 @@ Overview
    :target: https://codeclimate.com/github/ionelmc/python-tblib
    :alt: CodeClimate Quality Status
 
-.. |version| image:: https://img.shields.io/pypi/v/tblib.svg?style=flat
+.. |version| image:: https://img.shields.io/pypi/v/tblib.svg
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/tblib
 
-.. |downloads| image:: https://img.shields.io/pypi/dm/tblib.svg?style=flat
-    :alt: PyPI Package monthly downloads
-    :target: https://pypi.python.org/pypi/tblib
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.3.0.svg
+    :alt: Commits since latest release
+    :target: https://github.com/ionelmc/python-tblib/compare/v1.3.0...master
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg?style=flat
+.. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg
     :alt: PyPI Wheel
     :target: https://pypi.python.org/pypi/tblib
 
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/tblib.svg?style=flat
+.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/tblib.svg
     :alt: Supported versions
     :target: https://pypi.python.org/pypi/tblib
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tblib.svg?style=flat
+.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tblib.svg
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/tblib
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-tblib/master.svg?style=flat
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-tblib/master.svg
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/ionelmc/python-tblib/
 

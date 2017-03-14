@@ -10,12 +10,11 @@ env:
     - TOXENV=docs
 matrix:
   include:
-{% for env in tox_environments %}{{ '' }}
+{% for env in tox_environments %}
     - python: {{ env.split('-')[0] if env.startswith('pypy') else '{0[2]}.{0[3]}'.format(env) }}
       env:
-        - TOXENV={{ env }},coveralls,codecov
+        - TOXENV={{ env }},report,coveralls,codecov
 {% endfor %}
-
 before_install:
   - python --version
   - uname -a

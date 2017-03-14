@@ -2,7 +2,7 @@
 
 cookiecutter:
     appveyor: 'yes'
-    c_extension_cython: 'yes'
+    c_extension_cython: 'no'
     c_extension_optional: 'no'
     c_extension_support: 'no'
     codacy: 'yes'
@@ -19,7 +19,7 @@ cookiecutter:
     package_name: tblib
     project_name: tblib
     project_short_description: Traceback serialization library.
-    release_date: '2015-12-18'
+    release_date: '2016-03-08'
     repo_name: python-tblib
     requiresio: 'yes'
     scrutinizer: 'yes'
@@ -29,6 +29,6 @@ cookiecutter:
     test_matrix_separate_coverage: 'no'
     test_runner: pytest
     travis: 'yes'
-    version: 1.2.0
+    version: 1.3.0
     website: http://blog.ionelmc.ro
-    year: 2013-2016
+    year: 2013-2017

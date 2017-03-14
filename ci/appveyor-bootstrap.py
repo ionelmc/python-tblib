@@ -39,6 +39,7 @@ INSTALL_CMD = {
     "3.4": [["msiexec.exe", "/L*+!", "install.log", "/qn", "/x", "{path}"],
             ["msiexec.exe", "/L*+!", "install.log", "/qn", "/i", "{path}", "TARGETDIR={home}"]],
     "3.5": [["{path}", "/quiet", "TargetDir={home}"]],
+    "3.6": [["{path}", "/quiet", "TargetDir={home}"]],
 }
 
 
