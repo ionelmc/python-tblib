@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.3.1 (unreleased)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed handling for tracebacks due to exceeding the recursion limit.
+  Fixes `#15 <https://github.com/ionelmc/python-tblib/issues/15>`_.
+
 1.3.0 (2016-03-08)
 ~~~~~~~~~~~~~~~~~~
 
