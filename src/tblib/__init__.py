@@ -77,7 +77,7 @@ class Traceback(object):
         if tproxy:
             return tproxy(TracebackType, self.__tproxy_handler)
         if not tb_set_next:
-            raise RuntimeError("Cannot re-create traceback !")
+            raise RuntimeError("Unsupported Python interpreter!")
 
         current = self
         top_tb = None
