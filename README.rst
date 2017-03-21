@@ -86,8 +86,8 @@ Traceback serialization library.
 
 It allows you to:
 
-* `Pickle <https://docs.python.org/3/library/pickle.html>`_ tracebacks and raise exceptions 
-  with pickled tracebacks in different processes. This allows better error handling when running 
+* `Pickle <https://docs.python.org/3/library/pickle.html>`_ tracebacks and raise exceptions
+  with pickled tracebacks in different processes. This allows better error handling when running
   code over multiple processes (imagine multiprocessing, billiard, futures, celery etc).
 * Create traceback objects from strings (the ``from_string`` method). *No pickling is used*.
 * Serialize tracebacks to/from plain dicts (the ``from_dict`` and ``to_dict`` methods). *No pickling is used*.
@@ -305,6 +305,28 @@ Or other import failures::
         raise Exception("boom!")
     Exception: boom!
 
+Or a traceback that's caused by exceeding the recursion limit (here we're
+forcing the type and value to have consistency across platforms)::
+
+    >>> def f(): f()
+    >>> try:
+    ...    f()
+    ... except RuntimeError:
+    ...    et, ev, tb = sys.exc_info()
+    ...    tb = Traceback(tb)
+    ...
+    >>> reraise(RuntimeError, RuntimeError("maximum recursion depth exceeded"), tb.as_traceback())
+    Traceback (most recent call last):
+      ...
+      File "<doctest README.rst[32]>", line 1, in f
+        def f(): f()
+      File "<doctest README.rst[32]>", line 1, in f
+        def f(): f()
+      File "<doctest README.rst[32]>", line 1, in f
+        def f(): f()
+      ...
+    RuntimeError: maximum recursion depth exceeded
+
 Reference
 ~~~~~~~~~
 
@@ -351,7 +373,7 @@ json.JSONDecoder::
     ...     tb = Traceback(tb)
     ...     tb_dict = tb.to_dict()
     ...     pprint(tb_dict)
-    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[37]>',
+    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[...]>',
                              'co_name': '<module>'},
                   'f_globals': {'__name__': '__main__'}},
      'tb_lineno': 2,
