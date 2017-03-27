@@ -57,9 +57,9 @@ Overview
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/tblib
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.3.0.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.3.1.svg
     :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-tblib/compare/v1.3.0...master
+    :target: https://github.com/ionelmc/python-tblib/compare/v1.3.1...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg
     :alt: PyPI Wheel
