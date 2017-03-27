@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.3.1 (unreleased)
+1.3.1 (2017-03-27)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed handling for tracebacks due to exceeding the recursion limit.
