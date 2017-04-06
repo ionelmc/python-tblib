@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.3.2 (unreleased)
+~~~~~~~~~~~~~~~~~~
+
+* Add support for PyPy3.5-5.7.1-beta. Previously ``AttributeError:
+  'Frame' object has no attribute 'clear'``  could be raised. See PyPy
+  issue `#2532 <https://bitbucket.org/pypy/pypy/issues/2532/pypy3-attributeerror-frame-object-has-no>`_.
+
 1.3.1 (2017-03-27)
 ~~~~~~~~~~~~~~~~~~
 
