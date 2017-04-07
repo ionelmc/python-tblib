@@ -617,6 +617,26 @@ What if we have a local call stack ?
     Exception: Guessing time !
     <BLANKLINE>
 
+Other weird stuff
+`````````````````
+
+Clearing traceback works (Python 3.4 and up)::
+
+    >>> tb = Traceback.from_string("""
+    ... File "skipped.py", line 123, in func_123
+    ... Traceback (most recent call last):
+    ...   File "tests/examples.py", line 2, in func_a
+    ...     func_b()
+    ...   File "tests/examples.py", line 6, in func_b
+    ...     func_c()
+    ...   File "tests/examples.py", line 10, in func_c
+    ...     func_d()
+    ...   File "tests/examples.py", line 14, in func_d
+    ... Doesn't: matter
+    ... """)
+    >>> import traceback, sys
+    >>> if sys.version_info > (3, 4):
+    ...     traceback.clear_frames(tb)
 
 Credits
 =======
