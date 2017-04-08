@@ -36,7 +36,7 @@ before_install:
   - uname -a
   - lsb_release -a
   - |
-    set -eux
+    set -ex
     if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then
         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy-5.7-linux_x86_64-portable.tar.bz2
         tar -jxvf pypy-5.7-linux_x86_64-portable.tar.bz2
