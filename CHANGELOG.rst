@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.3.2 (unreleased)
+1.3.2 (2017-04-09)
 ~~~~~~~~~~~~~~~~~~
 
 * Add support for PyPy3.5-5.7.1-beta. Previously ``AttributeError:
