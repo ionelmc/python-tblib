@@ -15,11 +15,9 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-def read(*names, **kwargs):
-    return io.open(
-        join(dirname(__file__), *names),
-        encoding=kwargs.get('encoding', 'utf8')
-    ).read()
+def read(*names):
+    with io.open(join(dirname(__file__), *names), encoding='utf-8') as fp:
+        return fp.read()
 
 
 setup(
