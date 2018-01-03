@@ -1,4 +1,3 @@
-﻿
 Authors
 =======
 
@@ -7,3 +6,4 @@ Authors
 * Beckjake - https://github.com/beckjake
 * DRayX - https://github.com/DRayX
 * Jason Madden - https://github.com/jamadden
+* Jon Dufresne - https://github.com/jdufresne/
