@@ -50,7 +50,6 @@ class Frame(object):
             for k, v in frame.f_globals.items()
             if k in ("__file__", "__name__")
         }
-
         self.f_code = Code(frame.f_code)
         self.f_lineno = int(frame.f_lineno)
 
