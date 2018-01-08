@@ -40,6 +40,11 @@ class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
+        self.co_nlocals = code.co_nlocals
+        self.co_stacksize = code.co_stacksize
+        self.co_flags = code.co_flags
+        self.co_firstlineno = code.co_firstlineno
+        self.co_code = code.co_code
 
 
 class Frame(object):
@@ -49,7 +54,10 @@ class Frame(object):
             for k, v in frame.f_globals.items()
             if k in ("__file__", "__name__")
         }
+
         self.f_code = Code(frame.f_code)
+        self.f_lineno = int(frame.f_lineno)
+        self.f_back = Frame(frame.f_back) if frame.f_back is not None else None
 
     def clear(self):
         # For compatibility with PyPy 3.5;
@@ -67,6 +75,7 @@ class Traceback(object):
         self.tb_frame = Frame(tb.tb_frame)
         # noinspection SpellCheckingInspection
         self.tb_lineno = int(tb.tb_lineno)
+        self.tb_lasti = int(tb.tb_lasti)
 
         # Build in place to avoid exceeding the recursion limit
         tb = tb.tb_next
@@ -76,6 +85,7 @@ class Traceback(object):
             traceback = object.__new__(cls)
             traceback.tb_frame = Frame(tb.tb_frame)
             traceback.tb_lineno = int(tb.tb_lineno)
+            traceback.tb_lasti = int(tb.tb_lasti)
             prev_traceback.tb_next = traceback
             prev_traceback = traceback
             tb = tb.tb_next
@@ -109,7 +119,7 @@ class Traceback(object):
                     code.co_firstlineno, code.co_lnotab, (), ()
                 )
 
-            # noinspection PyBroadException
+            # noinspection PyBroadExceptionf
             try:
                 exec(code, current.tb_frame.f_globals, {})
             except Exception:
