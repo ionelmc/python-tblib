@@ -52,6 +52,7 @@ class Frame(object):
         }
         self.f_code = Code(frame.f_code)
         self.f_lineno = int(frame.f_lineno)
+        self.f_back = Frame(self.f_back) if self.f_back is not None else None
 
     def clear(self):
         # For compatibility with PyPy 3.5;
