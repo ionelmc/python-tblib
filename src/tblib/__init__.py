@@ -114,7 +114,7 @@ class Traceback(object):
                     code.co_firstlineno, code.co_lnotab, (), ()
                 )
 
-            # noinspection PyBroadExceptionf
+            # noinspection PyBroadException
             try:
                 exec(code, current.tb_frame.f_globals, {})
             except Exception:

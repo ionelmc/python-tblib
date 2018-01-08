@@ -6,6 +6,7 @@ UNRELEASED
 ~~~~~~~~~~
 
 * Remove support for end of life Python 3.3.
+* Support for constructing Twisted Failure objects when re-raising pickled exceptions
 
 1.3.2 (2017-04-09)
 ~~~~~~~~~~~~~~~~~~

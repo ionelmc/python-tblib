@@ -7,3 +7,4 @@ Authors
 * DRayX - https://github.com/DRayX
 * Jason Madden - https://github.com/jamadden
 * Jon Dufresne - https://github.com/jdufresne/
+* Arni Mar Jonsson - https://github.com/arnimarj
