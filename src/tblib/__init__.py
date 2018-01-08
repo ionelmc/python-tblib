@@ -40,10 +40,6 @@ class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
-        self.co_nlocals = code.co_nlocals
-        self.co_stacksize = code.co_stacksize
-        self.co_flags = code.co_flags
-        self.co_firstlineno = code.co_firstlineno
         self.co_code = code.co_code
 
 
@@ -57,7 +53,6 @@ class Frame(object):
 
         self.f_code = Code(frame.f_code)
         self.f_lineno = int(frame.f_lineno)
-        self.f_back = Frame(frame.f_back) if frame.f_back is not None else None
 
     def clear(self):
         # For compatibility with PyPy 3.5;
