@@ -55,7 +55,7 @@ Overview
 
 .. |version| image:: https://img.shields.io/pypi/v/tblib.svg
     :alt: PyPI Package latest release
-    :target: https://pypi.python.org/pypi/tblib
+    :target: https://pypi.org/project/tblib/
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.3.2.svg
     :alt: Commits since latest release
@@ -63,15 +63,15 @@ Overview
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg
     :alt: PyPI Wheel
-    :target: https://pypi.python.org/pypi/tblib
+    :target: https://pypi.org/project/tblib/
 
 .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/tblib.svg
     :alt: Supported versions
-    :target: https://pypi.python.org/pypi/tblib
+    :target: https://pypi.org/project/tblib/
 
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tblib.svg
     :alt: Supported implementations
-    :target: https://pypi.python.org/pypi/tblib
+    :target: https://pypi.org/project/tblib/
 
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-tblib/master.svg
     :alt: Scrutinizer Status
