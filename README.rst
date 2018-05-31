@@ -661,8 +661,8 @@ Capture tracebacks in a `Twisted Failure <https://twistedmatrix.com/documents/cu
     ... except Exception as e:
     ...     failure_object = Failure()
     ...
-    >>> repr(failure_object)
-    '<twisted.python.failure.Failure exceptions.ValueError: hello tblib>'
+    >>> failure_object.getErrorMessage()
+    'hello tblib'
 
 
 Credits
