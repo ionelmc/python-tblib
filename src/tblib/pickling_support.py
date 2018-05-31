@@ -8,12 +8,12 @@ from . import Frame
 from . import Traceback
 
 
-def unpickle_traceback(*tb):
+def unpickle_traceback(tb_frame, tb_lineno, tb_lasti, tb_next):
     ret = object.__new__(Traceback)
-    if len(tb) == 3:
-        ret.tb_frame, ret.tb_lineno, ret.tb_next = tb
-    else:
-        ret.tb_frame, ret.tb_lineno, ret.tb_lasti, ret.tb_next = tb
+    ret.tb_frame = tb_frame
+    ret.tb_lineno = tb_lineno
+    ret.tb_lasti = tb_lasti
+    ret.tb_next = tb_next
     return ret.as_traceback()
 
 
