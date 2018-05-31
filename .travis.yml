@@ -42,7 +42,7 @@ install:
     set -ex
     if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then
         (cd $HOME
-         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy-6.0.0-linux_x86_64-portable.tar.bz2 
+         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy-6.0.0-linux_x86_64-portable.tar.bz2
          tar xf pypy-6.0.0-linux_x86_64-portable.tar.bz2
          pypy-6.0.0-linux_x86_64-portable/bin/pypy -m ensurepip
          pypy-6.0.0-linux_x86_64-portable/bin/pypy -m pip install -U virtualenv)
