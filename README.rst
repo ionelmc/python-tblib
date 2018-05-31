@@ -373,19 +373,23 @@ json.JSONDecoder::
     ...     tb = Traceback(tb)
     ...     tb_dict = tb.to_dict()
     ...     pprint(tb_dict)
-    {'tb_frame': {'f_code': {'co_code': None, co_filename': '<doctest README.rst[40]>',
+    {'tb_frame': {'f_code': {'co_code': None,
+                             'co_filename': ...
                              'co_name': '<module>'},
                   'f_globals': {'__name__': '__main__'}},
      'tb_lineno': 2,
-     'tb_next': {'tb_frame': {'f_code': {'co_code': None, 'co_filename': ...
+     'tb_next': {'tb_frame': {'f_code': {'co_code': None,
+                                         'co_filename': ...
                                          'co_name': 'inner_2'},
                               'f_globals': {'__name__': '__main__'}},
                  'tb_lineno': 2,
-                 'tb_next': {'tb_frame': {'f_code': {'co_code': None, 'co_filename': ...
+                 'tb_next': {'tb_frame': {'f_code': {'co_code': None,
+                                                     'co_filename': ...
                                                      'co_name': 'inner_1'},
                                           'f_globals': {'__name__': '__main__'}},
                              'tb_lineno': 2,
-                             'tb_next': {'tb_frame': {'f_code': {'co_code': None,, 'co_filename': ...
+                             'tb_next': {'tb_frame': {'f_code': {'co_code': None,
+                                                                 'co_filename': ...
                                                                  'co_name': 'inner_0'},
                                                       'f_globals': {'__name__': '__main__'}},
                                          'tb_lineno': 2,
@@ -657,8 +661,8 @@ Capture tracebacks in a `Twisted Failure <https://twistedmatrix.com/documents/cu
     ... except Exception as e:
     ...     failure_object = Failure()
     ...
-    >>> str(failure_object)
-    "[Failure instance: Traceback: <type 'exceptions.ValueError'>: hello tblib\n--- <exception caught here> ---\n<stdin>:2:<module>\n<stdin>:2:<module>\n<stdin>:2:inner_0\n]"
+    >>> repr(failure_object)
+    '<twisted.python.failure.Failure exceptions.ValueError: hello tblib>'
 
 
 Credits

@@ -40,11 +40,7 @@ class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
-        try:
-            if hasattr(code, 'co_code'):
-                self.co_code = code.co_code
-        except KeyError:
-            pass
+        self.co_code = None
 
 
 class Frame(object):
@@ -153,6 +149,7 @@ class Traceback(object):
         code = {
             'co_filename': self.tb_frame.f_code.co_filename,
             'co_name': self.tb_frame.f_code.co_name,
+            'co_code': None,
         }
         frame = {
             'f_globals': self.tb_frame.f_globals,
@@ -174,6 +171,7 @@ class Traceback(object):
         code = _AttrDict(
             co_filename=dct['tb_frame']['f_code']['co_filename'],
             co_name=dct['tb_frame']['f_code']['co_name'],
+            co_code=None,
         )
         frame = _AttrDict(
             f_globals=dct['tb_frame']['f_globals'],
