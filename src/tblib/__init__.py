@@ -40,6 +40,7 @@ class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
+        self.co_code = code.co_code
 
 
 class Frame(object):

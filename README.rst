@@ -373,7 +373,7 @@ json.JSONDecoder::
     ...     tb = Traceback(tb)
     ...     tb_dict = tb.to_dict()
     ...     pprint(tb_dict)
-    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[...]>',
+    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[40]>',
                              'co_name': '<module>'},
                   'f_globals': {'__name__': '__main__'}},
      'tb_lineno': 2,
