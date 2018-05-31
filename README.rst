@@ -638,7 +638,7 @@ Clearing traceback works (Python 3.4 and up)::
     >>> if sys.version_info > (3, 4):
     ...     traceback.clear_frames(tb)
 
-Capture tracebacks in a `Twisted Failure <https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html>` object::
+Capture tracebacks in a `Twisted Failure <https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html>`_ object::
 
     >>> import six, pickle, sys
     >>> from twisted.python.failure import Failure
