@@ -144,13 +144,13 @@ Unpickling
 ::
 
     >>> pickle.loads(s1)
-    (<...Exception'>, Exception('fail',), <traceback object at ...>)
+    (<...Exception'>, Exception('fail'...), <traceback object at ...>)
 
     >>> pickle.loads(s2)
-    (<...Exception'>, Exception('fail',), <traceback object at ...>)
+    (<...Exception'>, Exception('fail'...), <traceback object at ...>)
 
     >>> pickle.loads(s3)
-    (<...Exception'>, Exception('fail',), <traceback object at ...>)
+    (<...Exception'>, Exception('fail'...), <traceback object at ...>)
 
 Raising
 ~~~~~~~
