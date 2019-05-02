@@ -12,11 +12,9 @@ Overview
     * - tests
       - | |travis| |appveyor| |requires|
         | |coveralls| |codecov|
-        | |landscape| |scrutinizer| |codacy| |codeclimate|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-
 .. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
     :target: https://readthedocs.org/projects/python-tblib
     :alt: Documentation Status
@@ -41,21 +39,9 @@ Overview
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/python-tblib
 
-.. |landscape| image:: https://landscape.io/github/ionelmc/python-tblib/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/ionelmc/python-tblib/master
-    :alt: Code Quality Status
-
-.. |codacy| image:: https://img.shields.io/codacy/a8f7891727784601931d715097b703ee.svg?style=flat
-    :target: https://www.codacy.com/app/ionelmc/python-tblib
-    :alt: Codacy Code Quality Status
-
-.. |codeclimate| image:: https://codeclimate.com/github/ionelmc/python-tblib/badges/gpa.svg
-   :target: https://codeclimate.com/github/ionelmc/python-tblib
-   :alt: CodeClimate Quality Status
-
 .. |version| image:: https://img.shields.io/pypi/v/tblib.svg
     :alt: PyPI Package latest release
-    :target: https://pypi.org/project/tblib/
+    :target: https://pypi.org/project/tblib
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.3.2.svg
     :alt: Commits since latest release
@@ -63,19 +49,15 @@ Overview
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg
     :alt: PyPI Wheel
-    :target: https://pypi.org/project/tblib/
+    :target: https://pypi.org/project/tblib
 
 .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/tblib.svg
     :alt: Supported versions
-    :target: https://pypi.org/project/tblib/
+    :target: https://pypi.org/project/tblib
 
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tblib.svg
     :alt: Supported implementations
-    :target: https://pypi.org/project/tblib/
-
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-tblib/master.svg
-    :alt: Scrutinizer Status
-    :target: https://scrutinizer-ci.com/g/ionelmc/python-tblib/
+    :target: https://pypi.org/project/tblib
 
 
 .. end-badges

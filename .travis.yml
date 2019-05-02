@@ -1,31 +1,36 @@
 language: python
-sudo: false
-cache: pip
+dist: xenial
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
-  matrix:
-    - TOXENV=check
-    - TOXENV=docs
 matrix:
   include:
-    - python: 2.7
+    - python: '3.6'
+      env:
+        - TOXENV=check
+    - python: '3.6'
+      env:
+        - TOXENV=docs
+    - python: '2.7'
       env:
         - TOXENV=py27,report,coveralls,codecov
-    - python: 3.4
+    - python: '3.4'
       env:
         - TOXENV=py34,report,coveralls,codecov
-    - python: 3.5
+    - python: '3.5'
       env:
         - TOXENV=py35,report,coveralls,codecov
-    - python: 3.6
+    - python: '3.6'
       env:
         - TOXENV=py36,report,coveralls,codecov
-    - python: pypy
+    - python: '3.7'
+      env:
+        - TOXENV=py37,report,coveralls,codecov
+    - python: 'pypy2.7-6.0'
       env:
         - TOXENV=pypy,report,coveralls,codecov
-    - python: pypy3
+    - python: 'pypy3.5-6.0'
       env:
         - TOXENV=pypy3,report,coveralls,codecov
 before_install:
@@ -33,32 +38,11 @@ before_install:
   - uname -a
   - lsb_release -a
 install:
-  - pip install -U tox virtualenv
+  - pip install tox
   - virtualenv --version
   - easy_install --version
   - pip --version
   - tox --version
-  - |
-    set -ex
-    if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then
-        (cd $HOME
-         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy-5.7.1-linux_x86_64-portable.tar.bz2
-         tar xf pypy-5.7.1-linux_x86_64-portable.tar.bz2
-         pypy-5.7.1-linux_x86_64-portable/bin/pypy -m ensurepip
-         pypy-5.7.1-linux_x86_64-portable/bin/pypy -m pip install -U virtualenv)
-        export PATH=$HOME/pypy-5.7.1-linux_x86_64-portable/bin/:$PATH
-        export TOXPYTHON=$HOME/pypy-5.7.1-linux_x86_64-portable/bin/pypy
-    fi
-    if [[ $TRAVIS_PYTHON_VERSION == 'pypy3' ]]; then
-        (cd $HOME
-         wget https://bitbucket.org/squeaky/portable-pypy/downloads/pypy3.5-5.7.1-beta-linux_x86_64-portable.tar.bz2
-         tar xf pypy3.5-5.7.1-beta-linux_x86_64-portable.tar.bz2
-         pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3 -m ensurepip
-         pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3 -m pip install -U virtualenv)
-        export PATH=$HOME/pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/:$PATH
-        export TOXPYTHON=$HOME/pypy3.5-5.7.1-beta-linux_x86_64-portable/bin/pypy3
-    fi
-    set +x
 script:
   - tox -v
 after_failure:
