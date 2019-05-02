@@ -37,6 +37,9 @@ class TracebackParseError(Exception):
 
 
 class Code(object):
+
+    co_code = None
+
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
