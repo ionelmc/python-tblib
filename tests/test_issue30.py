@@ -1,9 +1,14 @@
-def test_30():
-    from tblib import pickling_support
-    pickling_support.install()
+import pickle
+import sys
 
-    import six, pickle, sys
-    from twisted.python.failure import Failure
+import six
+from twisted.python.failure import Failure
+
+from tblib import pickling_support
+
+
+def test_30():
+    pickling_support.install()
 
     try:
         raise ValueError
