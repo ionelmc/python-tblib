@@ -485,18 +485,14 @@ tblib.decorators.return_error
         raise Exception('fail')
     Exception: fail
 
-How's this useful ? Imagine you're using multiprocessing like this::
+How's this useful? Imagine you're using multiprocessing like this::
 
+    # Note that Python 3.4 and later will show the remote traceback (but as a string sadly) so we skip testing this.
     >>> import traceback
     >>> from multiprocessing import Pool
     >>> from examples import func_a
-    >>> if sys.version_info[:2] >= (3, 4):
-    ...     import multiprocessing.pool
-    ...     # Undo the fix for http://bugs.python.org/issue13831 so that we can see the effects of our change.
-    ...     # because Python 3.4 will show the remote traceback (but as a string sadly)
-    ...     multiprocessing.pool.ExceptionWithTraceback = lambda e, t: e
-    >>> pool = Pool()
-    >>> try:
+    >>> pool = Pool()  # doctest: +SKIP
+    >>> try:  # doctest: +SKIP
     ...     for i in pool.map(func_a, range(5)):
     ...         print(i)
     ... except:
@@ -511,7 +507,7 @@ How's this useful ? Imagine you're using multiprocessing like this::
         ...
     Exception: Guessing time !
     <BLANKLINE>
-    >>> pool.terminate()
+    >>> pool.terminate()  # doctest: +SKIP
 
 Not very useful is it? Let's sort this out::
 
