@@ -553,11 +553,14 @@ What if we have a local call stack ?
 
     >>> def local_0():
     ...     pool = Pool()
-    ...     for i in pool.map(apply_with_return_error, zip(repeat(func_a), range(5))):
-    ...         if isinstance(i, Error):
-    ...             i.reraise()
-    ...         else:
-    ...             print(i)
+    ...     try:
+    ...         for i in pool.map(apply_with_return_error, zip(repeat(func_a), range(5))):
+    ...             if isinstance(i, Error):
+    ...                 i.reraise()
+    ...             else:
+    ...                 print(i)
+    ...     finally:
+    ...         pool.close()
     ...
     >>> def local_1():
     ...     local_0()
@@ -576,7 +579,7 @@ What if we have a local call stack ?
         local_1()
       File "<doctest README.rst[...]>", line 2, in local_1
         local_0()
-      File "<doctest README.rst[...]>", line 5, in local_0
+      File "<doctest README.rst[...]>", line 6, in local_0
         i.reraise()
       File "...tblib...decorators.py", line 20, in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
