@@ -2,6 +2,8 @@ import pickle
 import sys
 
 import six
+import pytest
+pytest.importorskip('twisted')
 from twisted.python.failure import Failure
 
 from tblib import pickling_support
