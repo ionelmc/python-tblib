@@ -2,11 +2,17 @@
 Changelog
 =========
 
-UNRELEASED
-~~~~~~~~~~
+1.4.0 (2019-05-02)
+~~~~~~~~~~~~~~~~~~
 
 * Remove support for end of life Python 3.3.
+<<<<<<< HEAD
 * Fix to support constructing Twisted Failure objects when re-raising pickled exceptions whilst running PyPy2.7-6.0.0.
+=======
+* Fixed tests for Python 3.7. Contributed by Elliott Sales de Andrade in
+  `#36 <https://github.com/ionelmc/python-tblib/issues/36>`_.
+* Fixed compatibility issue with Twised (``twisted.python.failure.Failure`` expected a ``co_code`` attribute).
+>>>>>>> upstrem/master
 
 1.3.2 (2017-04-09)
 ~~~~~~~~~~~~~~~~~~

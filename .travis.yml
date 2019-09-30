@@ -1,31 +1,36 @@
 language: python
-sudo: false
-cache: pip
+dist: xenial
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
-  matrix:
-    - TOXENV=check
-    - TOXENV=docs
 matrix:
   include:
-    - python: 2.7
+    - python: '3.6'
+      env:
+        - TOXENV=check
+    - python: '3.6'
+      env:
+        - TOXENV=docs
+    - python: '2.7'
       env:
         - TOXENV=py27,report,coveralls,codecov
-    - python: 3.4
+    - python: '3.4'
       env:
         - TOXENV=py34,report,coveralls,codecov
-    - python: 3.5
+    - python: '3.5'
       env:
         - TOXENV=py35,report,coveralls,codecov
-    - python: 3.6
+    - python: '3.6'
       env:
         - TOXENV=py36,report,coveralls,codecov
-    - python: pypy
+    - python: '3.7'
+      env:
+        - TOXENV=py37,report,coveralls,codecov
+    - python: 'pypy2.7-6.0'
       env:
         - TOXENV=pypy,report,coveralls,codecov
-    - python: pypy3
+    - python: 'pypy3.5-6.0'
       env:
         - TOXENV=pypy3,report,coveralls,codecov
 before_install:
@@ -33,11 +38,12 @@ before_install:
   - uname -a
   - lsb_release -a
 install:
-  - pip install -U tox virtualenv
+  - pip install tox
   - virtualenv --version
   - easy_install --version
   - pip --version
   - tox --version
+<<<<<<< HEAD
   - |
     set -ex
     if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then
@@ -59,6 +65,8 @@ install:
         export TOXPYTHON=$HOME/pypy3.5-6.0.0-linux_x86_64-portable/bin/pypy3
     fi
     set +x
+=======
+>>>>>>> upstrem/master
 script:
   - tox -v
 after_failure:

@@ -12,11 +12,9 @@ Overview
     * - tests
       - | |travis| |appveyor| |requires|
         | |coveralls| |codecov|
-        | |landscape| |scrutinizer| |codacy| |codeclimate|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-
 .. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
     :target: https://readthedocs.org/projects/python-tblib
     :alt: Documentation Status
@@ -41,25 +39,13 @@ Overview
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/python-tblib
 
-.. |landscape| image:: https://landscape.io/github/ionelmc/python-tblib/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/ionelmc/python-tblib/master
-    :alt: Code Quality Status
-
-.. |codacy| image:: https://img.shields.io/codacy/a8f7891727784601931d715097b703ee.svg?style=flat
-    :target: https://www.codacy.com/app/ionelmc/python-tblib
-    :alt: Codacy Code Quality Status
-
-.. |codeclimate| image:: https://codeclimate.com/github/ionelmc/python-tblib/badges/gpa.svg
-   :target: https://codeclimate.com/github/ionelmc/python-tblib
-   :alt: CodeClimate Quality Status
-
 .. |version| image:: https://img.shields.io/pypi/v/tblib.svg
     :alt: PyPI Package latest release
     :target: https://pypi.org/project/tblib
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.3.2.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.4.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-tblib/compare/v1.3.2...master
+    :target: https://github.com/ionelmc/python-tblib/compare/v1.4.0...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg
     :alt: PyPI Wheel
@@ -72,10 +58,13 @@ Overview
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tblib.svg
     :alt: Supported implementations
     :target: https://pypi.org/project/tblib
+<<<<<<< HEAD
 
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/ionelmc/python-tblib/master.svg
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/ionelmc/python-tblib/
+=======
+>>>>>>> upstrem/master
 
 
 .. end-badges
@@ -162,13 +151,13 @@ Unpickling
 ::
 
     >>> pickle.loads(s1)
-    (<...Exception'>, Exception('fail',), <traceback object at ...>)
+    (<...Exception'>, Exception('fail'...), <traceback object at ...>)
 
     >>> pickle.loads(s2)
-    (<...Exception'>, Exception('fail',), <traceback object at ...>)
+    (<...Exception'>, Exception('fail'...), <traceback object at ...>)
 
     >>> pickle.loads(s3)
-    (<...Exception'>, Exception('fail',), <traceback object at ...>)
+    (<...Exception'>, Exception('fail'...), <traceback object at ...>)
 
 Raising
 ~~~~~~~
@@ -507,18 +496,14 @@ tblib.decorators.return_error
         raise Exception('fail')
     Exception: fail
 
-How's this useful ? Imagine you're using multiprocessing like this::
+How's this useful? Imagine you're using multiprocessing like this::
 
+    # Note that Python 3.4 and later will show the remote traceback (but as a string sadly) so we skip testing this.
     >>> import traceback
     >>> from multiprocessing import Pool
     >>> from examples import func_a
-    >>> if sys.version_info[:2] >= (3, 4):
-    ...     import multiprocessing.pool
-    ...     # Undo the fix for http://bugs.python.org/issue13831 so that we can see the effects of our change.
-    ...     # because Python 3.4 will show the remote traceback (but as a string sadly)
-    ...     multiprocessing.pool.ExceptionWithTraceback = lambda e, t: e
-    >>> pool = Pool()
-    >>> try:
+    >>> pool = Pool()  # doctest: +SKIP
+    >>> try:  # doctest: +SKIP
     ...     for i in pool.map(func_a, range(5)):
     ...         print(i)
     ... except:
@@ -533,7 +518,7 @@ How's this useful ? Imagine you're using multiprocessing like this::
         ...
     Exception: Guessing time !
     <BLANKLINE>
-    >>> pool.terminate()
+    >>> pool.terminate()  # doctest: +SKIP
 
 Not very useful is it? Let's sort this out::
 
@@ -579,11 +564,14 @@ What if we have a local call stack ?
 
     >>> def local_0():
     ...     pool = Pool()
-    ...     for i in pool.map(apply_with_return_error, zip(repeat(func_a), range(5))):
-    ...         if isinstance(i, Error):
-    ...             i.reraise()
-    ...         else:
-    ...             print(i)
+    ...     try:
+    ...         for i in pool.map(apply_with_return_error, zip(repeat(func_a), range(5))):
+    ...             if isinstance(i, Error):
+    ...                 i.reraise()
+    ...             else:
+    ...                 print(i)
+    ...     finally:
+    ...         pool.close()
     ...
     >>> def local_1():
     ...     local_0()
@@ -602,7 +590,7 @@ What if we have a local call stack ?
         local_1()
       File "<doctest README.rst[...]>", line 2, in local_1
         local_0()
-      File "<doctest README.rst[...]>", line 5, in local_0
+      File "<doctest README.rst[...]>", line 6, in local_0
         i.reraise()
       File "...tblib...decorators.py", line 20, in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)

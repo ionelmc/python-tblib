@@ -1,11 +1,13 @@
 [paths]
 source =
-   src/tblib
-   */site-packages/tblib
+   src
+   */site-packages
 
 [run]
-branch = True
-source = tblib
+branch = true
+source =
+    tblib
+    tests
 parallel = true
 
 [report]
