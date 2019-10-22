@@ -60,7 +60,6 @@ docs/_build
 .env
 .cache
 .pytest
-.bootstrap
 .appveyor.token
 *.bak
 
