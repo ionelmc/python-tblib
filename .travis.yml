@@ -1,5 +1,4 @@
 language: python
-dist: xenial
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
@@ -27,10 +26,10 @@ matrix:
     - python: '3.7'
       env:
         - TOXENV=py37,report,coveralls,codecov
-    - python: 'pypy2.7-6.0'
+    - python: 'pypy'
       env:
         - TOXENV=pypy,report,coveralls,codecov
-    - python: 'pypy3.5-6.0'
+    - python: 'pypy3'
       env:
         - TOXENV=pypy3,report,coveralls,codecov
 before_install:
