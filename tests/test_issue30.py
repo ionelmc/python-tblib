@@ -1,15 +1,17 @@
 import pickle
 import sys
 
-import six
 import pytest
-pytest.importorskip('twisted')
-from twisted.python.failure import Failure
+import six
 
-from tblib import pickling_support
+from tblib import pickling_support  # noqa: E402
+
+pytest.importorskip('twisted')
 
 
 def test_30():
+    from twisted.python.failure import Failure
+
     pickling_support.install()
 
     try:
