@@ -3,7 +3,7 @@
 Use the AppVeyor API to download Windows artifacts.
 
 Taken from: https://bitbucket.org/ned/coveragepy/src/tip/ci/download_appveyor.py
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License: https://www.apache.org/licenses/LICENSE-2.0
 # For details: https://bitbucket.org/ned/coveragepy/src/default/NOTICE.txt
 """
 from __future__ import unicode_literals

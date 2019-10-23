@@ -37,6 +37,6 @@ cookiecutter:
     test_runner: pytest
     travis: yes
     version: 1.3.2
-    website: http://blog.ionelmc.ro
+    website: https://blog.ionelmc.ro/
     year_from: '2013'
     year_to: '2019'
