@@ -5,7 +5,8 @@ Changelog
 1.5.0 (2019-10-23)
 ~~~~~~~~~~~~~~~~~~
 
-* Added support for Python 3.8. Contributed by Victor Stiner in 
+* Added support for Python 3.8. Contributed by Victor Stinner in
+  `#42 <HTTPS://GITHUB.COM/IONELMC/PYTHON-TBLIB/ISSUES/42>`_.
 * Removed support for end of life Python 3.4.
 * Few CI improvements and fixes.
 
