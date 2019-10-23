@@ -11,7 +11,7 @@ Overview
       - |docs|
     * - tests
       - | |travis| |appveyor| |requires|
-        | |coveralls| |codecov|
+        | |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
@@ -19,7 +19,7 @@ Overview
     :target: https://readthedocs.org/projects/python-tblib
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/ionelmc/python-tblib.svg?branch=master
+.. |travis| image:: https://api.travis-ci.org/ionelmc/python-tblib.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/ionelmc/python-tblib
 
@@ -31,10 +31,6 @@ Overview
     :alt: Requirements Status
     :target: https://requires.io/github/ionelmc/python-tblib/requirements/?branch=master
 
-.. |coveralls| image:: https://coveralls.io/repos/ionelmc/python-tblib/badge.svg?branch=master&service=github
-    :alt: Coverage Status
-    :target: https://coveralls.io/r/ionelmc/python-tblib
-
 .. |codecov| image:: https://codecov.io/github/ionelmc/python-tblib/coverage.svg?branch=master
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/python-tblib
@@ -42,10 +38,6 @@ Overview
 .. |version| image:: https://img.shields.io/pypi/v/tblib.svg
     :alt: PyPI Package latest release
     :target: https://pypi.org/project/tblib
-
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.4.0.svg
-    :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-tblib/compare/v1.4.0...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg
     :alt: PyPI Wheel
@@ -59,6 +51,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/tblib
 
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v1.4.0.svg
+    :alt: Commits since latest release
+    :target: https://github.com/ionelmc/python-tblib/compare/v1.4.0...master
 
 .. end-badges
 

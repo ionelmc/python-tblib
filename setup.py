@@ -26,7 +26,7 @@ def read(*names, **kwargs):
 setup(
     name='tblib',
     version='1.4.0',
-    license='BSD 2-Clause License',
+    license='BSD-2-Clause',
     description='Traceback serialization library.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),

@@ -1,4 +1,6 @@
 language: python
+dist: xenial
+cache: false
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
@@ -11,33 +13,34 @@ matrix:
     - python: '3.6'
       env:
         - TOXENV=docs
-    - python: '2.7'
-      env:
-        - TOXENV=py27,report,coveralls,codecov
-    - python: '3.5'
-      env:
-        - TOXENV=py35,report,coveralls,codecov
-    - python: '3.6'
-      env:
-        - TOXENV=py36,report,coveralls,codecov
-    - python: '3.7'
-      env:
-        - TOXENV=py37,report,coveralls,codecov
-    - python: '3.8'
-      env:
-        - TOXENV=py38,report,coveralls,codecov
-    - python: 'pypy'
-      env:
-        - TOXENV=pypy,report,coveralls,codecov
-    - python: 'pypy3'
-      env:
-        - TOXENV=pypy3,report,coveralls,codecov
+    - env:
+        - TOXENV=py27,codecov
+      python: '2.7'
+    - env:
+        - TOXENV=py35,codecov
+      python: '3.5'
+    - env:
+        - TOXENV=py36,codecov
+      python: '3.6'
+    - env:
+        - TOXENV=py37,codecov
+      python: '3.7'
+    - env:
+        - TOXENV=py38,codecov
+      python: '3.8'
+    - env:
+        - TOXENV=pypy,codecov
+      python: 'pypy'
+    - env:
+        - TOXENV=pypy3,codecov
+        - TOXPYTHON=pypy3
+      python: 'pypy3'
 before_install:
   - python --version
   - uname -a
-  - lsb_release -a
+  - lsb_release -a || true
 install:
-  - pip install tox
+  - python -mpip install --progress-bar=off tox -rci/requirements.txt
   - virtualenv --version
   - easy_install --version
   - pip --version
