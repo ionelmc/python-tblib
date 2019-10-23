@@ -2,10 +2,17 @@
 Changelog
 =========
 
+1.5.0 (2019-10-23)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for Python 3.8. Contributed by Victor Stiner in 
+* Removed support for end of life Python 3.4.
+* Few CI improvements and fixes.
+
 1.4.0 (2019-05-02)
 ~~~~~~~~~~~~~~~~~~
 
-* Remove support for end of life Python 3.3.
+* Removed support for end of life Python 3.3.
 * Fixed tests for Python 3.7. Contributed by Elliott Sales de Andrade in
   `#36 <https://github.com/ionelmc/python-tblib/issues/36>`_.
 * Fixed compatibility issue with Twised (``twisted.python.failure.Failure`` expected a ``co_code`` attribute).
