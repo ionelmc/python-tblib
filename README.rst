@@ -202,6 +202,7 @@ Pickling Exceptions together with their traceback and chain (Python 3 only)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
+
     >>> try:  # doctest: +SKIP
     ...     try:
     ...         1 / 0
@@ -230,30 +231,30 @@ To cover custom Exceptions, there are two options:
 
 1. Invoke ``pickling_support.install()`` after all modules have been imported
 
-::
+    .. code-block:: python
 
-    >>> from tblib import pickling_support
-    >>> # Declare all imports of your package's dependencies
-    >>> import numpy  # doctest: +SKIP
+        >>> from tblib import pickling_support
+        >>> # Declare all imports of your package's dependencies
+        >>> import numpy  # doctest: +SKIP
 
-    >>> # Declare your own custom Exceptions
-    >>> class CustomError(Exception):
-    ...     pass
+        >>> # Declare your own custom Exceptions
+        >>> class CustomError(Exception):
+        ...     pass
 
-    >>> # Finally, install tblib
-    >>> pickling_support.install()
+        >>> # Finally, install tblib
+        >>> pickling_support.install()
 
 2. Selectively install tblib for Exception instances just before they are pickled
 
-::
+    .. code-block:: python
 
-     pickling_support.install(<Exception instance>, [Exception instance], ...)
+       pickling_support.install(<Exception instance>, [Exception instance], ...)
 
    The above will install tblib pickling for all listed exceptions as well as any other
    exceptions in their exception chains.
 
    For example, one could write a wrapper to be used with
-   :class:`concurrent.futures.ProcessPoolExecutor`,
+   `ProcessPoolExecutor <https://docs.python.org/3/library/concurrent.futures.html>`_,
    `Dask.distributed <https://distributed.dask.org/>`_, or similar libraries:
 
 ::
@@ -265,8 +266,6 @@ To cover custom Exceptions, there are two options:
     ...     except Exception as e:
     ...         pickling_support.install(e)
     ...         raise
-
-
 
 What if we have a local stack, does it show correctly ?
 -------------------------------------------------------
