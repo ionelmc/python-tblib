@@ -13,10 +13,6 @@ import tblib.pickling_support
 
 
 has_python3 = sys.version_info.major >= 3
-protocol = pytest.mark.parametrize(
-    "protocol",
-    [None] + list(range(1, pickle.HIGHEST_PROTOCOL + 1))
-)
 
 
 def setup_function():
@@ -40,7 +36,9 @@ class CustomErrorEx(Exception):
         return CustomErrorEx, self.args, self.__dict__
 
 
-@protocol
+@pytest.mark.parametrize(
+    "protocol", [None] + list(range(1, pickle.HIGHEST_PROTOCOL + 1))
+)
 @pytest.mark.parametrize("exc_cls", [CustomError, CustomErrorEx])
 @pytest.mark.parametrize("global_install", [False, True])
 def test_pickle_exceptions(global_install, exc_cls, protocol):

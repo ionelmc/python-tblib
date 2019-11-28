@@ -243,14 +243,14 @@ To cover custom Exceptions, there are two options:
     >>> # Finally, install tblib
     >>> pickling_support.install()
 
-2. Selectively install tblib for Exception instances just before they are pickled.
+2. Selectively install tblib for Exception instances just before they are pickled
 
 ::
 
      pickling_support.install(<Exception instance>, [Exception instance], ...)
 
-   will install tblib pickling for all listed exceptions as well as any other exceptions
-   in their exception chains.
+   The above will install tblib pickling for all listed exceptions as well as any other
+   exceptions in their exception chains.
 
    For example, one could write a wrapper to be used with
    :class:`concurrent.futures.ProcessPoolExecutor`,
