@@ -11,7 +11,6 @@ import pytest
 
 import tblib.pickling_support
 
-
 has_python3 = sys.version_info.major >= 3
 
 
