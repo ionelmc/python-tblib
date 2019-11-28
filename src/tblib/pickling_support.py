@@ -1,15 +1,15 @@
 import sys
+from types import TracebackType
+
+from . import Frame
+from . import Traceback
+
 if sys.version_info.major >= 3:
     import copyreg
     import pickle
 else:
     import copy_reg as copyreg
     import cPickle as pickle
-
-from types import TracebackType
-
-from . import Frame
-from . import Traceback
 
 
 def unpickle_traceback(tb_frame, tb_lineno, tb_next):
