@@ -32,24 +32,14 @@ def unpickle_exception(func, args, cause, tb):
 
 
 def pickle_exception(obj):
-    # Check for a __reduce_ex__ method, fall back to __reduce__
-    reduce = getattr(obj, "__reduce_ex__", None)
-    if reduce is not None:
-        # __reduce_ex__(4) should be no different from __reduce_ex__(3).
-        # __reduce_ex__(5) could bring benefits in the unlikely case the exception
-        # directly contains buffers, but PickleBuffer objects will cause a crash when
-        # running on protocol=4, and there's no clean way to figure out the current
-        # protocol from here. Note that any object returned by __reduce_ex__(3) will
-        # still be pickled with protocol 5 if pickle.dump() is running with it.
-        rv = reduce(3)
-    else:
-        reduce = getattr(obj, "__reduce__", None)
-        if reduce is not None:
-            rv = reduce()
-        else:
-            raise pickle.PicklingError(
-                "Can't pickle %r object: %r" % (obj.__class__.__name__, obj)
-            )
+    # All exceptions, unlike generic Python objects, define __reduce_ex__
+    # __reduce_ex__(4) should be no different from __reduce_ex__(3).
+    # __reduce_ex__(5) could bring benefits in the unlikely case the exception
+    # directly contains buffers, but PickleBuffer objects will cause a crash when
+    # running on protocol=4, and there's no clean way to figure out the current
+    # protocol from here. Note that any object returned by __reduce_ex__(3) will
+    # still be pickled with protocol 5 if pickle.dump() is running with it.
+    rv = obj.__reduce_ex__(3)
     if isinstance(rv, str):
         raise TypeError("str __reduce__ output is not supported")
     assert isinstance(rv, tuple) and len(rv) >= 2
