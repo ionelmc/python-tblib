@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.6.0 (unreleased)
+~~~~~~~~~~~~~~~~~~
+* When pickling an Exception, also pickle its traceback and the Exception chain
+  (``raise ... from ...``). Contributed by Guido Imperiale in
+  `#53 <https://github.com/ionelmc/python-tblib/issues/53>`_.
+
 1.5.0 (2019-10-23)
 ~~~~~~~~~~~~~~~~~~
 
