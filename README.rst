@@ -57,7 +57,7 @@ Overview
 
 .. end-badges
 
-Traceback serialization library.
+Serialization library for Exceptions and Tracebacks.
 
 * Free software: BSD license
 
@@ -69,6 +69,8 @@ It allows you to:
 * Create traceback objects from strings (the ``from_string`` method). *No pickling is used*.
 * Serialize tracebacks to/from plain dicts (the ``from_dict`` and ``to_dict`` methods). *No pickling is used*.
 * Raise the tracebacks created from the aforementioned sources.
+* Pickle an Exception together with its traceback and exception chain
+  (``raise ... from ...``) *(Python 3 only)*
 
 **Again, note that using the pickle support is completely optional. You are solely responsible for
 security problems should you decide to use the pickle support.**
@@ -133,8 +135,8 @@ those tracebacks or print them - that should cover 99% of the usecases.
     >>> len(s3) > 1
     True
 
-Unpickling
-~~~~~~~~~~
+Unpickling tracebacks
+~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -195,6 +197,76 @@ Raising
       File "<doctest README.rst[3]>", line 2, in inner_0
         raise Exception('fail')
     Exception: fail
+
+Pickling Exceptions together with their traceback and chain (Python 3 only)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+    >>> try:  # doctest: +SKIP
+    ...     try:
+    ...         1 / 0
+    ...     except Exception as e:
+    ...         raise Exception("foo") from e
+    ... except Exception as e:
+    ...     s = pickle.dumps(e)
+    >>> raise pickle.loads(s)  # doctest: +SKIP
+    Traceback (most recent call last):
+      File "<doctest README.rst[16]>", line 3, in <module>
+        1 / 0
+    ZeroDivisionError: division by zero
+
+    The above exception was the direct cause of the following exception:
+
+    Traceback (most recent call last):
+      File "<doctest README.rst[17]>", line 1, in <module>
+        raise pickle.loads(s)
+      File "<doctest README.rst[16]>", line 5, in <module>
+        raise Exception("foo") from e
+    Exception: foo
+
+BaseException subclasses defined after calling ``pickling_support.install()`` will
+**not** retain their traceback and exception chain pickling.
+To cover custom Exceptions, there are two options:
+
+1. Invoke ``pickling_support.install()`` after all modules have been imported
+
+::
+
+    >>> from tblib import pickling_support
+    >>> # Declare all imports of your package's dependencies
+    >>> import numpy  # doctest: +SKIP
+
+    >>> # Declare your own custom Exceptions
+    >>> class CustomError(Exception):
+    ...     pass
+
+    >>> # Finally, install tblib
+    >>> pickling_support.install()
+
+2. Selectively install tblib for Exception instances just before they are pickled.
+
+::
+
+     pickling_support.install(<Exception instance>, [Exception instance], ...)
+
+   will install tblib pickling for all listed exceptions as well as any other exceptions
+   in their exception chains.
+
+   For example, one could write a wrapper to be used with
+   :class:`concurrent.futures.ProcessPoolExecutor`,
+   `Dask.distributed <https://distributed.dask.org/>`_, or similar libraries:
+
+::
+
+    >>> from tblib import pickling_support
+    >>> def wrapper(func, *args, **kwargs):
+    ...     try:
+    ...         return func(*args, **kwargs)
+    ...     except Exception as e:
+    ...         pickling_support.install(e)
+    ...         raise
+
+
 
 What if we have a local stack, does it show correctly ?
 -------------------------------------------------------
