@@ -27,21 +27,11 @@ class CustomError(Exception):
     pass
 
 
-class CustomErrorEx(Exception):
-    # Test that __reduce_ex__ is preferred to __reduce__ when available
-    def __reduce__(self):
-        assert False
-
-    def __reduce_ex__(self, proto):
-        return CustomErrorEx, self.args, self.__dict__
-
-
 @pytest.mark.parametrize(
     "protocol", [None] + list(range(1, pickle.HIGHEST_PROTOCOL + 1))
 )
-@pytest.mark.parametrize("exc_cls", [CustomError, CustomErrorEx])
 @pytest.mark.parametrize("global_install", [False, True])
-def test_pickle_exceptions(global_install, exc_cls, protocol):
+def test_pickle_exceptions(global_install, protocol):
     if global_install:
         tblib.pickling_support.install()
 
@@ -51,7 +41,7 @@ def test_pickle_exceptions(global_install, exc_cls, protocol):
         except Exception as e:
             # Python 3 only syntax
             # raise CustomError("foo") from e
-            new_e = exc_cls("foo")
+            new_e = CustomError("foo")
             if has_python3:
                 new_e.__cause__ = e
             raise new_e
@@ -70,7 +60,7 @@ def test_pickle_exceptions(global_install, exc_cls, protocol):
     if protocol:
         exc = pickle.loads(pickle.dumps(exc, protocol=protocol))
 
-    assert isinstance(exc, exc_cls)
+    assert isinstance(exc, CustomError)
     assert exc.args == ("foo",)
     assert exc.x == 1
     if has_python3:
