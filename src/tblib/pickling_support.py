@@ -54,18 +54,29 @@ def _get_subclasses(cls):
         to_visit += list(this.__subclasses__())
 
 
-def install(*exception_instances):
+def install(*exc_classes_or_instances):
     copyreg.pickle(TracebackType, pickle_traceback)
 
     if sys.version_info.major < 3:
         return
 
-    if exception_instances:
-        for exc in exception_instances:
+    if not exc_classes_or_instances:
+        for exception_cls in _get_subclasses(BaseException):
+            copyreg.pickle(exception_cls, pickle_exception)
+        return
+
+    for exc in exc_classes_or_instances:
+        if isinstance(exc, BaseException):
             while exc is not None:
                 copyreg.pickle(type(exc), pickle_exception)
                 exc = exc.__cause__
-
-    else:
-        for exception_cls in _get_subclasses(BaseException):
-            copyreg.pickle(exception_cls, pickle_exception)
+        elif issubclass(exc, BaseException):
+            copyreg.pickle(exc, pickle_exception)
+            # Allow using @install as a decorator for Exception classes
+            if len(exc_classes_or_instances) == 1:
+                return exc
+        else:
+            raise TypeError(
+                "Expected subclasses or instances of BaseException, got %s"
+                % (type(exc))
+            )

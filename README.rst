@@ -227,15 +227,32 @@ Pickling Exceptions together with their traceback and chain (Python 3 only)
 
 BaseException subclasses defined after calling ``pickling_support.install()`` will
 **not** retain their traceback and exception chain pickling.
-To cover custom Exceptions, there are two options:
+To cover custom Exceptions, there are three options:
 
-1. Invoke ``pickling_support.install()`` after all modules have been imported
+1. Use ``@pickling_support.install`` as a decorator for each custom Exception
 
     .. code-block:: python
 
         >>> from tblib import pickling_support
         >>> # Declare all imports of your package's dependencies
         >>> import numpy  # doctest: +SKIP
+
+        >>> pickling_support.install()  # install for all modules imported so far
+
+        >>> @pickling_support.install
+        ... class CustomError(Exception):
+        ...     pass
+
+   Eventual subclasses of ``CustomError`` will need to be decorated again.
+
+2. Invoke ``pickling_support.install()`` after all modules have been imported and all
+   Exception subclasses have been declared
+
+    .. code-block:: python
+
+        >>> # Declare all imports of your package's dependencies
+        >>> import numpy  # doctest: +SKIP
+        >>> from tblib import pickling_support
 
         >>> # Declare your own custom Exceptions
         >>> class CustomError(Exception):
@@ -244,7 +261,7 @@ To cover custom Exceptions, there are two options:
         >>> # Finally, install tblib
         >>> pickling_support.install()
 
-2. Selectively install tblib for Exception instances just before they are pickled
+3. Selectively install tblib for Exception instances just before they are pickled
 
     .. code-block:: python
 
