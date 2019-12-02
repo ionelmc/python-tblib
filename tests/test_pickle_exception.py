@@ -79,7 +79,6 @@ class RegisteredError(Exception):
 
 
 def test_install_decorator():
-
     with pytest.raises(RegisteredError) as ewrap:
         raise RegisteredError("foo")
     exc = ewrap.value
