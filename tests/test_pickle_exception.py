@@ -93,6 +93,7 @@ def test_install_decorator():
         assert exc.__traceback__ is not None
 
 
+@pytest.mark.skipif(sys.version_info[0] < 3, reason="No checks done in Python 2")
 def test_install_typeerror():
     with pytest.raises(TypeError):
         tblib.pickling_support.install("foo")
