@@ -58,6 +58,11 @@ def install(*exc_classes_or_instances):
     copyreg.pickle(TracebackType, pickle_traceback)
 
     if sys.version_info.major < 3:
+        # Dummy decorator?
+        if len(exc_classes_or_instances) == 1:
+            exc = exc_classes_or_instances[0]
+            if isinstance(exc, type) and issubclass(exc, BaseException):
+                return exc
         return
 
     if not exc_classes_or_instances:
@@ -70,7 +75,7 @@ def install(*exc_classes_or_instances):
             while exc is not None:
                 copyreg.pickle(type(exc), pickle_exception)
                 exc = exc.__cause__
-        elif issubclass(exc, BaseException):
+        elif isinstance(exc, type) and issubclass(exc, BaseException):
             copyreg.pickle(exc, pickle_exception)
             # Allow using @install as a decorator for Exception classes
             if len(exc_classes_or_instances) == 1:
