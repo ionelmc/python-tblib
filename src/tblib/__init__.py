@@ -148,10 +148,19 @@ class Traceback(object):
 
     def to_dict(self):
         """Convert a Traceback into a dictionary representation"""
+        # Create a compression dictionary, to be filled as we go, and stuff it
+        # into the top level.
+        zipper = {}
+        result = self._to_compressed_dict(zipper)
+        result['zip'] = zipper
+        return result
+
+    def _to_compressed_dict(self, zipper):
+        """Convert a Traceback into a dictionary with optimised filename storage"""
         if self.tb_next is None:
             tb_next = None
         else:
-            tb_next = self.tb_next.to_dict()
+            tb_next = self.tb_next._to_compressed_dict(zipper)
 
         code = {
             'co_filename': self.tb_frame.f_code.co_filename,
@@ -161,6 +170,9 @@ class Traceback(object):
             'f_globals': self.tb_frame.f_globals,
             'f_code': code,
         }
+
+        # Update the filename entries with integers.
+        code['co_filename'] = zipper.setdefault(code['co_filename'], len(zipper))
         return {
             'tb_frame': frame,
             'tb_lineno': self.tb_lineno,
@@ -169,11 +181,20 @@ class Traceback(object):
 
     @classmethod
     def from_dict(cls, dct):
+        # Have zip keyed by strings was ideal for JSON transport, now we need
+        # to switch to doing lookups the other way around.
+        zipper = {v: k for k, v in dct['zip'].items()}
+        return cls._from_compressed_dict(dct, zipper)
+
+    @classmethod
+    def _from_compressed_dict(cls, dct, zipper):
         if dct['tb_next']:
-            tb_next = cls.from_dict(dct['tb_next'])
+            tb_next = cls._from_compressed_dict(dct['tb_next'], zipper)
         else:
             tb_next = None
 
+        # Update the filename entries with strings.
+        dct['tb_frame']['f_code']['co_filename'] = zipper[dct['tb_frame']['f_code']['co_filename']]
         code = _AttrDict(
             co_filename=dct['tb_frame']['f_code']['co_filename'],
             co_name=dct['tb_frame']['f_code']['co_name'],
