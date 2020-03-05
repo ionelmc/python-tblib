@@ -53,6 +53,7 @@ class Frame(object):
             if k in ("__file__", "__name__")
         }
         self.f_code = Code(frame.f_code)
+        self.f_lineno = frame.f_lineno
 
     def clear(self):
         # For compatibility with PyPy 3.5;
@@ -160,6 +161,7 @@ class Traceback(object):
         frame = {
             'f_globals': self.tb_frame.f_globals,
             'f_code': code,
+            'f_lineno': self.tb_frame.f_lineno,
         }
         return {
             'tb_frame': frame,
@@ -181,6 +183,7 @@ class Traceback(object):
         frame = _AttrDict(
             f_globals=dct['tb_frame']['f_globals'],
             f_code=code,
+            f_lineno=dct['tb_frame']['f_lineno'],
         )
         tb = _AttrDict(
             tb_frame=frame,
@@ -220,6 +223,7 @@ class Traceback(object):
                             __name__='?',
                         ),
                         f_code=_AttrDict(frame),
+                        f_lineno=frame['tb_lineno'],
                     ),
                     tb_next=previous,
                 )
