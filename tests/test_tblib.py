@@ -33,18 +33,21 @@ KeyboardInterrupt"""
         "tb_frame": {
             "f_code": {"co_filename": "file1", "co_name": "<module>"},
             "f_globals": {"__file__": "file1", "__name__": "?"},
+            "f_lineno": 123,
         },
         "tb_lineno": 123,
         "tb_next": {
             "tb_frame": {
                 "f_code": {"co_filename": "file2", "co_name": "???"},
                 "f_globals": {"__file__": "file2", "__name__": "?"},
+                "f_lineno": 234,
             },
             "tb_lineno": 234,
             "tb_next": {
                 "tb_frame": {
                     "f_code": {"co_filename": "file3", "co_name": "function3"},
                     "f_globals": {"__file__": "file3", "__name__": "?"},
+                    "f_lineno": 345,
                 },
                 "tb_lineno": 345,
                 "tb_next": None,
@@ -105,7 +108,7 @@ Traceback (most recent call last):
 
     result = testdir.runpytest_subprocess('--tb=short', '-vv', test)
     result.stdout.fnmatch_lines([
-        'test_pytest_integration.py:15: in test_raise',
+        'test_pytest_integration.py:*: in test_raise',
         '    six.reraise(RuntimeError, RuntimeError(), pytb)',
         'file1:123: in <module>',
         '    ???',
@@ -128,7 +131,7 @@ Traceback (most recent call last):
     result = testdir.runpytest_subprocess('--tb=native', '-vv', test)
     result.stdout.fnmatch_lines([
         'Traceback (most recent call last):',
-        '  File "*test_pytest_integration.py", line 15, in test_raise',
+        '  File "*test_pytest_integration.py", line *, in test_raise',
         '    six.reraise(RuntimeError, RuntimeError(), pytb)',
         '  File "file1", line 123, in <module>',
         '  File "file2", line 234, in ???',

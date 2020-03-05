@@ -10,3 +10,4 @@ Authors
 * Elliott Sales de Andrade - https://github.com/QuLogic
 * Victor Stinner - https://github.com/vstinner
 * Guido Imperiale - https://github.com/crusaderky
+* Ivanq - https://github.com/imachug

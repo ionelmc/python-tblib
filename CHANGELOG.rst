@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.7.0 (2020-03-07)
+~~~~~~~~~~~~~~~~~~
+
+* Add more attributes to ``Frame`` and ``Code`` objects for pytest compatibility. Contributed by Ivanq in
+  `#58 <https://github.com/ionelmc/python-tblib/pull/58>`_.
+
 1.6.0 (2019-12-07)
 ~~~~~~~~~~~~~~~~~~
 

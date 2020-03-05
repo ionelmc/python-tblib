@@ -43,16 +43,25 @@ class Code(object):
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
+        self.co_argcount = 0
+        self.co_kwonlyargcount = 0
+        self.co_varnames = ()
+        self.co_nlocals = 0
+        self.co_stacksize = 0
+        self.co_flags = 64
+        self.co_firstlineno = 0
 
 
 class Frame(object):
     def __init__(self, frame):
+        self.f_locals = {}
         self.f_globals = {
             k: v
             for k, v in frame.f_globals.items()
             if k in ("__file__", "__name__")
         }
         self.f_code = Code(frame.f_code)
+        self.f_lineno = frame.f_lineno
 
     def clear(self):
         # For compatibility with PyPy 3.5;
@@ -161,6 +170,7 @@ class Traceback(object):
         frame = {
             'f_globals': self.tb_frame.f_globals,
             'f_code': code,
+            'f_lineno': self.tb_frame.f_lineno,
         }
         return {
             'tb_frame': frame,
@@ -183,6 +193,7 @@ class Traceback(object):
         frame = _AttrDict(
             f_globals=dct['tb_frame']['f_globals'],
             f_code=code,
+            f_lineno=dct['tb_frame']['f_lineno'],
         )
         tb = _AttrDict(
             tb_frame=frame,
@@ -222,6 +233,7 @@ class Traceback(object):
                             __name__='?',
                         ),
                         f_code=_AttrDict(frame),
+                        f_lineno=int(frame['tb_lineno']),
                     ),
                     tb_next=previous,
                 )

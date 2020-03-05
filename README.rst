@@ -440,19 +440,23 @@ json.JSONDecoder::
     ...     pprint(tb_dict)
     {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[...]>',
                              'co_name': '<module>'},
-                  'f_globals': {'__name__': '__main__'}},
+                  'f_globals': {'__name__': '__main__'},
+                  'f_lineno': 5},
      'tb_lineno': 2,
-     'tb_next': {'tb_frame': {'f_code': {'co_filename': ...
+     'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
                                          'co_name': 'inner_2'},
-                              'f_globals': {'__name__': '__main__'}},
+                              'f_globals': {'__name__': '__main__'},
+                              'f_lineno': 2},
                  'tb_lineno': 2,
-                 'tb_next': {'tb_frame': {'f_code': {'co_filename': ...
+                 'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
                                                      'co_name': 'inner_1'},
-                                          'f_globals': {'__name__': '__main__'}},
+                                          'f_globals': {'__name__': '__main__'},
+                                          'f_lineno': 2},
                              'tb_lineno': 2,
-                             'tb_next': {'tb_frame': {'f_code': {'co_filename': ...
+                             'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
                                                                  'co_name': 'inner_0'},
-                                                      'f_globals': {'__name__': '__main__'}},
+                                                      'f_globals': {'__name__': '__main__'},
+                                                      'f_lineno': 2},
                                          'tb_lineno': 2,
                                          'tb_next': None}}}}
 
