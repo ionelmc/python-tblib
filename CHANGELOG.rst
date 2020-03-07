@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.7.0 (2020-03-07)
+~~~~~~~~~~~~~~~~~~
+
+* Pickle ``Frame.f_lineno``. Contributed by Ivanq in
+  `#57 <https://github.com/ionelmc/python-tblib/pull/57>`_.
+
 1.6.0 (2019-12-07)
 ~~~~~~~~~~~~~~~~~~
 
