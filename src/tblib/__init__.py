@@ -146,7 +146,7 @@ class Traceback(object):
         else:
             return getattr(self, operation)(*args, **kwargs)
 
-    def to_dict(self):
+    def as_dict(self):
         """Convert a Traceback into a dictionary representation"""
         if self.tb_next is None:
             tb_next = None
@@ -166,6 +166,7 @@ class Traceback(object):
             'tb_lineno': self.tb_lineno,
             'tb_next': tb_next,
         }
+    to_dict = as_dict
 
     @classmethod
     def from_dict(cls, dct):
