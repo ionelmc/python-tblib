@@ -135,6 +135,7 @@ class Traceback(object):
         finally:
             del top_tb
             del tb
+    to_traceback = as_traceback
 
     # noinspection SpellCheckingInspection
     def __tproxy_handler(self, operation, *args, **kwargs):
