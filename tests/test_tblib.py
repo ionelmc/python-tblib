@@ -1,15 +1,11 @@
 import traceback
 
-try:
-    from io import StringIO
-except ImportError:
-    from StringIO import StringIO
-
-from _pytest._code import ExceptionInfo
-
-from tblib import pickling_support, Traceback, _AttrDict
+from tblib import Traceback
+from tblib import pickling_support
 
 pickling_support.install()
+
+pytest_plugins = 'pytester',
 
 
 def test_parse_traceback():
@@ -55,30 +51,88 @@ KeyboardInterrupt"""
             },
         },
     }
-
-    ei = ExceptionInfo.from_exc_info((KeyboardInterrupt, KeyboardInterrupt(), pytb))
-    out = StringIO()
-    tw = _AttrDict(
-        line=lambda string, **_: out.write(string + '\n'),
-        write=lambda string, **_: out.write(string),
-        sep=lambda string: out.write(string),
-    )
-    ei.getrepr(style='long').toterminal(tw)
-    print(out.getvalue())
-    assert out.getvalue() == """
->   ???
-
-file1:123:{0}
-_{0}
->   ???
-
-file2:234:{0}
-_{0}
->   ???
-E   KeyboardInterrupt
-
-file3:345: KeyboardInterrupt
-""".format(' ')
-
     tb3 = Traceback.from_dict(expected_dict)
     assert tb3.as_dict() == tb2.as_dict() == tb1.as_dict() == expected_dict
+
+
+def test_pytest_integration(testdir):
+    test = testdir.makepyfile("""
+import six
+
+from tblib import Traceback
+
+def test_raise():
+    tb1 = Traceback.from_string('''
+Traceback (most recent call last):
+  File "file1", line 123, in <module>
+    code1
+  File "file2", line 234, in ???
+    code2
+  File "file3", line 345, in function3
+  File "file4", line 456, in ""''')
+    pytb = tb1.as_traceback()
+    six.reraise(RuntimeError, RuntimeError(), pytb)
+""")
+
+    # mode(auto / long / short / line / native / no).
+
+    result = testdir.runpytest_subprocess('--tb=long', '-vv', test)
+    result.stdout.fnmatch_lines([
+        "_ _ _ _ _ _ _ _ *",
+        "",
+        ">   [?][?][?]",
+        "",
+        "file1:123:*",
+        "_ _ _ _ _ _ _ _ *",
+        "",
+        ">   [?][?][?]",
+        "",
+        "file2:234:*",
+        "_ _ _ _ _ _ _ _ *",
+        "",
+        ">   [?][?][?]",
+        "",
+        "file3:345:*",
+        "_ _ _ _ _ _ _ _ *",
+        "",
+        ">   [?][?][?]",
+        "E   RuntimeError",
+        "",
+        "file4:456: RuntimeError",
+        "===*=== 1 failed in * ===*===",
+    ])
+
+    result = testdir.runpytest_subprocess('--tb=short', '-vv', test)
+    result.stdout.fnmatch_lines([
+        'test_pytest_integration.py:15: in test_raise',
+        '    six.reraise(RuntimeError, RuntimeError(), pytb)',
+        'file1:123: in <module>',
+        '    ???',
+        'file2:234: in ???',
+        '    ???',
+        'file3:345: in function3',
+        '    ???',
+        'file4:456: in ""',
+        '    ???',
+        'E   RuntimeError',
+    ])
+
+    result = testdir.runpytest_subprocess('--tb=line', '-vv', test)
+    result.stdout.fnmatch_lines([
+        "===*=== FAILURES ===*===",
+        "file4:456: RuntimeError",
+        "===*=== 1 failed in * ===*===",
+    ])
+
+    result = testdir.runpytest_subprocess('--tb=native', '-vv', test)
+    result.stdout.fnmatch_lines([
+        'Traceback (most recent call last):',
+        '  File "*test_pytest_integration.py", line 15, in test_raise',
+        '    six.reraise(RuntimeError, RuntimeError(), pytb)',
+        '  File "file1", line 123, in <module>',
+        '  File "file2", line 234, in ???',
+        '  File "file3", line 345, in function3',
+        '  File "file4", line 456, in ""',
+        'RuntimeError',
+
+    ])
