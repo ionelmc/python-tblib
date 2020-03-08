@@ -69,7 +69,8 @@ Traceback (most recent call last):
   File "file2", line 234, in ???
     code2
   File "file3", line 345, in function3
-  File "file4", line 456, in ""''')
+  File "file4", line 456, in ""
+''')
     pytb = tb1.as_traceback()
     six.reraise(RuntimeError, RuntimeError(), pytb)
 """)
