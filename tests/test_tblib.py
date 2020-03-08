@@ -1,6 +1,13 @@
 import traceback
 
-from tblib import pickling_support, Traceback
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+from _pytest._code import ExceptionInfo
+
+from tblib import pickling_support, Traceback, _AttrDict
 
 pickling_support.install()
 
@@ -48,5 +55,30 @@ KeyboardInterrupt"""
             },
         },
     }
+
+    ei = ExceptionInfo.from_exc_info((KeyboardInterrupt, KeyboardInterrupt(), pytb))
+    out = StringIO()
+    tw = _AttrDict(
+        line=lambda string, **_: out.write(string + '\n'),
+        write=lambda string, **_: out.write(string),
+        sep=lambda string: out.write(string),
+    )
+    ei.getrepr(style='long').toterminal(tw)
+    print(out.getvalue())
+    assert out.getvalue() == """
+>   ???
+
+file1:123:{0}
+_{0}
+>   ???
+
+file2:234:{0}
+_{0}
+>   ???
+E   KeyboardInterrupt
+
+file3:345: KeyboardInterrupt
+""".format(' ')
+
     tb3 = Traceback.from_dict(expected_dict)
     assert tb3.as_dict() == tb2.as_dict() == tb1.as_dict() == expected_dict
