@@ -119,7 +119,7 @@ class Traceback(object):
 
             # noinspection PyBroadException
             try:
-                exec(code, current.tb_frame.f_globals, {})
+                exec(code, dict(current.tb_frame.f_globals), {})
             except Exception:
                 next_tb = sys.exc_info()[2].tb_next
                 if top_tb is None:
