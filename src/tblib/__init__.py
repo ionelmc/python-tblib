@@ -24,7 +24,12 @@ FRAME_RE = re.compile(r'^\s*File "(?P<co_filename>.+)", line (?P<tb_lineno>\d+)(
 
 class _AttrDict(dict):
     __slots__ = ()
-    __getattr__ = dict.__getitem__
+
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError(name)
 
 
 # noinspection PyPep8Naming
@@ -40,6 +45,13 @@ class Code(object):
 
     co_code = None
 
+    def __new__(cls, *args, **kwargs):
+        code = super(Code, cls).__new__(cls)
+        if tproxy:
+            code.__init__(*args, **kwargs)
+            return tproxy(CodeType, code.__tproxy_handler)
+        return code
+
     def __init__(self, code):
         self.co_filename = code.co_filename
         self.co_name = code.co_name
@@ -50,6 +62,16 @@ class Code(object):
         self.co_stacksize = 0
         self.co_flags = 64
         self.co_firstlineno = 0
+
+    def __reduce__(self):
+        return Code, (_AttrDict(self.__dict__),)
+
+    # noinspection SpellCheckingInspection
+    def __tproxy_handler(self, operation, *args, **kwargs):
+        if operation in ('__getattribute__', '__getattr__'):
+            return getattr(self, args[0])
+        else:
+            return getattr(self, operation)(*args, **kwargs)
 
 
 class Frame(object):
