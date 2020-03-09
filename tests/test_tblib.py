@@ -1,3 +1,4 @@
+import pickle
 import traceback
 
 from tblib import Traceback
@@ -55,7 +56,8 @@ KeyboardInterrupt"""
         },
     }
     tb3 = Traceback.from_dict(expected_dict)
-    assert tb3.as_dict() == tb2.as_dict() == tb1.as_dict() == expected_dict
+    tb4 = pickle.loads(pickle.dumps(tb3))
+    assert tb4.as_dict() == tb3.as_dict() == tb2.as_dict() == tb1.as_dict() == expected_dict
 
 
 def test_pytest_integration(testdir):
