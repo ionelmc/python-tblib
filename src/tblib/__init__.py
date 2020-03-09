@@ -1,6 +1,7 @@
 import re
 import sys
 from types import CodeType
+from types import FrameType
 from types import TracebackType
 
 try:
@@ -42,15 +43,7 @@ class TracebackParseError(Exception):
 
 
 class Code(object):
-
     co_code = None
-
-    def __new__(cls, *args, **kwargs):
-        code = super(Code, cls).__new__(cls)
-        if tproxy:
-            code.__init__(*args, **kwargs)
-            return tproxy(CodeType, code.__tproxy_handler)
-        return code
 
     def __init__(self, code):
         self.co_filename = code.co_filename
@@ -67,7 +60,7 @@ class Code(object):
         return Code, (_AttrDict(self.__dict__),)
 
     # noinspection SpellCheckingInspection
-    def __tproxy_handler(self, operation, *args, **kwargs):
+    def __tproxy__(self, operation, *args, **kwargs):
         if operation in ('__getattribute__', '__getattr__'):
             return getattr(self, args[0])
         else:
@@ -92,9 +85,18 @@ class Frame(object):
         # in turn is called by unittest.TestCase.assertRaises
         pass
 
+    # noinspection SpellCheckingInspection
+    def __tproxy__(self, operation, *args, **kwargs):
+        if operation in ('__getattribute__', '__getattr__'):
+            if args[0] == 'f_code':
+                return tproxy(CodeType, self.f_code.__tproxy__)
+            else:
+                return getattr(self, args[0])
+        else:
+            return getattr(self, operation)(*args, **kwargs)
+
 
 class Traceback(object):
-
     tb_next = None
 
     def __init__(self, tb):
@@ -116,7 +118,7 @@ class Traceback(object):
 
     def as_traceback(self):
         if tproxy:
-            return tproxy(TracebackType, self.__tproxy_handler)
+            return tproxy(TracebackType, self.__tproxy__)
         if not tb_set_next:
             raise RuntimeError("Unsupported Python interpreter!")
 
@@ -169,10 +171,12 @@ class Traceback(object):
     to_traceback = as_traceback
 
     # noinspection SpellCheckingInspection
-    def __tproxy_handler(self, operation, *args, **kwargs):
+    def __tproxy__(self, operation, *args, **kwargs):
         if operation in ('__getattribute__', '__getattr__'):
             if args[0] == 'tb_next':
                 return self.tb_next and self.tb_next.as_traceback()
+            elif args[0] == 'tb_frame':
+                return tproxy(FrameType, self.tb_frame.__tproxy__)
             else:
                 return getattr(self, args[0])
         else:
