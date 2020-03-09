@@ -17,7 +17,7 @@ if not tb_set_next and not tproxy:
     raise ImportError("Cannot use tblib. Runtime not supported.")
 
 __version__ = '1.6.0'
-__all__ = 'Traceback',
+__all__ = 'Traceback', 'TracebackParseError', 'Frame', 'Code'
 
 PY3 = sys.version_info[0] == 3
 FRAME_RE = re.compile(r'^\s*File "(?P<co_filename>.+)", line (?P<tb_lineno>\d+)(, in (?P<co_name>.+))?$')
@@ -43,6 +43,9 @@ class TracebackParseError(Exception):
 
 
 class Code(object):
+    """
+    Class that replicates just enough of the builtin Code object to enable serialization and traceback rendering.
+    """
     co_code = None
 
     def __init__(self, code):
@@ -61,6 +64,9 @@ class Code(object):
 
     # noinspection SpellCheckingInspection
     def __tproxy__(self, operation, *args, **kwargs):
+        """
+        Necessary for PyPy's tproxy.
+        """
         if operation in ('__getattribute__', '__getattr__'):
             return getattr(self, args[0])
         else:
@@ -68,6 +74,9 @@ class Code(object):
 
 
 class Frame(object):
+    """
+    Class that replicates just enough of the builtin Frame object to enable serialization and traceback rendering.
+    """
     def __init__(self, frame):
         self.f_locals = {}
         self.f_globals = {
@@ -79,14 +88,18 @@ class Frame(object):
         self.f_lineno = frame.f_lineno
 
     def clear(self):
-        # For compatibility with PyPy 3.5;
-        # clear() was added to frame in Python 3.4
-        # and is called by traceback.clear_frames(), which
-        # in turn is called by unittest.TestCase.assertRaises
-        pass
+        """
+        For compatibility with PyPy 3.5;
+        clear() was added to frame in Python 3.4
+        and is called by traceback.clear_frames(), which
+        in turn is called by unittest.TestCase.assertRaises
+        """
 
     # noinspection SpellCheckingInspection
     def __tproxy__(self, operation, *args, **kwargs):
+        """
+        Necessary for PyPy's tproxy.
+        """
         if operation in ('__getattribute__', '__getattr__'):
             if args[0] == 'f_code':
                 return tproxy(CodeType, self.f_code.__tproxy__)
@@ -97,6 +110,9 @@ class Frame(object):
 
 
 class Traceback(object):
+    """
+    Class that wraps builtin Traceback objects.
+    """
     tb_next = None
 
     def __init__(self, tb):
@@ -117,6 +133,9 @@ class Traceback(object):
             tb = tb.tb_next
 
     def as_traceback(self):
+        """
+        Convert to a builtin Traceback object that is usable for raising or rendering a stacktrace.
+        """
         if tproxy:
             return tproxy(TracebackType, self.__tproxy__)
         if not tb_set_next:
@@ -172,6 +191,9 @@ class Traceback(object):
 
     # noinspection SpellCheckingInspection
     def __tproxy__(self, operation, *args, **kwargs):
+        """
+        Necessary for PyPy's tproxy.
+        """
         if operation in ('__getattribute__', '__getattr__'):
             if args[0] == 'tb_next':
                 return self.tb_next and self.tb_next.as_traceback()
@@ -183,7 +205,10 @@ class Traceback(object):
             return getattr(self, operation)(*args, **kwargs)
 
     def as_dict(self):
-        """Convert a Traceback into a dictionary representation"""
+        """
+        Converts to a dictionary representation. You can serialize the result to JSON as it only has
+        builtin objects like dicts, lists, ints or strings.
+        """
         if self.tb_next is None:
             tb_next = None
         else:
@@ -207,6 +232,9 @@ class Traceback(object):
 
     @classmethod
     def from_dict(cls, dct):
+        """
+        Creates an instance from a dictionary with the same structure as ``.as_dict()`` returns.
+        """
         if dct['tb_next']:
             tb_next = cls.from_dict(dct['tb_next'])
         else:
@@ -230,6 +258,10 @@ class Traceback(object):
 
     @classmethod
     def from_string(cls, string, strict=True):
+        """
+        Creates an instance by parsing a stacktrace. Strict means that parsing stops when lines are not indented by at least two spaces
+        anymore.
+        """
         frames = []
         header = strict
 

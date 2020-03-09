@@ -4,8 +4,7 @@ from __future__ import unicode_literals
 import os
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
+    'autoapi.extension',
     'sphinx.ext.coverage',
     'sphinx.ext.doctest',
     'sphinx.ext.extlinks',
@@ -14,10 +13,13 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
 ]
+autoapi_type = 'python'
+autoapi_dirs = ['../src']
+
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'tblib'
-year = '2013-2019'
+year = '2013-2020'
 author = 'Ionel Cristian Mărieș'
 copyright = '{0}, {1}'.format(year, author)
 version = release = '1.6.0'

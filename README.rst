@@ -15,7 +15,8 @@ Overview
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-.. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
+
+.. |docs| image:: https://codecov.io/gh/ionelmc/python-tblib/branch/master/graphs/badge.svg?branch=master
     :target: https://readthedocs.org/projects/python-tblib
     :alt: Documentation Status
 

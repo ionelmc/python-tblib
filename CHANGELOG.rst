@@ -19,7 +19,7 @@ Changelog
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for Python 3.8. Contributed by Victor Stinner in
-  `#42 <HTTPS://GITHUB.COM/IONELMC/PYTHON-TBLIB/ISSUES/42>`_.
+  `#42 <https://github.com/ionelmc/python-tblib/issues/42>`_.
 * Removed support for end of life Python 3.4.
 * Few CI improvements and fixes.
 
