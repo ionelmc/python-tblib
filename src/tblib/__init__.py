@@ -59,9 +59,6 @@ class Code(object):
         self.co_flags = 64
         self.co_firstlineno = 0
 
-    def __reduce__(self):
-        return Code, (_AttrDict(self.__dict__),)
-
     # noinspection SpellCheckingInspection
     def __tproxy__(self, operation, *args, **kwargs):
         """
