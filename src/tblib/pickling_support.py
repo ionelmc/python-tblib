@@ -54,6 +54,14 @@ def _get_subclasses(cls):
         to_visit += list(this.__subclasses__())
 
 
+def enable_stringify_locals():
+    Frame.stringify_locals = True
+
+
+def disable_stringify_locals():
+    Frame.stringify_locals = False
+
+
 def install(*exc_classes_or_instances):
     copyreg.pickle(TracebackType, pickle_traceback)
 

@@ -74,6 +74,8 @@ class Frame(object):
     """
     Class that replicates just enough of the builtin Frame object to enable serialization and traceback rendering.
     """
+    stringify_locals = False
+
     def __init__(self, frame):
         self.f_locals = {}
         self.f_globals = {
@@ -83,6 +85,12 @@ class Frame(object):
         }
         self.f_code = Code(frame.f_code)
         self.f_lineno = frame.f_lineno
+
+        if Frame.stringify_locals:
+            self.f_locals = {
+                k: repr(v)
+                for k, v in getattr(frame, "f_locals", {}).items()
+            }
 
     def clear(self):
         """
@@ -168,7 +176,7 @@ class Traceback(object):
 
             # noinspection PyBroadException
             try:
-                exec(code, dict(current.tb_frame.f_globals), {})
+                exec(code, dict(current.tb_frame.f_globals), dict(current.tb_frame.f_locals))
             except Exception:
                 next_tb = sys.exc_info()[2].tb_next
                 if top_tb is None:

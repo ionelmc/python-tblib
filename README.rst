@@ -393,6 +393,44 @@ forcing the type and value to have consistency across platforms)::
       ...
     RuntimeError: maximum recursion depth exceeded
 
+Pickling Exceptions together with their local variables in string form
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    >>> from pprint import pprint
+    >>> from tblib import pickling_support
+    >>> pickling_support.install()
+    >>> pickling_support.enable_stringify_locals()
+    >>> import pickle, sys
+    >>> def gen_func():
+    ...     for i in range(5):
+    ...         yield i
+    ...
+    >>> def func(a, b, c, d, *args, **kwargs):
+    ...     f = object()
+    ...     g = gen_func()
+    ...     raise Exception('fail')
+    ...
+    >>> try:
+    ...     func(1, True, "c", range(10), "hi", Exception(), kw=())
+    ... except:
+    ...     buf = pickle.dumps(sys.exc_info(), protocol=pickle.HIGHEST_PROTOCOL)
+    ...
+    >>> exc_type, exc_obj, exc_tb = pickle.loads(buf)
+    >>> pprint(exc_tb.tb_next.tb_frame.f_locals)  # doctest: +SKIP
+    {'a': '1',
+     'args': "('hi', Exception())",
+     'b': 'True',
+     'c': "'c'",
+     'd': 'range(0, 10)',
+     'f': '<object object at 0x7f21890aeb50>',
+     'g': '<generator object gen_func at 0x7f21857bdf20>',
+     'kwargs': "{'kw': ()}"}
+
+This is useful for printing purposes, where the variable itself is not that
+important, but its representation is. An example of such use-case is tracing.
+
 Reference
 ~~~~~~~~~
 

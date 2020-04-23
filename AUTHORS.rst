@@ -11,3 +11,4 @@ Authors
 * Victor Stinner - https://github.com/vstinner
 * Guido Imperiale - https://github.com/crusaderky
 * Ivanq - https://github.com/imachug
+* Marco Ribeiro - https://marcoribeiro.me/
