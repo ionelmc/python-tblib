@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.7.0 (2020-03-07)
+1.7.0 (2020-07-24)
 ~~~~~~~~~~~~~~~~~~
 
 * Add more attributes to ``Frame`` and ``Code`` objects for pytest compatibility. Contributed by Ivanq in
