@@ -1,7 +1,6 @@
 import sys
-from functools import wraps
 
-from six import reraise
+from six import reraise, wraps
 
 from . import Traceback
 
