@@ -4,22 +4,9 @@ from types import CodeType
 from types import FrameType
 from types import TracebackType
 
-try:
-    from __pypy__ import tproxy
-except ImportError:
-    tproxy = None
-try:
-    from .cpython import tb_set_next
-except ImportError:
-    tb_set_next = None
-
-if not tb_set_next and not tproxy:
-    raise ImportError("Cannot use tblib. Runtime not supported.")
-
 __version__ = '1.7.0'
 __all__ = 'Traceback', 'TracebackParseError', 'Frame', 'Code'
 
-PY3 = sys.version_info[0] == 3
 FRAME_RE = re.compile(r'^\s*File "(?P<co_filename>.+)", line (?P<tb_lineno>\d+)(, in (?P<co_name>.+))?$')
 
 
@@ -59,16 +46,6 @@ class Code(object):
         self.co_flags = 64
         self.co_firstlineno = 0
 
-    # noinspection SpellCheckingInspection
-    def __tproxy__(self, operation, *args, **kwargs):
-        """
-        Necessary for PyPy's tproxy.
-        """
-        if operation in ('__getattribute__', '__getattr__'):
-            return getattr(self, args[0])
-        else:
-            return getattr(self, operation)(*args, **kwargs)
-
 
 class Frame(object):
     """
@@ -91,19 +68,6 @@ class Frame(object):
         and is called by traceback.clear_frames(), which
         in turn is called by unittest.TestCase.assertRaises
         """
-
-    # noinspection SpellCheckingInspection
-    def __tproxy__(self, operation, *args, **kwargs):
-        """
-        Necessary for PyPy's tproxy.
-        """
-        if operation in ('__getattribute__', '__getattr__'):
-            if args[0] == 'f_code':
-                return tproxy(CodeType, self.f_code.__tproxy__)
-            else:
-                return getattr(self, args[0])
-        else:
-            return getattr(self, operation)(*args, **kwargs)
 
 
 class Traceback(object):
@@ -133,11 +97,6 @@ class Traceback(object):
         """
         Convert to a builtin Traceback object that is usable for raising or rendering a stacktrace.
         """
-        if tproxy:
-            return tproxy(TracebackType, self.__tproxy__)
-        if not tb_set_next:
-            raise RuntimeError("Unsupported Python interpreter!")
-
         current = self
         top_tb = None
         tb = None
@@ -149,20 +108,12 @@ class Traceback(object):
                 code = code.replace(co_argcount=0,
                                     co_filename=f_code.co_filename, co_name=f_code.co_name,
                                     co_freevars=(), co_cellvars=())
-            elif PY3:
+            else:
                 code = CodeType(
                     0, code.co_kwonlyargcount,
                     code.co_nlocals, code.co_stacksize, code.co_flags,
                     code.co_code, code.co_consts, code.co_names, code.co_varnames,
                     f_code.co_filename, f_code.co_name,
-                    code.co_firstlineno, code.co_lnotab, (), ()
-                )
-            else:
-                code = CodeType(
-                    0,
-                    code.co_nlocals, code.co_stacksize, code.co_flags,
-                    code.co_code, code.co_consts, code.co_names, code.co_varnames,
-                    f_code.co_filename.encode(), f_code.co_name.encode(),
                     code.co_firstlineno, code.co_lnotab, (), ()
                 )
 
@@ -174,7 +125,7 @@ class Traceback(object):
                 if top_tb is None:
                     top_tb = next_tb
                 if tb is not None:
-                    tb_set_next(tb, next_tb)
+                    tb.tb_next = next_tb
                 tb = next_tb
                 del next_tb
 
@@ -185,21 +136,6 @@ class Traceback(object):
             del top_tb
             del tb
     to_traceback = as_traceback
-
-    # noinspection SpellCheckingInspection
-    def __tproxy__(self, operation, *args, **kwargs):
-        """
-        Necessary for PyPy's tproxy.
-        """
-        if operation in ('__getattribute__', '__getattr__'):
-            if args[0] == 'tb_next':
-                return self.tb_next and self.tb_next.as_traceback()
-            elif args[0] == 'tb_frame':
-                return tproxy(FrameType, self.tb_frame.__tproxy__)
-            else:
-                return getattr(self, args[0])
-        else:
-            return getattr(self, operation)(*args, **kwargs)
 
     def as_dict(self):
         """

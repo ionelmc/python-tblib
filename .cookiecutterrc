@@ -22,7 +22,7 @@ default_context:
     github_actions: yes
     github_actions_osx: yes
     github_actions_windows: yes
-    legacy_python: yes
+    legacy_python: no
     license: BSD 2-Clause License
     linter: flake8
     package_name: tblib
