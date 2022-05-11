@@ -10,29 +10,24 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor| |requires|
+      - | |github-actions| |requires|
         | |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-
-.. |docs| image:: https://codecov.io/gh/ionelmc/python-tblib/branch/master/graphs/badge.svg?branch=master
-    :target: https://readthedocs.org/projects/python-tblib
+.. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
+    :target: https://python-tblib.readthedocs.io/
     :alt: Documentation Status
 
-.. |travis| image:: https://api.travis-ci.org/ionelmc/python-tblib.svg?branch=master
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/ionelmc/python-tblib
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/python-tblib?branch=master&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/ionelmc/python-tblib
+.. |github-actions| image:: https://github.com/ionelmc/python-tblib/actions/workflows/github-actions.yml/badge.svg
+    :alt: GitHub Actions Build Status
+    :target: https://github.com/ionelmc/python-tblib/actions
 
 .. |requires| image:: https://requires.io/github/ionelmc/python-tblib/requirements.svg?branch=master
     :alt: Requirements Status
     :target: https://requires.io/github/ionelmc/python-tblib/requirements/?branch=master
 
-.. |codecov| image:: https://codecov.io/github/ionelmc/python-tblib/coverage.svg?branch=master
+.. |codecov| image:: https://codecov.io/gh/ionelmc/python-tblib/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
     :target: https://codecov.io/github/ionelmc/python-tblib
 
