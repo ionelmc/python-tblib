@@ -81,7 +81,4 @@ def install(*exc_classes_or_instances):
             if len(exc_classes_or_instances) == 1:
                 return exc
         else:
-            raise TypeError(
-                "Expected subclasses or instances of BaseException, got %s"
-                % (type(exc))
-            )
+            raise TypeError("Expected subclasses or instances of BaseException, got %s" % (type(exc)))

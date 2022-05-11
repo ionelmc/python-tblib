@@ -1,8 +1,6 @@
 import re
 import sys
 from types import CodeType
-from types import FrameType
-from types import TracebackType
 
 __version__ = '1.7.0'
 __all__ = 'Traceback', 'TracebackParseError', 'Frame', 'Code'
@@ -33,6 +31,7 @@ class Code(object):
     """
     Class that replicates just enough of the builtin Code object to enable serialization and traceback rendering.
     """
+
     co_code = None
 
     def __init__(self, code):
@@ -51,13 +50,10 @@ class Frame(object):
     """
     Class that replicates just enough of the builtin Frame object to enable serialization and traceback rendering.
     """
+
     def __init__(self, frame):
         self.f_locals = {}
-        self.f_globals = {
-            k: v
-            for k, v in frame.f_globals.items()
-            if k in ("__file__", "__name__")
-        }
+        self.f_globals = {k: v for k, v in frame.f_globals.items() if k in ("__file__", "__name__")}
         self.f_code = Code(frame.f_code)
         self.f_lineno = frame.f_lineno
 
@@ -74,6 +70,7 @@ class Traceback(object):
     """
     Class that wraps builtin Traceback objects.
     """
+
     tb_next = None
 
     def __init__(self, tb):
@@ -105,16 +102,24 @@ class Traceback(object):
             code = compile('\n' * (current.tb_lineno - 1) + 'raise __traceback_maker', current.tb_frame.f_code.co_filename, 'exec')
             if hasattr(code, "replace"):
                 # Python 3.8 and newer
-                code = code.replace(co_argcount=0,
-                                    co_filename=f_code.co_filename, co_name=f_code.co_name,
-                                    co_freevars=(), co_cellvars=())
+                code = code.replace(co_argcount=0, co_filename=f_code.co_filename, co_name=f_code.co_name, co_freevars=(), co_cellvars=())
             else:
                 code = CodeType(
-                    0, code.co_kwonlyargcount,
-                    code.co_nlocals, code.co_stacksize, code.co_flags,
-                    code.co_code, code.co_consts, code.co_names, code.co_varnames,
-                    f_code.co_filename, f_code.co_name,
-                    code.co_firstlineno, code.co_lnotab, (), ()
+                    0,
+                    code.co_kwonlyargcount,
+                    code.co_nlocals,
+                    code.co_stacksize,
+                    code.co_flags,
+                    code.co_code,
+                    code.co_consts,
+                    code.co_names,
+                    code.co_varnames,
+                    f_code.co_filename,
+                    f_code.co_name,
+                    code.co_firstlineno,
+                    code.co_lnotab,
+                    (),
+                    (),
                 )
 
             # noinspection PyBroadException
@@ -135,6 +140,7 @@ class Traceback(object):
         finally:
             del top_tb
             del tb
+
     to_traceback = as_traceback
 
     def as_dict(self):
@@ -161,6 +167,7 @@ class Traceback(object):
             'tb_lineno': self.tb_lineno,
             'tb_next': tb_next,
         }
+
     to_dict = as_dict
 
     @classmethod

@@ -64,7 +64,9 @@ setup(
         'Issue Tracker': 'https://github.com/ionelmc/python-tblib/issues',
     },
     keywords=[
-        'traceback', 'debugging', 'exceptions',
+        'traceback',
+        'debugging',
+        'exceptions',
     ],
     python_requires='>=3.7',
     install_requires=[

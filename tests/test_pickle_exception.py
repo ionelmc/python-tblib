@@ -27,9 +27,7 @@ class CustomError(Exception):
     pass
 
 
-@pytest.mark.parametrize(
-    "protocol", [None] + list(range(1, pickle.HIGHEST_PROTOCOL + 1))
-)
+@pytest.mark.parametrize("protocol", [None] + list(range(1, pickle.HIGHEST_PROTOCOL + 1)))
 @pytest.mark.parametrize("how", ["global", "instance", "class"])
 def test_install(clear_dispatch_table, how, protocol):
     if how == "global":

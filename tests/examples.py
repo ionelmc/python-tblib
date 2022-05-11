@@ -16,9 +16,11 @@ def func_d():
 
 def bad_syntax():
     import badsyntax
+
     badsyntax
 
 
 def bad_module():
     import badmodule
+
     badmodule
