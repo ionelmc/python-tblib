@@ -94,3 +94,22 @@ def test_install_decorator():
 def test_install_typeerror():
     with pytest.raises(TypeError):
         tblib.pickling_support.install("foo")
+
+
+def test_tracebackhide():
+    tblib.pickling_support.install()
+
+    def temp():
+        __tracebackhide__ = True
+        raise RuntimeError("oops!")
+
+    with pytest.raises(RuntimeError) as ewrap:
+        temp()
+    exc = ewrap.value
+    exc.__traceback__.tb_next.tb_frame
+    e2 = pickle.loads(pickle.dumps(exc))
+
+    assert e2.__traceback__.tb_next.tb_frame.f_locals == {"__tracebackhide__": True}
+    from tblib import Traceback
+
+    assert Traceback.from_dict(Traceback(exc.__traceback__).as_dict()).tb_next.tb_frame.f_locals == {"__tracebackhide__": True}

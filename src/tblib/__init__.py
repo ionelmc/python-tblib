@@ -46,6 +46,13 @@ class Code(object):
         self.co_firstlineno = 0
 
 
+def _frame_flocals(frame):
+    f_locals = {}
+    if "__tracebackhide__" in frame.f_locals:
+        f_locals["__tracebackhide__"] = bool(frame.f_locals["__tracebackhide__"])
+    return f_locals
+
+
 class Frame(object):
     """
     Class that replicates just enough of the builtin Frame object to enable serialization and traceback rendering.
@@ -53,6 +60,7 @@ class Frame(object):
 
     def __init__(self, frame):
         self.f_locals = {}
+        self.f_locals = _frame_flocals(frame)
         self.f_globals = {k: v for k, v in frame.f_globals.items() if k in ("__file__", "__name__")}
         self.f_code = Code(frame.f_code)
         self.f_lineno = frame.f_lineno
@@ -124,7 +132,7 @@ class Traceback(object):
 
             # noinspection PyBroadException
             try:
-                exec(code, dict(current.tb_frame.f_globals), {})
+                exec(code, dict(current.tb_frame.f_globals), dict(current.tb_frame.f_locals))
             except Exception:
                 next_tb = sys.exc_info()[2].tb_next
                 if top_tb is None:
@@ -159,6 +167,7 @@ class Traceback(object):
         }
         frame = {
             'f_globals': self.tb_frame.f_globals,
+            'f_locals': _frame_flocals(self.tb_frame),
             'f_code': code,
             'f_lineno': self.tb_frame.f_lineno,
         }
@@ -186,6 +195,7 @@ class Traceback(object):
         )
         frame = _AttrDict(
             f_globals=dct['tb_frame']['f_globals'],
+            f_locals=dct['tb_frame'].get('f_locals', {}),
             f_code=code,
             f_lineno=dct['tb_frame']['f_lineno'],
         )
