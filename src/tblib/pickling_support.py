@@ -22,9 +22,11 @@ def pickle_traceback(tb):
     return unpickle_traceback, (Frame(tb.tb_frame), tb.tb_lineno, tb.tb_next and Traceback(tb.tb_next))
 
 
-def unpickle_exception(func, args, cause, tb):
+def unpickle_exception(func, args, cause, context, suppress, tb):
     inst = func(*args)
     inst.__cause__ = cause
+    inst.__context__ = context
+    inst.__suppress_context__ = suppress
     inst.__traceback__ = tb
     return inst
 
@@ -42,7 +44,7 @@ def pickle_exception(obj):
         raise TypeError("str __reduce__ output is not supported")
     assert isinstance(rv, tuple) and len(rv) >= 2
 
-    return (unpickle_exception, rv[:2] + (obj.__cause__, obj.__traceback__)) + rv[2:]
+    return (unpickle_exception, rv[:2] + (obj.__cause__, obj.__context__, obj.__suppress_context__, obj.__traceback__)) + rv[2:]
 
 
 def _get_subclasses(cls):
