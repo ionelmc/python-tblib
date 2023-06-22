@@ -2,6 +2,12 @@
 Changelog
 =========
 
+2.0.0 (2023-06-22)
+~~~~~~~~~~~~~~~~~~
+
+* Removed support for legacy Pythons (2.7 and 3.6) and added Python 3.11 in the test grid.
+* Some cleanups and refactors (mostly from ruff).
+
 1.7.0 (2020-07-24)
 ~~~~~~~~~~~~~~~~~~
 
