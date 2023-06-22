@@ -2,7 +2,6 @@ import pickle
 import sys
 
 import pytest
-import six
 
 from tblib import pickling_support
 
@@ -21,7 +20,8 @@ def test_30():
 
     f = None
     try:
-        six.reraise(*pickle.loads(s))
+        etype, evalue, etb = pickle.loads(s)
+        raise evalue.with_traceback(etb)
     except ValueError:
         f = Failure()
 

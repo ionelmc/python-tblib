@@ -63,8 +63,6 @@ KeyboardInterrupt"""
 def test_pytest_integration(testdir):
     test = testdir.makepyfile(
         """
-import six
-
 from tblib import Traceback
 
 def test_raise():
@@ -78,7 +76,7 @@ Traceback (most recent call last):
   File "file4", line 456, in ""
 ''')
     pytb = tb1.as_traceback()
-    six.reraise(RuntimeError, RuntimeError(), pytb)
+    raise RuntimeError().with_traceback(pytb)
 """
     )
 
@@ -116,7 +114,7 @@ Traceback (most recent call last):
     result.stdout.fnmatch_lines(
         [
             'test_pytest_integration.py:*: in test_raise',
-            '    six.reraise(RuntimeError, RuntimeError(), pytb)',
+            '    raise RuntimeError().with_traceback(pytb)',
             'file1:123: in <module>',
             '    ???',
             'file2:234: in ???',
@@ -143,7 +141,7 @@ Traceback (most recent call last):
         [
             'Traceback (most recent call last):',
             '  File "*test_pytest_integration.py", line *, in test_raise',
-            '    six.reraise(RuntimeError, RuntimeError(), pytb)',
+            '    raise RuntimeError().with_traceback(pytb)',
             '  File "file1", line 123, in <module>',
             '  File "file2", line 234, in ???',
             '  File "file3", line 345, in function3',
