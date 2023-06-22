@@ -31,27 +31,27 @@ KeyboardInterrupt"""
     tb2 = Traceback(pytb)
 
     expected_dict = {
-        "tb_frame": {
-            "f_code": {"co_filename": "file1", "co_name": "<module>"},
-            "f_globals": {"__file__": "file1", "__name__": "?"},
-            "f_lineno": 123,
+        'tb_frame': {
+            'f_code': {'co_filename': 'file1', 'co_name': '<module>'},
+            'f_globals': {'__file__': 'file1', '__name__': '?'},
+            'f_lineno': 123,
         },
-        "tb_lineno": 123,
-        "tb_next": {
-            "tb_frame": {
-                "f_code": {"co_filename": "file2", "co_name": "???"},
-                "f_globals": {"__file__": "file2", "__name__": "?"},
-                "f_lineno": 234,
+        'tb_lineno': 123,
+        'tb_next': {
+            'tb_frame': {
+                'f_code': {'co_filename': 'file2', 'co_name': '???'},
+                'f_globals': {'__file__': 'file2', '__name__': '?'},
+                'f_lineno': 234,
             },
-            "tb_lineno": 234,
-            "tb_next": {
-                "tb_frame": {
-                    "f_code": {"co_filename": "file3", "co_name": "function3"},
-                    "f_globals": {"__file__": "file3", "__name__": "?"},
-                    "f_lineno": 345,
+            'tb_lineno': 234,
+            'tb_next': {
+                'tb_frame': {
+                    'f_code': {'co_filename': 'file3', 'co_name': 'function3'},
+                    'f_globals': {'__file__': 'file3', '__name__': '?'},
+                    'f_lineno': 345,
                 },
-                "tb_lineno": 345,
-                "tb_next": None,
+                'tb_lineno': 345,
+                'tb_next': None,
             },
         },
     }
@@ -87,28 +87,28 @@ Traceback (most recent call last):
     result = testdir.runpytest_subprocess('--tb=long', '-vv', test)
     result.stdout.fnmatch_lines(
         [
-            "_ _ _ _ _ _ _ _ *",
-            "",
-            ">   [?][?][?]",
-            "",
-            "file1:123:*",
-            "_ _ _ _ _ _ _ _ *",
-            "",
-            ">   [?][?][?]",
-            "",
-            "file2:234:*",
-            "_ _ _ _ _ _ _ _ *",
-            "",
-            ">   [?][?][?]",
-            "",
-            "file3:345:*",
-            "_ _ _ _ _ _ _ _ *",
-            "",
-            ">   [?][?][?]",
-            "E   RuntimeError",
-            "",
-            "file4:456: RuntimeError",
-            "===*=== 1 failed in * ===*===",
+            '_ _ _ _ _ _ _ _ *',
+            '',
+            '>   [?][?][?]',
+            '',
+            'file1:123:*',
+            '_ _ _ _ _ _ _ _ *',
+            '',
+            '>   [?][?][?]',
+            '',
+            'file2:234:*',
+            '_ _ _ _ _ _ _ _ *',
+            '',
+            '>   [?][?][?]',
+            '',
+            'file3:345:*',
+            '_ _ _ _ _ _ _ _ *',
+            '',
+            '>   [?][?][?]',
+            'E   RuntimeError',
+            '',
+            'file4:456: RuntimeError',
+            '===*=== 1 failed in * ===*===',
         ]
     )
 
@@ -132,9 +132,9 @@ Traceback (most recent call last):
     result = testdir.runpytest_subprocess('--tb=line', '-vv', test)
     result.stdout.fnmatch_lines(
         [
-            "===*=== FAILURES ===*===",
-            "file4:456: RuntimeError",
-            "===*=== 1 failed in * ===*===",
+            '===*=== FAILURES ===*===',
+            'file4:456: RuntimeError',
+            '===*=== 1 failed in * ===*===',
         ]
     )
 

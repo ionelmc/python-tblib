@@ -27,7 +27,7 @@ class TracebackParseError(Exception):
     pass
 
 
-class Code(object):
+class Code:
     """
     Class that replicates just enough of the builtin Code object to enable serialization and traceback rendering.
     """
@@ -46,14 +46,14 @@ class Code(object):
         self.co_firstlineno = 0
 
 
-class Frame(object):
+class Frame:
     """
     Class that replicates just enough of the builtin Frame object to enable serialization and traceback rendering.
     """
 
     def __init__(self, frame):
         self.f_locals = {}
-        self.f_globals = {k: v for k, v in frame.f_globals.items() if k in ("__file__", "__name__")}
+        self.f_globals = {k: v for k, v in frame.f_globals.items() if k in ('__file__', '__name__')}
         self.f_code = Code(frame.f_code)
         self.f_lineno = frame.f_lineno
 
@@ -66,7 +66,7 @@ class Frame(object):
         """
 
 
-class Traceback(object):
+class Traceback:
     """
     Class that wraps builtin Traceback objects.
     """
@@ -100,7 +100,7 @@ class Traceback(object):
         while current:
             f_code = current.tb_frame.f_code
             code = compile('\n' * (current.tb_lineno - 1) + 'raise __traceback_maker', current.tb_frame.f_code.co_filename, 'exec')
-            if hasattr(code, "replace"):
+            if hasattr(code, 'replace'):
                 # Python 3.8 and newer
                 code = code.replace(co_argcount=0, co_filename=f_code.co_filename, co_name=f_code.co_name, co_freevars=(), co_cellvars=())
             else:
@@ -237,4 +237,4 @@ class Traceback(object):
                 )
             return cls(previous)
         else:
-            raise TracebackParseError("Could not find any frames in %r." % string)
+            raise TracebackParseError('Could not find any frames in %r.' % string)

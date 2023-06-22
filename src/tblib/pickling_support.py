@@ -39,8 +39,9 @@ def pickle_exception(obj):
     # still be pickled with protocol 5 if pickle.dump() is running with it.
     rv = obj.__reduce_ex__(3)
     if isinstance(rv, str):
-        raise TypeError("str __reduce__ output is not supported")
-    assert isinstance(rv, tuple) and len(rv) >= 2
+        raise TypeError('str __reduce__ output is not supported')
+    assert isinstance(rv, tuple)
+    assert len(rv) >= 2
 
     return (unpickle_exception, rv[:2] + (obj.__cause__, obj.__traceback__)) + rv[2:]
 
@@ -81,4 +82,4 @@ def install(*exc_classes_or_instances):
             if len(exc_classes_or_instances) == 1:
                 return exc
         else:
-            raise TypeError("Expected subclasses or instances of BaseException, got %s" % (type(exc)))
+            raise TypeError('Expected subclasses or instances of BaseException, got %s' % (type(exc)))

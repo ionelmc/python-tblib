@@ -4,7 +4,7 @@ import sys
 import pytest
 import six
 
-from tblib import pickling_support  # noqa: E402
+from tblib import pickling_support
 
 pytest.importorskip('twisted')
 

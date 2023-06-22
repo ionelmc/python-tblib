@@ -6,7 +6,7 @@ from six import reraise
 from . import Traceback
 
 
-class Error(object):
+class Error:
     def __init__(self, exc_type, exc_value, traceback):
         self.exc_type = exc_type
         self.exc_value = exc_value
