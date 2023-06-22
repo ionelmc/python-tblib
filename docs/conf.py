@@ -19,7 +19,7 @@ project = 'tblib'
 year = '2013-2022'
 author = 'Ionel Cristian Mărieș'
 copyright = f'{year}, {author}'
-version = release = '1.7.0'
+version = release = '2.0.0'
 
 pygments_style = 'trac'
 templates_path = ['.']
