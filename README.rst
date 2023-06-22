@@ -23,13 +23,9 @@ Overview
     :alt: GitHub Actions Build Status
     :target: https://github.com/ionelmc/python-tblib/actions
 
-.. |requires| image:: https://requires.io/github/ionelmc/python-tblib/requirements.svg?branch=master
-    :alt: Requirements Status
-    :target: https://requires.io/github/ionelmc/python-tblib/requirements/?branch=master
-
 .. |codecov| image:: https://codecov.io/gh/ionelmc/python-tblib/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
-    :target: https://codecov.io/github/ionelmc/python-tblib
+    :target: https://app.codecov.io/github/ionelmc/python-tblib
 
 .. |version| image:: https://img.shields.io/pypi/v/tblib.svg
     :alt: PyPI Package latest release

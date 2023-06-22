@@ -10,13 +10,13 @@ jobs:
       matrix:
         include:
           - name: 'check'
-            python: '3.9'
-            toxpython: 'python3.9'
+            python: '3.11'
+            toxpython: 'python3.11'
             tox_env: 'check'
             os: 'ubuntu-latest'
           - name: 'docs'
-            python: '3.9'
-            toxpython: 'python3.9'
+            python: '3.11'
+            toxpython: 'python3.11'
             tox_env: 'docs'
             os: 'ubuntu-latest'
           - name: 'py37 (ubuntu)'
@@ -91,6 +91,24 @@ jobs:
             python_arch: 'x64'
             tox_env: 'py310'
             os: 'macos-latest'
+          - name: 'py311 (ubuntu)'
+            python: '3.11'
+            toxpython: 'python3.11'
+            python_arch: 'x64'
+            tox_env: 'py311'
+            os: 'ubuntu-latest'
+          - name: 'py311 (windows)'
+            python: '3.11'
+            toxpython: 'python3.11'
+            python_arch: 'x64'
+            tox_env: 'py311'
+            os: 'windows-latest'
+          - name: 'py311 (macos)'
+            python: '3.11'
+            toxpython: 'python3.11'
+            python_arch: 'x64'
+            tox_env: 'py311'
+            os: 'macos-latest'
           - name: 'pypy37 (ubuntu)'
             python: 'pypy-3.7'
             toxpython: 'pypy3.7'
@@ -127,11 +145,29 @@ jobs:
             python_arch: 'x64'
             tox_env: 'pypy38'
             os: 'macos-latest'
+          - name: 'pypy39 (ubuntu)'
+            python: 'pypy-3.9'
+            toxpython: 'pypy3.9'
+            python_arch: 'x64'
+            tox_env: 'pypy39'
+            os: 'ubuntu-latest'
+          - name: 'pypy39 (windows)'
+            python: 'pypy-3.9'
+            toxpython: 'pypy3.9'
+            python_arch: 'x64'
+            tox_env: 'pypy39'
+            os: 'windows-latest'
+          - name: 'pypy39 (macos)'
+            python: 'pypy-3.9'
+            toxpython: 'pypy3.9'
+            python_arch: 'x64'
+            tox_env: 'pypy39'
+            os: 'macos-latest'
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.python_arch }}
