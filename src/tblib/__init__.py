@@ -15,7 +15,7 @@ class _AttrDict(dict):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError(name)
+            raise AttributeError(name) from None
 
 
 # noinspection PyPep8Naming
@@ -124,7 +124,7 @@ class Traceback:
 
             # noinspection PyBroadException
             try:
-                exec(code, dict(current.tb_frame.f_globals), {})
+                exec(code, dict(current.tb_frame.f_globals), {})  # noqa: S102
             except Exception:
                 next_tb = sys.exc_info()[2].tb_next
                 if top_tb is None:

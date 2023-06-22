@@ -18,7 +18,7 @@ has_python3 = sys.version_info.major >= 3
 def clear_dispatch_table():
     bak = copyreg.dispatch_table.copy()
     copyreg.dispatch_table.clear()
-    yield
+    yield None
     copyreg.dispatch_table.clear()
     copyreg.dispatch_table.update(bak)
 
@@ -37,7 +37,7 @@ def test_install(clear_dispatch_table, how, protocol):
 
     try:
         try:
-            1 / 0
+            1 / 0  # noqa: B018
         except Exception as e:
             # Python 3 only syntax
             # raise CustomError("foo") from e

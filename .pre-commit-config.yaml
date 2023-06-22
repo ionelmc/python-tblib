@@ -2,7 +2,7 @@
 #   pre-commit install --install-hooks
 # To update the versions:
 #   pre-commit autoupdate
-exclude: '^(\.tox|ci/templates|\.bumpversion\.cfg)(/|$)'
+exclude: '^(\.tox|ci/templates|\.bumpversion\.cfg|tests/bad.*.py)(/|$)'
 # Note the order is intentional to avoid multiple passes of the hooks
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit

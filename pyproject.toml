@@ -12,6 +12,7 @@ extend-exclude = ["static", "ci/templates"]
 ignore = [
     "RUF001", # ruff-specific rules ambiguous-unicode-character-string
     "S101", # flake8-bandit assert
+    "S301", # flake8-bandit pickle
     "S308", # flake8-bandit suspicious-mark-safe-usage
     "E501", # pycodestyle line-too-long
 ]
