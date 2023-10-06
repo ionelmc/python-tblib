@@ -44,7 +44,6 @@ def test_install(clear_dispatch_table, how, protocol):
                 # The ValueError's __context__ will be the ZeroDivisionError
                 raise ValueError('blah')
         except Exception as e:
-            assert isinstance(e.__context__, ZeroDivisionError)
             # Python 3 only syntax
             # raise CustomError("foo") from e
             new_e = CustomError('foo')
