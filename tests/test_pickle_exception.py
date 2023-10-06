@@ -42,7 +42,7 @@ def test_install(clear_dispatch_table, how, protocol):
                 1 / 0  # noqa: B018
             finally:
                 # The ValueError's __context__ will be the ZeroDivisionError
-                raise ValueError("blah")
+                raise ValueError('blah')
         except Exception as e:
             assert isinstance(e.__context__, ZeroDivisionError)
             # Python 3 only syntax
@@ -51,8 +51,8 @@ def test_install(clear_dispatch_table, how, protocol):
             if has_python3:
                 new_e.__cause__ = e
                 if has_python311:
-                    new_e.add_note("note 1")
-                    new_e.add_note("note 2")
+                    new_e.add_note('note 1')
+                    new_e.add_note('note 2')
             raise new_e
     except Exception as e:
         exc = e
@@ -87,9 +87,7 @@ def test_install(clear_dispatch_table, how, protocol):
         assert exc.__cause__.__context__.__context__ is None
 
         if has_python311:
-            assert exc.__notes__ == ["note 1", "note 2"]
-
-
+            assert exc.__notes__ == ['note 1', 'note 2']
 
 
 @tblib.pickling_support.install
@@ -111,21 +109,15 @@ def test_install_decorator():
         assert exc.__traceback__ is not None
 
 
-@pytest.mark.skipif(not has_python311, reason="no BaseExceptionGroup before Python 3.11")
+@pytest.mark.skipif(not has_python311, reason='no BaseExceptionGroup before Python 3.11')
 def test_install_instance_recursively(clear_dispatch_table):
-    exc = BaseExceptionGroup(
-        "test",
-        [
-            ValueError("foo"),
-            CustomError("bar")
-        ]
-    )
-    exc.exceptions[0].__cause__ = ZeroDivisionError("baz")
-    exc.exceptions[0].__cause__.__context__ = AttributeError("quux")
+    exc = BaseExceptionGroup('test', [ValueError('foo'), CustomError('bar')])
+    exc.exceptions[0].__cause__ = ZeroDivisionError('baz')
+    exc.exceptions[0].__cause__.__context__ = AttributeError('quux')
 
     tblib.pickling_support.install(exc)
 
-    installed = set(c for c in copyreg.dispatch_table if issubclass(c, BaseException))
+    installed = {c for c in copyreg.dispatch_table if issubclass(c, BaseException)}
     assert installed == {ExceptionGroup, ValueError, CustomError, ZeroDivisionError, AttributeError}
 
 
