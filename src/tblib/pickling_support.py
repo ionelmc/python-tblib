@@ -51,13 +51,14 @@ def pickle_exception(obj):
 
     return (
         unpickle_exception,
-        rv[:2] + (
+        rv[:2]
+        + (
             obj.__cause__,
             obj.__traceback__,
             obj.__context__,
             obj.__suppress_context__,
             # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
-            getattr(obj, "__notes__", None),
+            getattr(obj, '__notes__', None),
         ),
     ) + rv[2:]
 
@@ -98,6 +99,7 @@ def install(*exc_classes_or_instances):
         else:
             raise TypeError('Expected subclasses or instances of BaseException, got %s' % (type(exc)))
 
+
 def _install_for_instance(exc, seen):
     assert isinstance(exc, BaseException)
 
@@ -117,7 +119,7 @@ def _install_for_instance(exc, seen):
 
     # This case is meant to cover BaseExceptionGroup on Python 3.11 as well as backports like the
     # exceptiongroup module
-    if hasattr(exc, "exceptions") and isinstance(exc.exceptions, (tuple, list)):
+    if hasattr(exc, 'exceptions') and isinstance(exc.exceptions, (tuple, list)):
         for subexc in exc.exceptions:
             if isinstance(subexc, BaseException):
                 _install_for_instance(subexc, seen)
