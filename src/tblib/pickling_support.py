@@ -22,20 +22,20 @@ def pickle_traceback(tb):
     return unpickle_traceback, (Frame(tb.tb_frame), tb.tb_lineno, tb.tb_next and Traceback(tb.tb_next))
 
 
-# unpickle_exception_3_11() / pickle_exception_3_11() are used in Python 3.11 and newer
-
-def unpickle_exception_3_11(func, args, cause, context, notes, suppress_context, tb):
+# Note: Older versions of tblib will generate pickle archives that call unpickle_exception() with
+# fewer arguments. We assign default values to some of the arguments to support this.
+def unpickle_exception(func, args, cause, tb, context=None, suppress_context=False, notes=None):
     inst = func(*args)
     inst.__cause__ = cause
+    inst.__traceback__ = tb
     inst.__context__ = context
+    inst.__suppress_context__ = suppress_context
     if notes is not None:
         inst.__notes__ = notes
-    inst.__suppress_context__ = suppress_context
-    inst.__traceback__ = tb
     return inst
 
 
-def pickle_exception_3_11(obj):
+def pickle_exception(obj):
     # All exceptions, unlike generic Python objects, define __reduce_ex__
     # __reduce_ex__(4) should be no different from __reduce_ex__(3).
     # __reduce_ex__(5) could bring benefits in the unlikely case the exception
@@ -50,46 +50,16 @@ def pickle_exception_3_11(obj):
     assert len(rv) >= 2
 
     return (
-        unpickle_exception_3_11,
+        unpickle_exception,
         rv[:2] + (
             obj.__cause__,
-            obj.__context__,
-            getattr(obj, "__notes__", None),
-            obj.__suppress_context__,
             obj.__traceback__,
+            obj.__context__,
+            obj.__suppress_context__,
+            # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
+            getattr(obj, "__notes__", None),
         ),
     ) + rv[2:]
-
-
-# unpickle_exception() / pickle_exception() are used on Python 3.10 and older; or when deserializing
-# old Pickle archives created by Python 3.10 and older.
-
-def unpickle_exception(func, args, cause, tb):
-    inst = func(*args)
-    inst.__cause__ = cause
-    inst.__traceback__ = tb
-    return inst
-
-
-def pickle_exception(obj):
-    rv = obj.__reduce_ex__(3)
-    if isinstance(rv, str):
-        raise TypeError('str __reduce__ output is not supported')
-    assert isinstance(rv, tuple)
-    assert len(rv) >= 2
-
-    # NOTE: The __context__ and __suppress_context__ attributes actually existed prior to Python
-    # 3.11, so in theory we should support them here. But existing Pickle archives might refer to
-    # unpickle_exception(), so we need to keep it around anyway; and it's not worth the trouble
-    # introducing a third pair of pickling/unpickling functions.
-
-    return (unpickle_exception, rv[:2] + (obj.__cause__, obj.__traceback__)) + rv[2:]
-
-
-if sys.version_info >= (3, 11):
-    pickle_exception_latest = pickle_exception_3_11
-else:
-    pickle_exception_latest = pickle_exception
 
 
 def _get_subclasses(cls):
@@ -114,14 +84,14 @@ def install(*exc_classes_or_instances):
 
     if not exc_classes_or_instances:
         for exception_cls in _get_subclasses(BaseException):
-            copyreg.pickle(exception_cls, pickle_exception_latest)
+            copyreg.pickle(exception_cls, pickle_exception)
         return
 
     for exc in exc_classes_or_instances:
         if isinstance(exc, BaseException):
             _install_for_instance(exc, set())
         elif isinstance(exc, type) and issubclass(exc, BaseException):
-            copyreg.pickle(exc, pickle_exception_latest)
+            copyreg.pickle(exc, pickle_exception)
             # Allow using @install as a decorator for Exception classes
             if len(exc_classes_or_instances) == 1:
                 return exc
@@ -138,7 +108,7 @@ def _install_for_instance(exc, seen):
         return
     seen.add(id(exc))
 
-    copyreg.pickle(type(exc), pickle_exception_latest)
+    copyreg.pickle(type(exc), pickle_exception)
 
     if exc.__cause__ is not None:
         _install_for_instance(exc.__cause__, seen)
