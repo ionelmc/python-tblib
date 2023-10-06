@@ -41,9 +41,10 @@ def test_install(clear_dispatch_table, how, protocol):
             try:
                 1 / 0  # noqa: B018
             finally:
-                # In Python 3, the ValueError's __context__ will be the ZeroDivisionError
+                # The ValueError's __context__ will be the ZeroDivisionError
                 raise ValueError("blah")
         except Exception as e:
+            assert isinstance(e.__context__, ZeroDivisionError)
             # Python 3 only syntax
             # raise CustomError("foo") from e
             new_e = CustomError('foo')
@@ -74,16 +75,20 @@ def test_install(clear_dispatch_table, how, protocol):
     assert exc.x == 1
     if has_python3:
         assert exc.__traceback__ is not None
+
         assert isinstance(exc.__cause__, ValueError)
         assert exc.__cause__.__traceback__ is not None
         assert exc.__cause__.x == 2
         assert exc.__cause__.__cause__ is None
+
+        assert isinstance(exc.__cause__.__context__, ZeroDivisionError)
+        assert exc.__cause__.__context__.x == 3
+        assert exc.__cause__.__context__.__cause__ is None
+        assert exc.__cause__.__context__.__context__ is None
+
         if has_python311:
             assert exc.__notes__ == ["note 1", "note 2"]
-            assert isinstance(exc.__cause__.__context__, ZeroDivisionError)
-            assert exc.__cause__.__context__.x == 3
-            assert exc.__cause__.__context__.__cause__ is None
-            assert exc.__cause__.__context__.__context__ is None
+
 
 
 
@@ -106,7 +111,7 @@ def test_install_decorator():
         assert exc.__traceback__ is not None
 
 
-@pytest.mark.skipif(sys.version_info < (3,11), reason="no BaseExceptionGroup before Python 3.11")
+@pytest.mark.skipif(not has_python311, reason="no BaseExceptionGroup before Python 3.11")
 def test_install_instance_recursively(clear_dispatch_table):
     exc = BaseExceptionGroup(
         "test",
