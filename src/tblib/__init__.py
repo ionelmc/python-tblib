@@ -49,6 +49,12 @@ class Code:
 class Frame:
     """
     Class that replicates just enough of the builtin Frame object to enable serialization and traceback rendering.
+
+    Args:
+
+        get_locals (callable): A function that take a frame argument and returns a dict.
+
+            See :class:`Traceback` class for example.
     """
 
     def __init__(self, frame, *, get_locals=None):
@@ -69,6 +75,21 @@ class Frame:
 class Traceback:
     """
     Class that wraps builtin Traceback objects.
+
+    Args:
+        get_locals (callable): A function that take a frame argument and returns a dict.
+
+            Ideally you will only return exactly what you need, and only with simple types that can be json serializable.
+
+            Example:
+
+            .. code:: python
+
+                def get_locals(frame):
+                    if frame.f_locals.get("__tracebackhide__"):
+                        return {"__tracebackhide__": True}
+                    else:
+                        return {}
     """
 
     tb_next = None

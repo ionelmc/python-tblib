@@ -73,6 +73,11 @@ def _get_subclasses(cls):
 
 
 def install(*exc_classes_or_instances, get_locals=None):
+    """
+    Args:
+
+        get_locals (callable): A function that take a frame argument and returns a dict. See :class:`tblib.Traceback` class for example.
+    """
     copyreg.pickle(TracebackType, partial(pickle_traceback, get_locals=get_locals))
 
     if not exc_classes_or_instances:
