@@ -13,7 +13,7 @@ def read(*names, **kwargs):
 
 setup(
     name='tblib',
-    version='2.1.0',
+    version='2.0.0',
     license='BSD-2-Clause',
     description='Traceback serialization library.',
     long_description='{}\n{}'.format(
@@ -39,17 +39,17 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         # uncomment if you test on these interpreters:
-        # 'Programming Language :: Python :: Implementation :: IronPython',
-        # 'Programming Language :: Python :: Implementation :: Jython',
-        # 'Programming Language :: Python :: Implementation :: Stackless',
+        # "Programming Language :: Python :: Implementation :: IronPython",
+        # "Programming Language :: Python :: Implementation :: Jython",
+        # "Programming Language :: Python :: Implementation :: Stackless",
         'Topic :: Utilities',
     ],
     project_urls={
@@ -62,13 +62,13 @@ setup(
         'debugging',
         'exceptions',
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     install_requires=[
-        # eg: 'aspectlib==1.1.1', 'six>=1.7',
+        # eg: "aspectlib==1.1.1", "six>=1.7",
     ],
     extras_require={
         # eg:
-        #   'rst': ['docutils>=0.11'],
-        #   ':python_version=="2.6"': ['argparse'],
+        #   "rst": ["docutils>=0.11"],
+        #   ":python_version=="2.6"": ["argparse"],
     },
 )

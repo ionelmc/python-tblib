@@ -38,7 +38,7 @@ select = [
     "W", # pycodestyle warnings
 ]
 src = ["src", "tests"]
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.flake8-pytest-style]
 fixture-parentheses = false
@@ -50,7 +50,7 @@ force-single-line = true
 
 [tool.black]
 line-length = 140
-target-version = ["py37"]
+target-version = ["py38"]
 skip-string-normalization = true
 
 [tool.ruff.flake8-quotes]
