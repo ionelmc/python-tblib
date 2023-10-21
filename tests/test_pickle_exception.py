@@ -1,3 +1,5 @@
+from traceback import format_exception
+
 try:
     import copyreg
 except ImportError:
@@ -52,12 +54,14 @@ def test_install(clear_dispatch_table, how, protocol):
                 if has_python311:
                     new_e.add_note('note 1')
                     new_e.add_note('note 2')
-            raise new_e
+            raise new_e from e
     except Exception as e:
         exc = e
     else:
         raise AssertionError
 
+    expected_format_exception = ''.join(format_exception(type(exc), exc, exc.__traceback__))
+    print(expected_format_exception)
     # Populate Exception.__dict__, which is used in some cases
     exc.x = 1
     if has_python3:
@@ -87,6 +91,8 @@ def test_install(clear_dispatch_table, how, protocol):
 
         if has_python311:
             assert exc.__notes__ == ['note 1', 'note 2']
+
+    assert expected_format_exception == ''.join(format_exception(type(exc), exc, exc.__traceback__))
 
 
 @tblib.pickling_support.install
