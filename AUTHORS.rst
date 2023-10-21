@@ -10,4 +10,6 @@ Authors
 * Elliott Sales de Andrade - https://github.com/QuLogic
 * Victor Stinner - https://github.com/vstinner
 * Guido Imperiale - https://github.com/crusaderky
-* Ivanq - https://github.com/imachug
+* Alisa Sireneva - https://github.com/purplesyringa
+* Michał Górny - https://github.com/mgorny
+* Tim Maxwell - https://github.com/tmaxwell-anthropic
