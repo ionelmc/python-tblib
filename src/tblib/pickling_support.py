@@ -1,13 +1,9 @@
-import sys
+import copyreg
+from functools import partial
 from types import TracebackType
 
 from . import Frame
 from . import Traceback
-
-if sys.version_info.major >= 3:
-    import copyreg
-else:
-    import copy_reg as copyreg
 
 
 def unpickle_traceback(tb_frame, tb_lineno, tb_next):
@@ -18,8 +14,12 @@ def unpickle_traceback(tb_frame, tb_lineno, tb_next):
     return ret.as_traceback()
 
 
-def pickle_traceback(tb):
-    return unpickle_traceback, (Frame(tb.tb_frame), tb.tb_lineno, tb.tb_next and Traceback(tb.tb_next))
+def pickle_traceback(tb, *, get_locals=None):
+    return unpickle_traceback, (
+        Frame(tb.tb_frame, get_locals=get_locals),
+        tb.tb_lineno,
+        tb.tb_next and Traceback(tb.tb_next, get_locals=get_locals),
+    )
 
 
 # Note: Older versions of tblib will generate pickle archives that call unpickle_exception() with
@@ -72,16 +72,8 @@ def _get_subclasses(cls):
         to_visit += list(this.__subclasses__())
 
 
-def install(*exc_classes_or_instances):
-    copyreg.pickle(TracebackType, pickle_traceback)
-
-    if sys.version_info.major < 3:
-        # Dummy decorator?
-        if len(exc_classes_or_instances) == 1:
-            exc = exc_classes_or_instances[0]
-            if isinstance(exc, type) and issubclass(exc, BaseException):
-                return exc
-        return
+def install(*exc_classes_or_instances, get_locals=None):
+    copyreg.pickle(TracebackType, partial(pickle_traceback, get_locals=get_locals))
 
     if not exc_classes_or_instances:
         for exception_cls in _get_subclasses(BaseException):

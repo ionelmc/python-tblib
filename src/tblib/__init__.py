@@ -51,8 +51,8 @@ class Frame:
     Class that replicates just enough of the builtin Frame object to enable serialization and traceback rendering.
     """
 
-    def __init__(self, frame):
-        self.f_locals = {}
+    def __init__(self, frame, *, get_locals=None):
+        self.f_locals = {} if get_locals is None else get_locals(frame)
         self.f_globals = {k: v for k, v in frame.f_globals.items() if k in ('__file__', '__name__')}
         self.f_code = Code(frame.f_code)
         self.f_lineno = frame.f_lineno
@@ -73,9 +73,8 @@ class Traceback:
 
     tb_next = None
 
-    def __init__(self, tb):
-        self.tb_frame = Frame(tb.tb_frame)
-        # noinspection SpellCheckingInspection
+    def __init__(self, tb, *, get_locals=None):
+        self.tb_frame = Frame(tb.tb_frame, get_locals=get_locals)
         self.tb_lineno = int(tb.tb_lineno)
 
         # Build in place to avoid exceeding the recursion limit
@@ -84,7 +83,7 @@ class Traceback:
         cls = type(self)
         while tb is not None:
             traceback = object.__new__(cls)
-            traceback.tb_frame = Frame(tb.tb_frame)
+            traceback.tb_frame = Frame(tb.tb_frame, get_locals=get_locals)
             traceback.tb_lineno = int(tb.tb_lineno)
             prev_traceback.tb_next = traceback
             prev_traceback = traceback
@@ -124,7 +123,7 @@ class Traceback:
 
             # noinspection PyBroadException
             try:
-                exec(code, dict(current.tb_frame.f_globals), {})  # noqa: S102
+                exec(code, dict(current.tb_frame.f_globals), dict(current.tb_frame.f_locals))  # noqa: S102
             except Exception:
                 next_tb = sys.exc_info()[2].tb_next
                 if top_tb is None:
@@ -151,7 +150,7 @@ class Traceback:
         if self.tb_next is None:
             tb_next = None
         else:
-            tb_next = self.tb_next.to_dict()
+            tb_next = self.tb_next.as_dict()
 
         code = {
             'co_filename': self.tb_frame.f_code.co_filename,
@@ -159,6 +158,7 @@ class Traceback:
         }
         frame = {
             'f_globals': self.tb_frame.f_globals,
+            'f_locals': self.tb_frame.f_locals,
             'f_code': code,
             'f_lineno': self.tb_frame.f_lineno,
         }
@@ -186,6 +186,7 @@ class Traceback:
         )
         frame = _AttrDict(
             f_globals=dct['tb_frame']['f_globals'],
+            f_locals=dct['tb_frame'].get('f_locals', {}),
             f_code=code,
             f_lineno=dct['tb_frame']['f_lineno'],
         )
@@ -194,7 +195,7 @@ class Traceback:
             tb_lineno=dct['tb_lineno'],
             tb_next=tb_next,
         )
-        return cls(tb)
+        return cls(tb, get_locals=get_all_locals)
 
     @classmethod
     def from_string(cls, string, strict=True):
@@ -230,6 +231,7 @@ class Traceback:
                             __file__=frame['co_filename'],
                             __name__='?',
                         ),
+                        f_locals={},
                         f_code=_AttrDict(frame),
                         f_lineno=int(frame['tb_lineno']),
                     ),
@@ -238,3 +240,7 @@ class Traceback:
             return cls(previous)
         else:
             raise TracebackParseError('Could not find any frames in %r.' % string)
+
+
+def get_all_locals(frame):
+    return dict(frame.f_locals)
