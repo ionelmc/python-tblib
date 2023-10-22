@@ -2,6 +2,15 @@
 Changelog
 =========
 
+3.0.0 (2023-10-22)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for  ``__context__``, ``__suppress_context__`` and ``__notes__``.
+  Contributed by Tim Maxwell in `#72 <https://github.com/ionelmc/python-tblib/pull/72>`_.
+* Added the ``get_locals`` argument to ``tblib.pickling_support.install()``, ``tblib.Traceback`` and ``tblib.Frame``.
+  Fixes `#41 <https://github.com/ionelmc/python-tblib/issues/41>`_.
+* Dropped support for now-EOL Python 3.7 and added 3.12 in the test grid.
+
 2.0.0 (2023-06-22)
 ~~~~~~~~~~~~~~~~~~
 
