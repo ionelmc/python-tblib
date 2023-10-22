@@ -2,7 +2,7 @@ import re
 import sys
 from types import CodeType
 
-__version__ = '2.0.0'
+__version__ = '3.0.0'
 __all__ = 'Traceback', 'TracebackParseError', 'Frame', 'Code'
 
 FRAME_RE = re.compile(r'^\s*File "(?P<co_filename>.+)", line (?P<tb_lineno>\d+)(, in (?P<co_name>.+))?$')
