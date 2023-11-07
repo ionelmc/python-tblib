@@ -164,3 +164,95 @@ def test_get_locals(clear_dispatch_table, how, protocol):
 
     exc = pickle.loads(pickle.dumps(exc, protocol=protocol))  # noqa: S301
     assert exc.__traceback__.tb_next.tb_frame.f_locals == {'my_variable': 1}
+
+
+class CustomWithAttributesException(Exception):
+    def __init__(self, message, arg1, arg2, arg3):
+        super().__init__(message)
+        self.values12 = (arg1, arg2)
+        self.value3 = arg3
+
+
+def test_custom_with_attributes():
+    try:
+        raise CustomWithAttributesException('bar', 1, 2, 3)
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, CustomWithAttributesException)
+    assert exc.args == ('bar',)
+    assert exc.values12 == (1, 2)
+    assert exc.value3 == 3
+    assert exc.__traceback__ is not None
+
+
+class CustomReduceException(Exception):
+    def __init__(self, message, arg1, arg2, arg3):
+        super().__init__(message)
+        self.values12 = (arg1, arg2)
+        self.value3 = arg3
+
+    def __reduce__(self):
+        return self.__class__, self.args + self.values12 + (self.value3,)
+
+
+def test_custom_reduce():
+    try:
+        raise CustomReduceException('foo', 1, 2, 3)
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, CustomReduceException)
+    assert exc.args == ('foo',)
+    assert exc.values12 == (1, 2)
+    assert exc.value3 == 3
+    assert exc.__traceback__ is not None
+
+
+class CustomReduceExException(Exception):
+    def __init__(self, message, arg1, arg2, protocol):
+        super().__init__(message)
+        self.values12 = (arg1, arg2)
+        self.value3 = protocol
+
+    def __reduce_ex__(self, protocol):
+        return self.__class__, self.args + self.values12 + (self.value3,)
+
+
+@pytest.mark.parametrize('protocol', [None, *list(range(1, pickle.HIGHEST_PROTOCOL + 1))])
+def test_custom_reduce_ex(protocol):
+    try:
+        raise CustomReduceExException('foo', 1, 2, 3)
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc, protocol=protocol))
+
+    assert isinstance(exc, CustomReduceExException)
+    assert exc.args == ('foo',)
+    assert exc.values12 == (1, 2)
+    assert exc.value3 == 3
+    assert exc.__traceback__ is not None
+
+
+def test_oserror():
+    try:
+        raise OSError(13, 'Permission denied')
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, OSError)
+    assert exc.args == (13, 'Permission denied')
+    assert exc.errno == 13
+    assert exc.strerror == 'Permission denied'
+    assert exc.__traceback__ is not None
