@@ -58,7 +58,11 @@ def test_install(clear_dispatch_table, how, protocol):
     else:
         raise AssertionError
 
-    expected_format_exception = ''.join(format_exception(type(exc), exc, exc.__traceback__))
+    expected_format_exception = ''.join(format_exception(type(exc), exc, exc.__traceback__)).replace(
+        '~~^~~',
+        '^^^^^^^^^^^^^^^^^',
+    )
+
     print(expected_format_exception)
     # Populate Exception.__dict__, which is used in some cases
     exc.x = 1
