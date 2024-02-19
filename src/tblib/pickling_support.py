@@ -22,6 +22,19 @@ def pickle_traceback(tb, *, get_locals=None):
     )
 
 
+def unpickle_exception_with_new(func, args, cause, tb, context, suppress_context, notes):
+    inst = func.__new__(func)
+    if args is not None:
+        inst.args = args
+    inst.__cause__ = cause
+    inst.__traceback__ = tb
+    inst.__context__ = context
+    inst.__suppress_context__ = suppress_context
+    if notes is not None:
+        inst.__notes__ = notes
+    return inst
+
+
 # Note: Older versions of tblib will generate pickle archives that call unpickle_exception() with
 # fewer arguments. We assign default values to some of the arguments to support this.
 def unpickle_exception(func, args, cause, tb, context=None, suppress_context=False, notes=None):
@@ -49,8 +62,18 @@ def pickle_exception(obj):
     assert isinstance(rv, tuple)
     assert len(rv) >= 2
 
+    # Use __new__ whenever there is no customization by __reduce__ and
+    # __reduce_ex__. Note that OSError and descendants are known to require
+    # using a constructor, otherwise they do not set the errno, strerror and other
+    # attributes.
+    use_new = (
+        obj.__class__.__reduce__ is BaseException.__reduce__
+        and obj.__class__.__reduce_ex__ is BaseException.__reduce_ex__
+        and not isinstance(obj, OSError)
+    )
+
     return (
-        unpickle_exception,
+        unpickle_exception_with_new if use_new else unpickle_exception,
         rv[:2]
         + (
             obj.__cause__,
