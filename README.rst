@@ -146,7 +146,7 @@ Raising
 
 ::
 
-    >>> from six import reraise
+    >>> from tblib.decorators import reraise
     >>> reraise(*pickle.loads(s1))
     Traceback (most recent call last):
       ...
@@ -433,22 +433,26 @@ json.JSONDecoder::
     {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[...]>',
                              'co_name': '<module>'},
                   'f_globals': {'__name__': '__main__'},
-                  'f_lineno': 5},
+                  'f_lineno': 5,
+                  'f_locals': {}},
      'tb_lineno': 2,
      'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
                                          'co_name': 'inner_2'},
                               'f_globals': {'__name__': '__main__'},
-                              'f_lineno': 2},
+                              'f_lineno': 2,
+                              'f_locals': {}},
                  'tb_lineno': 2,
                  'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
                                                      'co_name': 'inner_1'},
                                           'f_globals': {'__name__': '__main__'},
-                                          'f_lineno': 2},
+                                          'f_lineno': 2,
+                                          'f_locals': {}},
                              'tb_lineno': 2,
                              'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
                                                                  'co_name': 'inner_0'},
                                                       'f_globals': {'__name__': '__main__'},
-                                                      'f_lineno': 2},
+                                                      'f_lineno': 2,
+                                                      'f_locals': {}},
                                          'tb_lineno': 2,
                                          'tb_next': None}}}}
 
@@ -503,7 +507,7 @@ tblib.Traceback.from_string
       File "...examples.py", line 10, in func_c
         func_d()
       File "...examples.py", line 14, in func_d
-        raise Exception("Guessing time !")
+        raise Exception('Guessing time !')
     Exception: fail
 
 
@@ -534,7 +538,7 @@ If you use the ``strict=False`` option then parsing is a bit more lax::
       File "...examples.py", line 10, in func_c
         func_d()
       File "...examples.py", line 14, in func_d
-        raise Exception("Guessing time !")
+        raise Exception('Guessing time !')
     Exception: fail
 
 tblib.decorators.return_error
@@ -607,6 +611,8 @@ Not very useful is it? Let's sort this out::
         i.reraise()
       File "...tblib...decorators.py", line ..., in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
+      File "...tblib...decorators.py", line ..., in reraise
+        raise value.with_traceback(tb)
       File "...tblib...decorators.py", line ..., in return_exceptions_wrapper
         return func(*args, **kwargs)
       File "...tblib...decorators.py", line ..., in apply_with_return_error
@@ -618,7 +624,7 @@ Not very useful is it? Let's sort this out::
       File "...examples.py", line 10, in func_c
         func_d()
       File "...examples.py", line 14, in func_d
-        raise Exception("Guessing time !")
+        raise Exception('Guessing time !')
     Exception: Guessing time !
     <BLANKLINE>
     >>> pool.terminate()
@@ -660,11 +666,13 @@ What if we have a local call stack ?
         local_0()
       File "<doctest README.rst[...]>", line 6, in local_0
         i.reraise()
-      File "...tblib...decorators.py", line 20, in reraise
+      File "...tblib...decorators.py", line ..., in reraise
         reraise(self.exc_type, self.exc_value, self.traceback)
-      File "...tblib...decorators.py", line 27, in return_exceptions_wrapper
+      File "...tblib...decorators.py", line ..., in reraise
+        raise value.with_traceback(tb)
+      File "...tblib...decorators.py", line ..., in return_exceptions_wrapper
         return func(*args, **kwargs)
-      File "...tblib...decorators.py", line 47, in apply_with_return_error
+      File "...tblib...decorators.py", line ..., in apply_with_return_error
         return args[0](*args[1:])
       File "...tests...examples.py", line 2, in func_a
         func_b()
@@ -673,7 +681,7 @@ What if we have a local call stack ?
       File "...tests...examples.py", line 10, in func_c
         func_d()
       File "...tests...examples.py", line 14, in func_d
-        raise Exception("Guessing time !")
+        raise Exception('Guessing time !')
     Exception: Guessing time !
     <BLANKLINE>
 
