@@ -1,6 +1,5 @@
 import re
 import sys
-from types import CodeType
 
 __version__ = '3.0.0'
 __all__ = 'Traceback', 'TracebackParseError', 'Frame', 'Code'
@@ -124,34 +123,14 @@ class Traceback:
         )
         while current:
             f_code = current.tb_frame.f_code
-            if hasattr(stub, 'replace'):
-                # Python 3.8 and newer
-                code = stub.replace(
-                    co_firstlineno=current.tb_lineno,
-                    co_argcount=0,
-                    co_filename=f_code.co_filename,
-                    co_name=f_code.co_name,
-                    co_freevars=(),
-                    co_cellvars=(),
-                )
-            else:
-                code = CodeType(
-                    0,
-                    stub.co_kwonlyargcount,
-                    stub.co_nlocals,
-                    stub.co_stacksize,
-                    stub.co_flags,
-                    stub.co_code,
-                    stub.co_consts,
-                    stub.co_names,
-                    stub.co_varnames,
-                    f_code.co_filename,
-                    f_code.co_name,
-                    current.tb_lineno,
-                    stub.co_lnotab,
-                    (),
-                    (),
-                )
+            code = stub.replace(
+                co_firstlineno=current.tb_lineno,
+                co_argcount=0,
+                co_filename=f_code.co_filename,
+                co_name=f_code.co_name,
+                co_freevars=(),
+                co_cellvars=(),
+            )
 
             # noinspection PyBroadException
             try:
