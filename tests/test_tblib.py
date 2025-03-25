@@ -111,6 +111,18 @@ KeyboardInterrupt"""
     assert tb4.as_dict() == tb3.as_dict() == tb2.as_dict() == tb1.as_dict() == expected_dict
 
 
+def test_large_line_number():
+    line_number = 2**31 - 1
+    tb1 = Traceback.from_string(
+        f"""
+Traceback (most recent call last):
+  File "file1", line {line_number}, in <module>
+    code1
+"""
+    ).as_traceback()
+    assert tb1.tb_lineno == line_number
+
+
 def test_pytest_integration(testdir):
     test = testdir.makepyfile(
         """
