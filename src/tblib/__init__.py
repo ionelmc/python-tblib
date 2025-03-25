@@ -117,27 +117,38 @@ class Traceback:
         current = self
         top_tb = None
         tb = None
+        stub = compile(
+            'raise __traceback_maker',
+            '<string>',
+            'exec',
+        )
         while current:
             f_code = current.tb_frame.f_code
-            code = compile('\n' * (current.tb_lineno - 1) + 'raise __traceback_maker', current.tb_frame.f_code.co_filename, 'exec')
-            if hasattr(code, 'replace'):
+            if hasattr(stub, 'replace'):
                 # Python 3.8 and newer
-                code = code.replace(co_argcount=0, co_filename=f_code.co_filename, co_name=f_code.co_name, co_freevars=(), co_cellvars=())
+                code = stub.replace(
+                    co_firstlineno=current.tb_lineno,
+                    co_argcount=0,
+                    co_filename=f_code.co_filename,
+                    co_name=f_code.co_name,
+                    co_freevars=(),
+                    co_cellvars=(),
+                )
             else:
                 code = CodeType(
                     0,
-                    code.co_kwonlyargcount,
-                    code.co_nlocals,
-                    code.co_stacksize,
-                    code.co_flags,
-                    code.co_code,
-                    code.co_consts,
-                    code.co_names,
-                    code.co_varnames,
+                    stub.co_kwonlyargcount,
+                    stub.co_nlocals,
+                    stub.co_stacksize,
+                    stub.co_flags,
+                    stub.co_code,
+                    stub.co_consts,
+                    stub.co_names,
+                    stub.co_varnames,
                     f_code.co_filename,
                     f_code.co_name,
-                    code.co_firstlineno,
-                    code.co_lnotab,
+                    current.tb_lineno,
+                    stub.co_lnotab,
                     (),
                     (),
                 )
