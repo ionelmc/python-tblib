@@ -13,3 +13,4 @@ Authors
 * Alisa Sireneva - https://github.com/purplesyringa
 * Michał Górny - https://github.com/mgorny
 * Tim Maxwell - https://github.com/tmaxwell-anthropic
+* Haoyu Weng - https://github.com/wengh
