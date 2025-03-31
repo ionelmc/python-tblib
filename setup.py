@@ -13,7 +13,7 @@ def read(*names, **kwargs):
 
 setup(
     name='tblib',
-    version='3.0.0',
+    version='3.1.0',
     license='BSD-2-Clause',
     description='Traceback serialization library.',
     long_description='{}\n{}'.format(

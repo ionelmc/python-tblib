@@ -41,9 +41,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/tblib
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v3.0.0.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v3.1.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/ionelmc/python-tblib/compare/v3.0.0...master
+    :target: https://github.com/ionelmc/python-tblib/compare/v3.1.0...master
 
 .. end-badges
 
