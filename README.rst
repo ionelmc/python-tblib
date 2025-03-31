@@ -10,13 +10,11 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |github-actions|
-        | |codecov|
+      - |github-actions| |codecov|
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
+      - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
-    :target: https://python-tblib.readthedocs.io/
+    :target: https://readthedocs.org/projects/python-tblib/
     :alt: Documentation Status
 
 .. |github-actions| image:: https://github.com/ionelmc/python-tblib/actions/workflows/github-actions.yml/badge.svg

@@ -1,5 +1,5 @@
 name: build
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   test:
     name: {{ '${{ matrix.name }}' }}
@@ -33,7 +33,7 @@ jobs:
 {% for os, python_arch in [
     ['ubuntu', 'x64'],
     ['windows', 'x64'],
-    ['macos', 'x64'],
+    ['macos', 'arm64'],
 ] %}
           - name: '{{ env }} ({{ os }})'
             python: '{{ python }}'
@@ -44,10 +44,10 @@ jobs:
 {% endfor %}
 {% endfor %}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: {{ '${{ matrix.python }}' }}
         architecture: {{ '${{ matrix.python_arch }}' }}
@@ -63,3 +63,11 @@ jobs:
         TOXPYTHON: '{{ '${{ matrix.toxpython }}' }}'
       run: >
         tox -e {{ '${{ matrix.tox_env }}' }} -v
+  finish:
+    needs: test
+    if: {{ '${{ always() }}' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: codecov/codecov-action@v3
+      with:
+        CODECOV_TOKEN: {% raw %}${{ secrets.CODECOV_TOKEN }}{% endraw %}

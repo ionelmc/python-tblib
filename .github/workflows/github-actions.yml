@@ -1,5 +1,5 @@
 name: build
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   test:
     name: ${{ matrix.name }}
@@ -19,24 +19,6 @@ jobs:
             toxpython: 'python3.11'
             tox_env: 'docs'
             os: 'ubuntu-latest'
-          - name: 'py38 (ubuntu)'
-            python: '3.8'
-            toxpython: 'python3.8'
-            python_arch: 'x64'
-            tox_env: 'py38'
-            os: 'ubuntu-latest'
-          - name: 'py38 (windows)'
-            python: '3.8'
-            toxpython: 'python3.8'
-            python_arch: 'x64'
-            tox_env: 'py38'
-            os: 'windows-latest'
-          - name: 'py38 (macos)'
-            python: '3.8'
-            toxpython: 'python3.8'
-            python_arch: 'x64'
-            tox_env: 'py38'
-            os: 'macos-latest'
           - name: 'py39 (ubuntu)'
             python: '3.9'
             toxpython: 'python3.9'
@@ -52,7 +34,7 @@ jobs:
           - name: 'py39 (macos)'
             python: '3.9'
             toxpython: 'python3.9'
-            python_arch: 'x64'
+            python_arch: 'arm64'
             tox_env: 'py39'
             os: 'macos-latest'
           - name: 'py310 (ubuntu)'
@@ -70,7 +52,7 @@ jobs:
           - name: 'py310 (macos)'
             python: '3.10'
             toxpython: 'python3.10'
-            python_arch: 'x64'
+            python_arch: 'arm64'
             tox_env: 'py310'
             os: 'macos-latest'
           - name: 'py311 (ubuntu)'
@@ -88,7 +70,7 @@ jobs:
           - name: 'py311 (macos)'
             python: '3.11'
             toxpython: 'python3.11'
-            python_arch: 'x64'
+            python_arch: 'arm64'
             tox_env: 'py311'
             os: 'macos-latest'
           - name: 'py312 (ubuntu)'
@@ -106,26 +88,26 @@ jobs:
           - name: 'py312 (macos)'
             python: '3.12'
             toxpython: 'python3.12'
-            python_arch: 'x64'
+            python_arch: 'arm64'
             tox_env: 'py312'
             os: 'macos-latest'
-          - name: 'pypy38 (ubuntu)'
-            python: 'pypy-3.8'
-            toxpython: 'pypy3.8'
+          - name: 'py313 (ubuntu)'
+            python: '3.13'
+            toxpython: 'python3.13'
             python_arch: 'x64'
-            tox_env: 'pypy38'
+            tox_env: 'py313'
             os: 'ubuntu-latest'
-          - name: 'pypy38 (windows)'
-            python: 'pypy-3.8'
-            toxpython: 'pypy3.8'
+          - name: 'py313 (windows)'
+            python: '3.13'
+            toxpython: 'python3.13'
             python_arch: 'x64'
-            tox_env: 'pypy38'
+            tox_env: 'py313'
             os: 'windows-latest'
-          - name: 'pypy38 (macos)'
-            python: 'pypy-3.8'
-            toxpython: 'pypy3.8'
-            python_arch: 'x64'
-            tox_env: 'pypy38'
+          - name: 'py313 (macos)'
+            python: '3.13'
+            toxpython: 'python3.13'
+            python_arch: 'arm64'
+            tox_env: 'py313'
             os: 'macos-latest'
           - name: 'pypy39 (ubuntu)'
             python: 'pypy-3.9'
@@ -142,7 +124,7 @@ jobs:
           - name: 'pypy39 (macos)'
             python: 'pypy-3.9'
             toxpython: 'pypy3.9'
-            python_arch: 'x64'
+            python_arch: 'arm64'
             tox_env: 'pypy39'
             os: 'macos-latest'
           - name: 'pypy310 (ubuntu)'
@@ -160,14 +142,14 @@ jobs:
           - name: 'pypy310 (macos)'
             python: 'pypy-3.10'
             toxpython: 'pypy3.10'
-            python_arch: 'x64'
+            python_arch: 'arm64'
             tox_env: 'pypy310'
             os: 'macos-latest'
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.python_arch }}
@@ -183,3 +165,11 @@ jobs:
         TOXPYTHON: '${{ matrix.toxpython }}'
       run: >
         tox -e ${{ matrix.tox_env }} -v
+  finish:
+    needs: test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: codecov/codecov-action@v3
+      with:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

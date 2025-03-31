@@ -107,7 +107,7 @@ KeyboardInterrupt"""
         },
     }
     tb3 = Traceback.from_dict(expected_dict)
-    tb4 = pickle.loads(pickle.dumps(tb3))
+    tb4 = pickle.loads(pickle.dumps(tb3))  # noqa: S301
     assert tb4.as_dict() == tb3.as_dict() == tb2.as_dict() == tb1.as_dict() == expected_dict
 
 

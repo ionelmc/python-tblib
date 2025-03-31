@@ -72,7 +72,7 @@ def test_install(clear_dispatch_table, how, protocol):
     if how == 'instance':
         tblib.pickling_support.install(exc)
     if protocol:
-        exc = pickle.loads(pickle.dumps(exc, protocol=protocol))
+        exc = pickle.loads(pickle.dumps(exc, protocol=protocol))  # noqa: S301
 
     assert isinstance(exc, CustomError)
     assert exc.args == ('foo',)
@@ -105,7 +105,7 @@ def test_install_decorator():
         raise RegisteredError('foo')
     exc = ewrap.value
     exc.x = 1
-    exc = pickle.loads(pickle.dumps(exc))
+    exc = pickle.loads(pickle.dumps(exc))  # noqa: S301
 
     assert isinstance(exc, RegisteredError)
     assert exc.args == ('foo',)
@@ -115,14 +115,14 @@ def test_install_decorator():
 
 @pytest.mark.skipif(not has_python311, reason='no BaseExceptionGroup before Python 3.11')
 def test_install_instance_recursively(clear_dispatch_table):
-    exc = BaseExceptionGroup('test', [ValueError('foo'), CustomError('bar')])
+    exc = BaseExceptionGroup('test', [ValueError('foo'), CustomError('bar')])  # noqa: F821
     exc.exceptions[0].__cause__ = ZeroDivisionError('baz')
     exc.exceptions[0].__cause__.__context__ = AttributeError('quux')
 
     tblib.pickling_support.install(exc)
 
     installed = {c for c in copyreg.dispatch_table if issubclass(c, BaseException)}
-    assert installed == {ExceptionGroup, ValueError, CustomError, ZeroDivisionError, AttributeError}
+    assert installed == {ExceptionGroup, ValueError, CustomError, ZeroDivisionError, AttributeError}  # noqa: F821
 
 
 def test_install_typeerror():
@@ -162,5 +162,5 @@ def test_get_locals(clear_dispatch_table, how, protocol):
     if how == 'instance':
         tblib.pickling_support.install(exc, get_locals=get_locals)
 
-    exc = pickle.loads(pickle.dumps(exc, protocol=protocol))
+    exc = pickle.loads(pickle.dumps(exc, protocol=protocol))  # noqa: S301
     assert exc.__traceback__.tb_next.tb_frame.f_locals == {'my_variable': 1}

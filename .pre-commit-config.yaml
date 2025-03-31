@@ -2,20 +2,17 @@
 #   pre-commit install --install-hooks
 # To update the versions:
 #   pre-commit autoupdate
-exclude: '^(\.tox|ci/templates|\.bumpversion\.cfg|tests/bad.*.py)(/|$)'
+exclude: '^(\.tox|ci/templates|\.bumpversion\.cfg|tests/badsyntax.py)(/|$)'
 # Note the order is intentional to avoid multiple passes of the hooks
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.1
+    rev: v0.11.2
     hooks:
       - id: ruff
-        args: [--fix, --exit-non-zero-on-fix, --show-fixes]
-  - repo: https://github.com/psf/black
-    rev: 23.10.0
-    hooks:
-      - id: black
+        args: [--fix, --exit-non-zero-on-fix, --show-fixes, --unsafe-fixes]
+      - id: ruff-format
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
