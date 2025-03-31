@@ -24,7 +24,7 @@ extlinks = {
     'pr': ('https://github.com/ionelmc/python-tblib/pull/%s', 'PR #%s'),
 }
 
-html_theme = 'sphinx_py3doc_enhanced_theme'
+html_theme = 'furo'
 html_theme_options = {
     'githuburl': 'https://github.com/ionelmc/python-tblib/',
 }
