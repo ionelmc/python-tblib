@@ -7,6 +7,7 @@ Changelog
 
 * Improved performance of ``as_traceback`` by a large factor.
   Contributed by Haoyu Weng in `#81 <https://github.com/ionelmc/python-tblib/pull/81>`_.
+* Dropped support for now-EOL Python 3.8 and added 3.13 in the test grid.
 
 3.0.0 (2023-10-22)
 ~~~~~~~~~~~~~~~~~~
