@@ -2,6 +2,12 @@
 Changelog
 =========
 
+3.1.0 (2025-03-31)
+~~~~~~~~~~~~~~~~~~
+
+* Improved performance of ``as_traceback`` by a large factor.
+  Contributed by Haoyu Weng in `#81 <https://github.com/ionelmc/python-tblib/pull/81>`_.
+
 3.0.0 (2023-10-22)
 ~~~~~~~~~~~~~~~~~~
 
