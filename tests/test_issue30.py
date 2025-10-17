@@ -9,7 +9,7 @@ pytest.importorskip('twisted')
 
 
 def test_30():
-    from twisted.python.failure import Failure
+    from twisted.python.failure import Failure  # noqa: PLC0415
 
     pickling_support.install()
 
@@ -20,7 +20,7 @@ def test_30():
 
     f = None
     try:
-        etype, evalue, etb = pickle.loads(s)  # noqa: S301
+        _etype, evalue, etb = pickle.loads(s)  # noqa: S301
         raise evalue.with_traceback(etb)
     except ValueError:
         f = Failure()

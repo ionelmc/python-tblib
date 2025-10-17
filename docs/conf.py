@@ -12,7 +12,7 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'tblib'
-year = '2013-2023'
+year = '2013-2025'
 author = 'Ionel Cristian Mărieș'
 copyright = f'{year}, {author}'
 version = release = '3.1.0'
@@ -26,7 +26,15 @@ extlinks = {
 
 html_theme = 'furo'
 html_theme_options = {
-    'githuburl': 'https://github.com/ionelmc/python-tblib/',
+    'source_repository': 'https://github.com/ionelmc/python-tblib/',
+    'source_branch': 'master',
+    'source_directory': 'docs/',
+    'footer_icons': [
+        {
+            'url': 'https://github.com/ionelmc/python-tblib/',
+            'html': 'github.com/ionelmc/python-tblib',
+        },
+    ],
 }
 
 html_use_smartypants = True

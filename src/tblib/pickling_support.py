@@ -51,8 +51,8 @@ def pickle_exception(obj):
 
     return (
         unpickle_exception,
-        rv[:2]
-        + (
+        (
+            *rv[:2],
             obj.__cause__,
             obj.__traceback__,
             obj.__context__,
@@ -60,7 +60,8 @@ def pickle_exception(obj):
             # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
             getattr(obj, '__notes__', None),
         ),
-    ) + rv[2:]
+        *rv[2:],
+    )
 
 
 def _get_subclasses(cls):

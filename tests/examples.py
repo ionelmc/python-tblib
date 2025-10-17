@@ -15,12 +15,12 @@ def func_d():
 
 
 def bad_syntax():
-    import badsyntax
+    import badsyntax  # noqa: PLC0415
 
     badsyntax()
 
 
 def bad_module():
-    import badmodule
+    import badmodule  # noqa: PLC0415
 
     badmodule()

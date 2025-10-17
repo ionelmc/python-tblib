@@ -8,7 +8,7 @@ branch = true
 source =
     tblib
     tests
-parallel = true
+patch = subprocess
 
 [report]
 show_missing = true
