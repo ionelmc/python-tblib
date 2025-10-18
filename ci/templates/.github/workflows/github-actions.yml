@@ -59,6 +59,12 @@ jobs:
     - name: test
       run: >
         tox -e {{ '${{ matrix.tox_env }}' }} -v
+    - uses: coverallsapp/github-action@v2
+      if: matrix.cover
+      continue-on-error: true
+      with:
+        flag-name: {{ '${{ matrix.name }}' }}
+        parallel: true
     - uses: codecov/codecov-action@v5
       if: matrix.cover
       with:
@@ -70,4 +76,7 @@ jobs:
     if: {{ '${{ always() }}' }}
     runs-on: ubuntu-latest
     steps:
+    - uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
 {{ '' }}
