@@ -20,7 +20,7 @@ def test_30():
 
     f = None
     try:
-        _etype, evalue, etb = pickle.loads(s)  # noqa: S301
+        _etype, evalue, etb = pickle.loads(s)
         raise evalue.with_traceback(etb)
     except ValueError:
         f = Failure()

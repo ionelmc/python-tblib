@@ -80,6 +80,7 @@ ignore = [
     "S603",   # flake8-bandit subprocess-without-shell-equals-true
     "S607",   # flake8-bandit start-process-with-partial-path
     "E501",   # pycodestyle line-too-long
+    "S301",
 ]
 select = [
     "B",   # flake8-bugbear
