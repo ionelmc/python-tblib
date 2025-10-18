@@ -22,10 +22,10 @@ def pickle_traceback(tb, *, get_locals=None):
     )
 
 
-def unpickle_exception_with_new(func, args, cause, tb, context, suppress_context, notes):
+def unpickle_exception_with_attrs(func, attrs, cause, tb, context, suppress_context, notes):
     inst = func.__new__(func)
-    if args is not None:
-        inst.args = args
+    for key, value in attrs.items():
+        setattr(inst, key, value)
     inst.__cause__ = cause
     inst.__traceback__ = tb
     inst.__context__ = context
@@ -48,43 +48,62 @@ def unpickle_exception(func, args, cause, tb, context=None, suppress_context=Fal
     return inst
 
 
-def pickle_exception(obj):
-    # All exceptions, unlike generic Python objects, define __reduce_ex__
-    # __reduce_ex__(4) should be no different from __reduce_ex__(3).
-    # __reduce_ex__(5) could bring benefits in the unlikely case the exception
-    # directly contains buffers, but PickleBuffer objects will cause a crash when
-    # running on protocol=4, and there's no clean way to figure out the current
-    # protocol from here. Note that any object returned by __reduce_ex__(3) will
-    # still be pickled with protocol 5 if pickle.dump() is running with it.
-    rv = obj.__reduce_ex__(3)
-    if isinstance(rv, str):
-        raise TypeError('str __reduce__ output is not supported')
-    assert isinstance(rv, tuple)
-    assert len(rv) >= 2
+def pickle_exception(
+    obj, builtin_reducers=(OSError.__reduce__, BaseException.__reduce__), builtin_inits=(OSError.__init__, BaseException.__init__)
+):
+    reduced_value = obj.__reduce__()
+    if isinstance(reduced_value, str):
+        raise TypeError('Did not expect {repr(obj)}.__reduce__() to return a string!')
 
-    # Use __new__ whenever there is no customization by __reduce__ and
-    # __reduce_ex__. Note that OSError and descendants are known to require
-    # using a constructor, otherwise they do not set the errno, strerror and other
-    # attributes.
-    use_new = (
-        obj.__class__.__reduce__ is BaseException.__reduce__
-        and obj.__class__.__reduce_ex__ is BaseException.__reduce_ex__
-        and not isinstance(obj, OSError)
-    )
+    func = type(obj)
+    # Detect busted objects: they have a custom __init__ but no __reduce__.
+    # This also means the resulting exceptions may be a bit "dulled" down - the args from __reduce__ are discarded.
+    if func.__reduce__ in builtin_reducers and func.__init__ not in builtin_inits:
+        _, args, *optionals = reduced_value
+        attrs = {
+            '__dict__': obj.__dict__,
+            'args': obj.args,
+        }
+        if isinstance(obj, OSError):
+            attrs.update(
+                errno=obj.errno,
+                strerror=obj.strerror,
+                winerror=getattr(obj, 'winerror', None),
+                filename=obj.filename,
+                filename2=obj.filename2,
+            )
 
-    return (
-        unpickle_exception_with_new if use_new else unpickle_exception,
-        (
-            *rv[:2],
-            obj.__cause__,
-            obj.__traceback__,
-            obj.__context__,
-            obj.__suppress_context__,
-            # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
-            getattr(obj, '__notes__', None),
-        ),
-        *rv[2:],
-    )
+        return (
+            unpickle_exception_with_attrs,
+            (
+                func,
+                attrs,
+                obj.__cause__,
+                obj.__traceback__,
+                obj.__context__,
+                obj.__suppress_context__,
+                # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
+                getattr(obj, '__notes__', None),
+            ),
+            *optionals,
+        )
+    else:
+        func, args, *optionals = reduced_value
+
+        return (
+            unpickle_exception,
+            (
+                func,
+                args,
+                obj.__cause__,
+                obj.__traceback__,
+                obj.__context__,
+                obj.__suppress_context__,
+                # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
+                getattr(obj, '__notes__', None),
+            ),
+            *optionals,
+        )
 
 
 def _get_subclasses(cls):

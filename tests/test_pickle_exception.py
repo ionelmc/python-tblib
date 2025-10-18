@@ -72,7 +72,7 @@ def test_install(clear_dispatch_table, how, protocol):
     if how == 'instance':
         tblib.pickling_support.install(exc)
     if protocol:
-        exc = pickle.loads(pickle.dumps(exc, protocol=protocol))  # noqa: S301
+        exc = pickle.loads(pickle.dumps(exc, protocol=protocol))
 
     assert isinstance(exc, CustomError)
     assert exc.args == ('foo',)
@@ -105,7 +105,7 @@ def test_install_decorator():
         raise RegisteredError('foo')
     exc = ewrap.value
     exc.x = 1
-    exc = pickle.loads(pickle.dumps(exc))  # noqa: S301
+    exc = pickle.loads(pickle.dumps(exc))
 
     assert isinstance(exc, RegisteredError)
     assert exc.args == ('foo',)
@@ -162,7 +162,7 @@ def test_get_locals(clear_dispatch_table, how, protocol):
     if how == 'instance':
         tblib.pickling_support.install(exc, get_locals=get_locals)
 
-    exc = pickle.loads(pickle.dumps(exc, protocol=protocol))  # noqa: S301
+    exc = pickle.loads(pickle.dumps(exc, protocol=protocol))
     assert exc.__traceback__.tb_next.tb_frame.f_locals == {'my_variable': 1}
 
 
@@ -186,6 +186,66 @@ def test_custom_with_attributes():
     assert exc.args == ('bar',)
     assert exc.values12 == (1, 2)
     assert exc.value3 == 3
+    assert exc.__traceback__ is not None
+
+
+class CustomOSError(OSError):
+    def __init__(self, message, errno, strerror: str, filename, none: None, filename2):
+        super().__init__(errno, strerror, filename, none, filename2)
+        self.message = message
+
+
+def test_custom_oserror():
+    try:
+        raise CustomOSError('bar', 2, 'err', 3, None, 5)
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, CustomOSError)
+    assert exc.message == 'bar'
+    assert exc.errno == 2
+    assert exc.strerror == 'err'
+    assert exc.filename == 3
+    assert exc.filename2 == 5
+    assert exc.__traceback__ is not None
+
+
+def test_oserror():
+    try:
+        raise OSError(2, 'err', 3, None, 5)
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, OSError)
+    assert exc.errno == 2
+    assert exc.strerror == 'err'
+    assert exc.filename == 3
+    assert exc.filename2 == 5
+    assert exc.__traceback__ is not None
+
+
+class BadError(Exception):
+    def __init__(self):
+        super().__init__('Bad Bad Bad!')
+
+
+def test_baderror():
+    try:
+        raise BadError
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, BadError)
+    assert exc.args == ('Bad Bad Bad!',)
     assert exc.__traceback__ is not None
 
 
@@ -242,7 +302,7 @@ def test_custom_reduce_ex(protocol):
     assert exc.__traceback__ is not None
 
 
-def test_oserror():
+def test_oserror_simple():
     try:
         raise OSError(13, 'Permission denied')
     except Exception as e:
