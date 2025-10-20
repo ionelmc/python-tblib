@@ -10,37 +10,33 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - |github-actions| |codecov|
+      - |github-actions| |coveralls| |codecov|
     * - package
       - |version| |wheel| |supported-versions| |supported-implementations| |commits-since|
 .. |docs| image:: https://readthedocs.org/projects/python-tblib/badge/?style=flat
     :target: https://readthedocs.org/projects/python-tblib/
     :alt: Documentation Status
-
 .. |github-actions| image:: https://github.com/ionelmc/python-tblib/actions/workflows/github-actions.yml/badge.svg
     :alt: GitHub Actions Build Status
     :target: https://github.com/ionelmc/python-tblib/actions
-
+.. |coveralls| image:: https://coveralls.io/repos/github/ionelmc/python-tblib/badge.svg?branch=master
+    :alt: Coverage Status
+    :target: https://coveralls.io/github/ionelmc/python-tblib?branch=master
 .. |codecov| image:: https://codecov.io/gh/ionelmc/python-tblib/branch/master/graphs/badge.svg?branch=master
     :alt: Coverage Status
     :target: https://app.codecov.io/github/ionelmc/python-tblib
-
 .. |version| image:: https://img.shields.io/pypi/v/tblib.svg
     :alt: PyPI Package latest release
     :target: https://pypi.org/project/tblib
-
 .. |wheel| image:: https://img.shields.io/pypi/wheel/tblib.svg
     :alt: PyPI Wheel
     :target: https://pypi.org/project/tblib
-
 .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/tblib.svg
     :alt: Supported versions
     :target: https://pypi.org/project/tblib
-
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/tblib.svg
     :alt: Supported implementations
     :target: https://pypi.org/project/tblib
-
 .. |commits-since| image:: https://img.shields.io/github/commits-since/ionelmc/python-tblib/v3.1.0.svg
     :alt: Commits since latest release
     :target: https://github.com/ionelmc/python-tblib/compare/v3.1.0...master
