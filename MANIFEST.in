@@ -20,5 +20,6 @@ include CHANGELOG.rst
 include CONTRIBUTING.rst
 include LICENSE
 include README.rst
+include SECURITY.md
 
 global-exclude *.py[cod] __pycache__/* *.so *.dylib

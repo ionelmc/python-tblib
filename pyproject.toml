@@ -55,6 +55,8 @@ dependencies = [
 [dependency-groups]
 test = [
     "pytest",
+    "twisted",
+    "pytest-benchmark",
 ]
 
 [project.urls]
