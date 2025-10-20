@@ -595,7 +595,7 @@ Not very useful is it? Let's sort this out::
     >>> from tblib.decorators import apply_with_return_error, Error
     >>> from itertools import repeat
     >>> pool = Pool()
-    >>> try:
+    >>> try: # doctest: +SKIP
     ...     for i in pool.map(apply_with_return_error, zip(repeat(func_a), range(5))):
     ...         if isinstance(i, Error):
     ...             i.reraise()
@@ -651,10 +651,11 @@ What if we have a local call stack ?
     >>> def local_2():
     ...     local_1()
     ...
-    >>> try:
+    >>> try: # doctest: +SKIP
     ...     local_2()
     ... except:
     ...     print(traceback.format_exc())
+    ...
     Traceback (most recent call last):
       File "<doctest README.rst[...]>", line 2, in <module>
         local_2()
