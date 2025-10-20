@@ -30,10 +30,9 @@ jobs:
 {% for os, python_arch in [
     ['ubuntu', 'x64'],
     ['windows', 'x64'],
-    ['windows', 'x86'],
     ['macos', 'arm64'],
 ] %}
-          - name: '{{ env }} ({{ os }})'
+          - name: '{{ env }} ({{ os }}/{{ python_arch }})'
             python: '{{ python }}'
             python_arch: '{{ python_arch }}'
             tox_env: '{{ env }}'
