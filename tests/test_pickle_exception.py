@@ -1,3 +1,4 @@
+import os
 from traceback import format_exception
 
 try:
@@ -345,3 +346,20 @@ def test_oserror_simple():
     assert exc.errno == 13
     assert exc.strerror == 'Permission denied'
     assert exc.__traceback__ is not None
+
+
+def test_real_oserror():
+    try:
+        os.open('non-existing-file', os.O_RDONLY)
+    except Exception as e:
+        exc = e
+    else:
+        pytest.fail('os.open should have raised an OSError')
+
+    str_output = str(exc)
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, OSError)
+    assert exc.errno == 2
+    assert str_output == str(exc)
