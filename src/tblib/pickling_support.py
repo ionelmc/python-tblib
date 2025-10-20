@@ -65,13 +65,13 @@ def pickle_exception(
             'args': obj.args,
         }
         if isinstance(obj, OSError):
-            attrs.update(
-                errno=obj.errno,
-                strerror=obj.strerror,
-                winerror=getattr(obj, 'winerror', None),
-                filename=obj.filename,
-                filename2=obj.filename2,
-            )
+            attrs.update(errno=obj.errno, strerror=obj.strerror)
+            if (winerror := getattr(obj, 'winerror', None)) is not None:
+                attrs['winerror'] = winerror
+            if obj.filename is not None:
+                attrs['filename'] = obj.filename
+            if obj.filename2 is not None:
+                attrs['filename2'] = obj.filename2
 
         return (
             unpickle_exception_with_attrs,

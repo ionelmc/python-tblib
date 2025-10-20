@@ -1,3 +1,4 @@
+import traceback
 from traceback import format_exception
 
 try:
@@ -228,6 +229,35 @@ def test_oserror():
     assert exc.filename == 3
     assert exc.filename2 == 5
     assert exc.__traceback__ is not None
+
+
+class OpenError(Exception):
+    pass
+
+
+def bad_open():
+    try:
+        raise PermissionError(13, 'Booboo', 'filename', None, None)
+    except Exception as e:
+        raise OpenError(e) from e
+
+
+def test_permissionerror():
+    try:
+        bad_open()
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+    print(''.join(traceback.format_exception(exc)))
+    assert isinstance(exc, OpenError)
+    assert exc.__traceback__ is not None
+    assert repr(exc) == "OpenError(PermissionError(13, 'Booboo'))"
+    assert str(exc) == "[Errno 13] Booboo: 'filename'"
+    assert exc.args[0].errno == 13
+    assert exc.args[0].strerror == 'Booboo'
+    assert exc.args[0].filename == 'filename'
 
 
 class BadError(Exception):
