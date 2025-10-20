@@ -1,4 +1,3 @@
-import traceback
 from traceback import format_exception
 
 try:

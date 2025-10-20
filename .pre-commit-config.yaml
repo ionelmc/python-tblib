@@ -22,5 +22,4 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: mixed-line-ending
-        args: [--fix]
       - id: debug-statements
