@@ -250,7 +250,7 @@ def test_permissionerror():
 
     tblib.pickling_support.install(exc)
     exc = pickle.loads(pickle.dumps(exc))
-    print(''.join(traceback.format_exception(exc)))
+
     assert isinstance(exc, OpenError)
     assert exc.__traceback__ is not None
     assert repr(exc) == "OpenError(PermissionError(13, 'Booboo'))"
