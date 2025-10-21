@@ -2,6 +2,26 @@
 Changelog
 =========
 
+3.2.0 (2025-10-21)
+~~~~~~~~~~~~~~~~~~
+
+* Changed ``tblib.pickling_support.install`` to support exceptions with ``__init__`` that does match the default
+  ``BaseException.__reduce__`` (as it expects the positional arguments to ``__init__`` to match the ``args`` attribute).
+
+  Special handling for OSError (and subclasses) is also included. The errno, strerror, winerror, filename and filename2 attributes will be added in the reduce structure (if set).
+
+  This will support exception subclasses that do this without defining a custom ``__reduce__``:
+
+  .. code-block:: python
+
+    def __init__(self):
+        super().__init__('mistery argument')
+
+    def __init__(self, mistery_argument):
+        super().__init__()
+        self.mistery_argument = mistery_argument
+
+
 3.1.0 (2025-03-31)
 ~~~~~~~~~~~~~~~~~~
 

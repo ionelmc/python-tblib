@@ -279,6 +279,27 @@ def test_baderror():
     assert exc.__traceback__ is not None
 
 
+class BadError2(Exception):
+    def __init__(self, stuff):
+        super().__init__()
+        self.stuff = stuff
+
+
+def test_baderror2():
+    try:
+        raise BadError2('123')
+    except Exception as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, BadError2)
+    assert exc.args == ()
+    assert exc.stuff == '123'
+    assert exc.__traceback__ is not None
+
+
 class CustomReduceException(Exception):
     def __init__(self, message, arg1, arg2, arg3):
         super().__init__(message)
