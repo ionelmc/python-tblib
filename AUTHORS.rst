@@ -14,3 +14,5 @@ Authors
 * Michał Górny - https://github.com/mgorny
 * Tim Maxwell - https://github.com/tmaxwell-anthropic
 * Haoyu Weng - https://github.com/wengh
+* Oldřich Jedlička - https://github.com/oldium
+* Colin Watson - https://github.com/cjwatson

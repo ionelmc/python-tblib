@@ -21,6 +21,9 @@ Changelog
         super().__init__()
         self.mistery_argument = mistery_argument
 
+  Tests and POC contributed by Oldřich Jedlička in `#73 <https://github.com/ionelmc/python-tblib/pull/73>`_.
+* Fixed some doctest and coverage config. Contributed by Colin Watson in `#79 <https://github.com/ionelmc/python-tblib/pull/79>`_.
+
 
 3.1.0 (2025-03-31)
 ~~~~~~~~~~~~~~~~~~
