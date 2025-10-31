@@ -384,3 +384,145 @@ def test_real_oserror():
     assert isinstance(exc, OSError)
     assert exc.errno == 2
     assert str_output == str(exc)
+
+
+@pytest.mark.skipif(not has_python311, reason='ExceptionGroup needs Python 3.11')
+def test_exception_group():
+    errors = []
+    try:
+        e = CustomWithAttributesException('bar', 1, 2, 3)
+        e.add_note('test_custom_with_attributes')
+        raise e
+    except Exception as e:
+        errors.append(e)
+
+    try:
+        e = CustomOSError('bar', 2, 'err', 3, None, 5)
+        e.add_note('test_custom_oserror')
+        raise e
+    except Exception as e:
+        errors.append(e)
+
+    try:
+        e = OSError(2, 'err', 3, None, 5)
+        e.add_note('test_oserror')
+        raise e
+    except Exception as e:
+        errors.append(e)
+
+    try:
+        bad_open()
+    except Exception as e:
+        e.add_note('test_permissionerror')
+        errors.append(e)
+
+    try:
+        raise BadError
+    except Exception as e:
+        e.add_note('test_baderror')
+        errors.append(e)
+
+    try:
+        e = BadError2('123')
+        e.add_note('test_baderror2')
+        raise e
+    except Exception as e:
+        errors.append(e)
+
+    try:
+        e = CustomReduceException('foo', 1, 2, 3)
+        e.add_note('test_custom_reduce')
+        raise e
+    except Exception as e:
+        errors.append(e)
+
+    try:
+        e = OSError(13, 'Permission denied')
+        e.add_note('test_oserror_simple')
+        raise e
+    except Exception as e:
+        errors.append(e)
+
+    try:
+        os.open('non-existing-file', os.O_RDONLY)
+    except Exception as e:
+        e.add_note('test_real_oserror')
+        real_oserror_str = str(e)
+        errors.append(e)
+    else:
+        pytest.fail('os.open should have raised an OSError')
+
+    try:
+        raise ExceptionGroup('group error', errors)  # noqa: F821
+    except Exception as e:
+        exc = e
+
+    assert len(exc.exceptions) == 9  # before pickling
+
+    tblib.pickling_support.install()
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert len(exc.exceptions) == 9  # after unpickling
+
+    assert exc.exceptions[0].__notes__ == ['test_custom_with_attributes']
+    assert isinstance(exc.exceptions[0], CustomWithAttributesException)
+    assert exc.exceptions[0].args == ('bar',)
+    assert exc.exceptions[0].values12 == (1, 2)
+    assert exc.exceptions[0].value3 == 3
+    assert exc.exceptions[0].__traceback__ is not None
+
+    assert exc.exceptions[1].__notes__ == ['test_custom_oserror']
+    assert isinstance(exc.exceptions[1], CustomOSError)
+    assert exc.exceptions[1].message == 'bar'
+    assert exc.exceptions[1].errno == 2
+    assert exc.exceptions[1].strerror == 'err'
+    assert exc.exceptions[1].filename == 3
+    assert exc.exceptions[1].filename2 == 5
+    assert exc.exceptions[1].__traceback__ is not None
+
+    assert exc.exceptions[2].__notes__ == ['test_oserror']
+    assert isinstance(exc.exceptions[2], OSError)
+    assert exc.exceptions[2].errno == 2
+    assert exc.exceptions[2].strerror == 'err'
+    assert exc.exceptions[2].filename == 3
+    assert exc.exceptions[2].filename2 == 5
+    assert exc.exceptions[2].__traceback__ is not None
+
+    assert exc.exceptions[3].__notes__ == ['test_permissionerror']
+    assert isinstance(exc.exceptions[3], OpenError)
+    assert exc.exceptions[3].__traceback__ is not None
+    assert repr(exc.exceptions[3]) == "OpenError(PermissionError(13, 'Booboo'))"
+    assert str(exc.exceptions[3]) == "[Errno 13] Booboo: 'filename'"
+    assert exc.exceptions[3].args[0].errno == 13
+    assert exc.exceptions[3].args[0].strerror == 'Booboo'
+    assert exc.exceptions[3].args[0].filename == 'filename'
+
+    assert exc.exceptions[4].__notes__ == ['test_baderror']
+    assert isinstance(exc.exceptions[4], BadError)
+    assert exc.exceptions[4].args == ('Bad Bad Bad!',)
+    assert exc.exceptions[4].__traceback__ is not None
+
+    assert exc.exceptions[5].__notes__ == ['test_baderror2']
+    assert isinstance(exc.exceptions[5], BadError2)
+    assert exc.exceptions[5].args == ()
+    assert exc.exceptions[5].stuff == '123'
+    assert exc.exceptions[5].__traceback__ is not None
+
+    assert exc.exceptions[6].__notes__ == ['test_custom_reduce']
+    assert isinstance(exc.exceptions[6], CustomReduceException)
+    assert exc.exceptions[6].args == ('foo',)
+    assert exc.exceptions[6].values12 == (1, 2)
+    assert exc.exceptions[6].value3 == 3
+    assert exc.exceptions[6].__traceback__ is not None
+
+    assert exc.exceptions[7].__notes__ == ['test_oserror_simple']
+    assert isinstance(exc.exceptions[7], OSError)
+    assert exc.exceptions[7].args == (13, 'Permission denied')
+    assert exc.exceptions[7].errno == 13
+    assert exc.exceptions[7].strerror == 'Permission denied'
+    assert exc.exceptions[7].__traceback__ is not None
+
+    assert exc.exceptions[8].__notes__ == ['test_real_oserror']
+    assert isinstance(exc.exceptions[8], OSError)
+    assert exc.exceptions[8].errno == 2
+    assert str(exc.exceptions[8]) == real_oserror_str

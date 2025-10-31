@@ -1,9 +1,13 @@
 import copyreg
+import sys
 from functools import partial
 from types import TracebackType
 
 from . import Frame
 from . import Traceback
+
+if sys.version_info < (3, 11):
+    ExceptionGroup = None
 
 
 def unpickle_traceback(tb_frame, tb_lineno, tb_next):
@@ -22,8 +26,8 @@ def pickle_traceback(tb, *, get_locals=None):
     )
 
 
-def unpickle_exception_with_attrs(func, attrs, cause, tb, context, suppress_context, notes):
-    inst = func.__new__(func)
+def unpickle_exception_with_attrs(func, attrs, cause, tb, context, suppress_context, notes, args=()):
+    inst = func.__new__(func, *args)
     for key, value in attrs.items():
         setattr(inst, key, value)
     inst.__cause__ = cause
@@ -64,6 +68,7 @@ def pickle_exception(
             '__dict__': obj.__dict__,
             'args': obj.args,
         }
+        args = ()
         if isinstance(obj, OSError):
             attrs.update(errno=obj.errno, strerror=obj.strerror)
             if (winerror := getattr(obj, 'winerror', None)) is not None:
@@ -72,6 +77,8 @@ def pickle_exception(
                 attrs['filename'] = obj.filename
             if obj.filename2 is not None:
                 attrs['filename2'] = obj.filename2
+        if ExceptionGroup is not None and isinstance(obj, ExceptionGroup):
+            args = (obj.message, obj.exceptions)
 
         return (
             unpickle_exception_with_attrs,
@@ -84,6 +91,7 @@ def pickle_exception(
                 obj.__suppress_context__,
                 # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
                 getattr(obj, '__notes__', None),
+                args,
             ),
             *optionals,
         )
