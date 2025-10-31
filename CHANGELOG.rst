@@ -2,6 +2,12 @@
 Changelog
 =========
 
+
+3.2.1 (2025-10-31)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed regression occurring with ``ExceptionGroup`` exceptions. That exception type is now handled specifically in the new ``unpickle_exception_with_attrs`` function (just like ``OSError``).
+
 3.2.0 (2025-10-21)
 ~~~~~~~~~~~~~~~~~~
 
