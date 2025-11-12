@@ -386,6 +386,23 @@ def test_real_oserror():
     assert str_output == str(exc)
 
 
+def test_timeouterror():
+    try:
+        raise TimeoutError('stuff')
+    except Exception as e:
+        exc = e
+    else:
+        pytest.fail('os.open should have raised an TimeoutError')
+
+    str_output = str(exc)
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, TimeoutError)
+    assert exc.errno is None
+    assert str_output == str(exc)
+
+
 @pytest.mark.skipif(not has_python311, reason='ExceptionGroup needs Python 3.11')
 def test_exception_group():
     errors = []
