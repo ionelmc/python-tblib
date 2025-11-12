@@ -70,7 +70,12 @@ def pickle_exception(
         }
         args = ()
         if isinstance(obj, OSError):
-            attrs.update(errno=obj.errno, strerror=obj.strerror)
+            # Only set OSError-specific attributes if they are not None
+            # Setting them to None explicitly breaks the string representation
+            if obj.errno is not None:
+                attrs['errno'] = obj.errno
+            if obj.strerror is not None:
+                attrs['strerror'] = obj.strerror
             if (winerror := getattr(obj, 'winerror', None)) is not None:
                 attrs['winerror'] = winerror
             if obj.filename is not None:
