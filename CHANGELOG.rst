@@ -2,6 +2,11 @@
 Changelog
 =========
 
+3.2.2 (2025-11-12)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed regression occurring with ``TimeoutError`` exceptions. They should be represented now exactly as the original when unpickling.
+  Contributed by Jacob Tomlinson in `#85 <https://github.com/ionelmc/python-tblib/pull/85>`_.
 
 3.2.1 (2025-10-31)
 ~~~~~~~~~~~~~~~~~~
