@@ -1,7 +1,7 @@
 import re
 import sys
 
-__version__ = '3.2.1'
+__version__ = '3.2.2'
 __all__ = 'Code', 'Frame', 'Traceback', 'TracebackParseError'
 
 FRAME_RE = re.compile(r'^\s*File "(?P<co_filename>.+)", line (?P<tb_lineno>\d+)(, in (?P<co_name>.+))?$')
