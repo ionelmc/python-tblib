@@ -17,6 +17,7 @@ import tblib.pickling_support
 has_python311 = sys.version_info >= (3, 11)
 has_python310 = sys.version_info >= (3, 10)
 
+
 @pytest.fixture
 def clear_dispatch_table():
     bak = copyreg.dispatch_table.copy()
