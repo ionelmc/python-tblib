@@ -52,71 +52,52 @@ def unpickle_exception(func, args, cause, tb, context=None, suppress_context=Fal
     return inst
 
 
-def pickle_exception(
-    obj, builtin_reducers=(OSError.__reduce__, BaseException.__reduce__), builtin_inits=(OSError.__init__, BaseException.__init__)
-):
+def _get_public_class_attributes(cls: type) -> set[str]:
+    return {
+        attr
+        for mro_cls in cls.mro()
+        for attr in mro_cls.__dict__.keys()
+        if not attr.startswith('_') and not callable(getattr(mro_cls, attr))
+    }
+
+
+def pickle_exception(obj):
     reduced_value = obj.__reduce__()
     if isinstance(reduced_value, str):
         raise TypeError('Did not expect {repr(obj)}.__reduce__() to return a string!')
 
     func = type(obj)
-    # Detect busted objects: they have a custom __init__ but no __reduce__.
-    # This also means the resulting exceptions may be a bit "dulled" down - the args from __reduce__ are discarded.
-    if func.__reduce__ in builtin_reducers and func.__init__ not in builtin_inits:
-        _, args, *optionals = reduced_value
-        attrs = {
-            '__dict__': obj.__dict__,
-            'args': obj.args,
-        }
-        args = ()
-        if isinstance(obj, OSError):
-            # Only set OSError-specific attributes if they are not None
-            # Setting them to None explicitly breaks the string representation
-            if obj.errno is not None:
-                attrs['errno'] = obj.errno
-            if obj.strerror is not None:
-                attrs['strerror'] = obj.strerror
-            if (winerror := getattr(obj, 'winerror', None)) is not None:
-                attrs['winerror'] = winerror
-            if obj.filename is not None:
-                attrs['filename'] = obj.filename
-            if obj.filename2 is not None:
-                attrs['filename2'] = obj.filename2
-        if ExceptionGroup is not None and isinstance(obj, ExceptionGroup):
-            args = (obj.message, obj.exceptions)
 
-        return (
-            unpickle_exception_with_attrs,
-            (
-                func,
-                attrs,
-                obj.__cause__,
-                obj.__traceback__,
-                obj.__context__,
-                obj.__suppress_context__,
-                # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
-                getattr(obj, '__notes__', None),
-                args,
-            ),
-            *optionals,
-        )
+    _, args, *optionals = reduced_value
+    attrs = {
+        '__dict__': obj.__dict__,
+        'args': obj.args,
+    }
+
+    if ExceptionGroup is not None and isinstance(obj, ExceptionGroup):
+        args = (obj.message, obj.exceptions)
+
     else:
-        func, args, *optionals = reduced_value
+        public_class_attributes = _get_public_class_attributes(type(obj))
+        additional_obj_attributes = {attr: value for attr in public_class_attributes if (value := getattr(obj, attr, None)) is not None}
+        attrs.update(additional_obj_attributes)
+        args = ()
 
-        return (
-            unpickle_exception,
-            (
-                func,
-                args,
-                obj.__cause__,
-                obj.__traceback__,
-                obj.__context__,
-                obj.__suppress_context__,
-                # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
-                getattr(obj, '__notes__', None),
-            ),
-            *optionals,
-        )
+    return (
+        unpickle_exception_with_attrs,
+        (
+            func,
+            attrs,
+            obj.__cause__,
+            obj.__traceback__,
+            obj.__context__,
+            obj.__suppress_context__,
+            # __notes__ doesn't exist prior to Python 3.11; and even on Python 3.11 it may be absent
+            getattr(obj, '__notes__', None),
+            args,
+        ),
+        *optionals,
+    )
 
 
 def _get_subclasses(cls):
