@@ -31,7 +31,9 @@ class CustomError(Exception):
 
 
 def strip_locations(tb_text):
-    return tb_text.replace('    ~~^~~\n', '').replace('    ^^^^^^^^^^^^^^^^^\n', '')
+    lines = tb_text.splitlines()
+    lines = [line for line in lines if '~~^~~' not in line and '^^^^' not in line]
+    return '\n'.join(lines)
 
 
 @pytest.mark.parametrize('protocol', [None, *list(range(1, pickle.HIGHEST_PROTOCOL + 1))])
