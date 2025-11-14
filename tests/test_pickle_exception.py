@@ -15,7 +15,7 @@ import pytest
 import tblib.pickling_support
 
 has_python311 = sys.version_info >= (3, 11)
-
+has_python310 = sys.version_info >= (3, 10)
 
 @pytest.fixture
 def clear_dispatch_table():
@@ -543,3 +543,54 @@ def test_exception_group():
     assert isinstance(exc.exceptions[8], OSError)
     assert exc.exceptions[8].errno == 2
     assert str(exc.exceptions[8]) == real_oserror_str
+
+
+def test_systemexit_error(clear_dispatch_table):
+    try:
+        raise SystemExit(42)
+    except SystemExit as e:
+        exc = e
+
+    tblib.pickling_support.install(exc)
+    exc = pickle.loads(pickle.dumps(exc))
+
+    assert isinstance(exc, SystemExit)
+    assert exc.code == 42
+    assert exc.__traceback__ is not None
+
+
+@pytest.mark.parametrize(
+    ('builtin_exception', 'args', 'kw_args'),
+    [
+        (
+            AttributeError,
+            ('msg',),
+            {'name': 'name', 'obj': None} if has_python310 else {},  # takes no keywords before v3.10
+        ),
+        (NameError, ('msg',), {'name': 'name'} if has_python310 else {}),  # takes no keywords before v3.10
+        (ImportError, ('msg',), {'name': 'name', 'path': 'some/path'}),
+        (OSError, (2, 'err', 3, None, 5), {}),
+        (StopIteration, ('value',), {}),
+        (
+            SyntaxError,
+            (
+                'msg',
+                ('fname', 42, 21, 'src', 123, 456) if has_python310 else ('fname', 42, 21, 'src'),
+            ),
+            {},
+        ),  # last two attributes added in v3.10
+        (SystemExit, (42,), {}),
+        (UnicodeDecodeError, ('encoding', bytearray(), 1, 2, 'reason'), {}),
+        (UnicodeEncodeError, ('encoding', 'object', 1, 2, 'reason'), {}),
+        (UnicodeTranslateError, ('object', 1, 2, 'reason'), {}),
+    ],
+)
+def test_builtin_exceptions_roundtrip(builtin_exception, args, kw_args, clear_dispatch_table):
+    tblib.pickling_support.install()
+    exc_orig = builtin_exception(*args, **kw_args)
+    exc_unpickled = pickle.loads(pickle.dumps(exc_orig))
+
+    public_class_attributes = tblib.pickling_support._get_public_class_attributes(type(exc_orig))
+
+    for attr in public_class_attributes:
+        assert getattr(exc_unpickled, attr, None) == getattr(exc_orig, attr, None)
