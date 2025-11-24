@@ -43,7 +43,7 @@ Overview
 
 .. end-badges
 
-Serialization library for Exceptions and Tracebacks.
+Serialization library for Exceptions and Tracebacks, It allows you to pickle/unpickle tracebacks or create traceback objects from string/dict.
 
 * Free software: BSD license
 
