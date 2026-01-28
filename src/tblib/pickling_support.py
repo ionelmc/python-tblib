@@ -3,26 +3,34 @@ import sys
 from functools import partial
 from types import TracebackType
 
-from . import Frame
 from . import Traceback
 
 if sys.version_info < (3, 11):
     ExceptionGroup = None
 
 
-def unpickle_traceback(tb_frame, tb_lineno, tb_next):
+def unpickle_traceback(tb_frame, tb_lineno, tb_next, tb_colno=None, tb_end_colno=None, tb_end_lineno=None):
     ret = object.__new__(Traceback)
     ret.tb_frame = tb_frame
     ret.tb_lineno = tb_lineno
     ret.tb_next = tb_next
+    # Restore column position info (Python 3.11+)
+    ret.tb_colno = tb_colno
+    ret.tb_end_colno = tb_end_colno
+    ret.tb_end_lineno = tb_end_lineno
     return ret.as_traceback()
 
 
 def pickle_traceback(tb, *, get_locals=None):
+    # Wrap with Traceback to capture column position info
+    tb_wrapper = Traceback(tb, get_locals=get_locals)
     return unpickle_traceback, (
-        Frame(tb.tb_frame, get_locals=get_locals),
-        tb.tb_lineno,
-        tb.tb_next and Traceback(tb.tb_next, get_locals=get_locals),
+        tb_wrapper.tb_frame,
+        tb_wrapper.tb_lineno,
+        tb_wrapper.tb_next,
+        getattr(tb_wrapper, 'tb_colno', None),
+        getattr(tb_wrapper, 'tb_end_colno', None),
+        getattr(tb_wrapper, 'tb_end_lineno', None),
     )
 
 

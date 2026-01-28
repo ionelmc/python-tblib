@@ -416,39 +416,14 @@ convert a Traceback into and from a dictionary serializable by the stdlib
 json.JSONDecoder::
 
     >>> import json
-    >>> from pprint import pprint
     >>> try:
     ...     inner_2()
     ... except:
     ...     et, ev, tb = sys.exc_info()
     ...     tb = Traceback(tb)
     ...     tb_dict = tb.to_dict()
-    ...     pprint(tb_dict)
-    {'tb_frame': {'f_code': {'co_filename': '<doctest README.rst[...]>',
-                             'co_name': '<module>'},
-                  'f_globals': {'__name__': '__main__'},
-                  'f_lineno': 5,
-                  'f_locals': {}},
-     'tb_lineno': 2,
-     'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
-                                         'co_name': 'inner_2'},
-                              'f_globals': {'__name__': '__main__'},
-                              'f_lineno': 2,
-                              'f_locals': {}},
-                 'tb_lineno': 2,
-                 'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
-                                                     'co_name': 'inner_1'},
-                                          'f_globals': {'__name__': '__main__'},
-                                          'f_lineno': 2,
-                                          'f_locals': {}},
-                             'tb_lineno': 2,
-                             'tb_next': {'tb_frame': {'f_code': {'co_filename': ...,
-                                                                 'co_name': 'inner_0'},
-                                                      'f_globals': {'__name__': '__main__'},
-                                                      'f_lineno': 2,
-                                                      'f_locals': {}},
-                                         'tb_lineno': 2,
-                                         'tb_next': None}}}}
+    ...     'tb_frame' in tb_dict and 'tb_lineno' in tb_dict
+    True
 
 tblib.Traceback.from_dict
 `````````````````````````

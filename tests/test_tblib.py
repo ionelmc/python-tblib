@@ -1,12 +1,24 @@
+import io
 import pickle
+import sys
 import traceback
+import types
+
+import pytest
 
 from tblib import Traceback
+from tblib import TracebackParseError
+from tblib import _get_code_position
+from tblib import _make_linetable_with_positions
+from tblib import _make_pypy_linetable_with_positions
 from tblib import pickling_support
 
 pickling_support.install()
 
 pytest_plugins = ('pytester',)
+
+# Column position info requires Python 3.11+
+has_column_positions = hasattr(types.CodeType, 'co_positions')
 
 
 def test_get_locals():
@@ -34,25 +46,32 @@ def test_get_locals():
 
     value = Traceback(exc.__traceback__, get_locals=get_locals).as_dict()
     lineno = exc.__traceback__.tb_lineno
-    assert value == {
-        'tb_frame': {
-            'f_globals': {'__name__': 'test_tblib', '__file__': __file__},
-            'f_locals': {},
-            'f_code': {'co_filename': __file__, 'co_name': 'test_get_locals'},
-            'f_lineno': lineno + 10,
-        },
-        'tb_lineno': lineno,
-        'tb_next': {
-            'tb_frame': {
-                'f_globals': {'__name__': 'test_tblib', '__file__': __file__},
-                'f_locals': {'my_variable': 1},
-                'f_code': {'co_filename': __file__, 'co_name': 'func'},
-                'f_lineno': lineno - 3,
-            },
-            'tb_lineno': lineno - 3,
-            'tb_next': None,
-        },
+
+    # Check structure (excluding column fields which depend on source formatting)
+    assert value['tb_frame'] == {
+        'f_globals': {'__name__': 'test_tblib', '__file__': __file__},
+        'f_locals': {},
+        'f_code': {'co_filename': __file__, 'co_name': 'test_get_locals'},
+        'f_lineno': lineno + 10,
     }
+    assert value['tb_lineno'] == lineno
+    assert value['tb_next']['tb_frame'] == {
+        'f_globals': {'__name__': 'test_tblib', '__file__': __file__},
+        'f_locals': {'my_variable': 1},
+        'f_code': {'co_filename': __file__, 'co_name': 'func'},
+        'f_lineno': lineno - 3,
+    }
+    assert value['tb_next']['tb_lineno'] == lineno - 3
+    assert value['tb_next']['tb_next'] is None
+
+    # On Python 3.11+, column position info should be present
+    if has_column_positions:
+        assert 'tb_colno' in value
+        assert 'tb_end_colno' in value
+        assert isinstance(value['tb_colno'], int)
+        assert isinstance(value['tb_end_colno'], int)
+        assert 'tb_colno' in value['tb_next']
+        assert 'tb_end_colno' in value['tb_next']
 
     assert Traceback.from_dict(value).tb_next.tb_frame.f_locals == {'my_variable': 1}
 
@@ -78,6 +97,7 @@ KeyboardInterrupt"""
     ]
     tb2 = Traceback(pytb)
 
+    # Expected structure without column fields (parsed from string has no column info)
     expected_dict = {
         'tb_frame': {
             'f_code': {'co_filename': 'file1', 'co_name': '<module>'},
@@ -108,7 +128,33 @@ KeyboardInterrupt"""
     }
     tb3 = Traceback.from_dict(expected_dict)
     tb4 = pickle.loads(pickle.dumps(tb3))
-    assert tb4.as_dict() == tb3.as_dict() == tb2.as_dict() == tb1.as_dict() == expected_dict
+
+    # tb1 (from string) has no column info
+    assert tb1.as_dict() == expected_dict
+
+    # tb3, tb4 (from dict without column info) have no column info
+    assert tb3.as_dict() == expected_dict
+    assert tb4.as_dict() == expected_dict
+
+    # tb2 (wrapped from reconstructed traceback) has column info on Python 3.11+
+    # because it extracts positions from the stub code object
+    tb2_dict = tb2.as_dict()
+    if has_column_positions:
+        # Column info should be present
+        assert 'tb_colno' in tb2_dict
+
+        # Remove column fields to compare structure
+        def without_columns(d):
+            if d is None:
+                return None
+            result = {k: v for k, v in d.items() if k not in ('tb_colno', 'tb_end_colno', 'tb_end_lineno')}
+            if 'tb_next' in result:
+                result['tb_next'] = without_columns(result['tb_next'])
+            return result
+
+        assert without_columns(tb2_dict) == expected_dict
+    else:
+        assert tb2_dict == expected_dict
 
 
 def test_large_line_number():
@@ -212,3 +258,228 @@ Traceback (most recent call last):
             'RuntimeError',
         ]
     )
+
+
+@pytest.mark.skipif(not has_column_positions, reason='Column positions require Python 3.11+')
+def test_caret_position_preserved():
+    """Test that caret positions are preserved through reconstruction."""
+
+    def inner():
+        x = {'a': 1}
+        return x['b']  # KeyError here - caret should point to x['b']
+
+    try:
+        inner()
+    except KeyError:
+        original_tb = sys.exc_info()[2]
+
+        tb_wrapper = Traceback(original_tb)
+
+        inner_frame = tb_wrapper.tb_next
+        assert inner_frame.tb_colno is not None, 'tb_colno should be captured'
+        assert inner_frame.tb_end_colno is not None, 'tb_end_colno should be captured'
+
+        reconstructed_tb = tb_wrapper.as_traceback()
+
+        original_output = io.StringIO()
+        traceback.print_exception(KeyError, KeyError('b'), original_tb, file=original_output)
+
+        reconstructed_output = io.StringIO()
+        traceback.print_exception(KeyError, KeyError('b'), reconstructed_tb, file=reconstructed_output)
+
+        original_lines = original_output.getvalue().splitlines()
+        reconstructed_lines = reconstructed_output.getvalue().splitlines()
+
+        assert len(original_lines) == len(reconstructed_lines), (
+            f'Different number of lines: {len(original_lines)} vs {len(reconstructed_lines)}'
+        )
+
+        for i, (orig, recon) in enumerate(zip(original_lines, reconstructed_lines)):
+            assert orig == recon, f'Line {i} differs:\n  Original:      {orig!r}\n  Reconstructed: {recon!r}'
+
+
+@pytest.mark.skipif(not has_column_positions, reason='Column positions require Python 3.11+')
+def test_caret_position_in_dict():
+    """Test that caret positions are preserved in dictionary serialization."""
+
+    def inner():
+        x = {'a': 1}
+        return x['b']
+
+    try:
+        inner()
+    except KeyError:
+        original_tb = sys.exc_info()[2]
+
+        tb_wrapper = Traceback(original_tb)
+        tb_dict = tb_wrapper.as_dict()
+
+        inner_dict = tb_dict['tb_next']
+        assert 'tb_colno' in inner_dict, 'tb_colno should be in dict'
+        assert 'tb_end_colno' in inner_dict, 'tb_end_colno should be in dict'
+        assert inner_dict['tb_colno'] is not None
+        assert inner_dict['tb_end_colno'] is not None
+
+        tb_from_dict = Traceback.from_dict(tb_dict)
+        assert tb_from_dict.tb_next.tb_colno == inner_dict['tb_colno']
+        assert tb_from_dict.tb_next.tb_end_colno == inner_dict['tb_end_colno']
+
+
+@pytest.mark.skipif(not has_column_positions, reason='Column positions require Python 3.11+')
+def test_caret_position_pickle():
+    """Test that caret positions are preserved through pickling."""
+
+    def inner():
+        x = {'a': 1}
+        return x['b']
+
+    try:
+        inner()
+    except KeyError:
+        original_tb = sys.exc_info()[2]
+
+        tb_wrapper = Traceback(original_tb)
+        original_colno = tb_wrapper.tb_next.tb_colno
+        original_end_colno = tb_wrapper.tb_next.tb_end_colno
+
+        # Pickle and unpickle
+        pickled = pickle.dumps(tb_wrapper)
+        unpickled = pickle.loads(pickled)
+
+        assert unpickled.tb_next.tb_colno == original_colno
+        assert unpickled.tb_next.tb_end_colno == original_end_colno
+
+
+def test_caret_position_without_column_info():
+    """Test that reconstruction works when column info is not available."""
+    tb = Traceback.from_string(
+        """
+Traceback (most recent call last):
+  File "test.py", line 10, in <module>
+    foo()
+ValueError: test
+"""
+    )
+
+    assert tb.tb_colno is None
+    assert tb.tb_end_colno is None
+
+    reconstructed = tb.as_traceback()
+    assert reconstructed is not None
+    assert reconstructed.tb_lineno == 10
+
+
+def test_caret_position_chained_exceptions():
+    """Test caret positions with chained exceptions."""
+
+    def outer():
+        inner()
+
+    def inner():
+        x = [1, 2, 3]
+        return x[10]  # IndexError here
+
+    try:
+        outer()
+    except IndexError:
+        original_tb = sys.exc_info()[2]
+
+        tb_wrapper = Traceback(original_tb)
+        reconstructed_tb = tb_wrapper.as_traceback()
+
+        # Walk both chains and compare
+        orig = original_tb
+        recon = reconstructed_tb
+        while orig is not None:
+            assert recon is not None, 'Reconstructed chain is shorter'
+            assert orig.tb_lineno == recon.tb_lineno
+            orig = orig.tb_next
+            recon = recon.tb_next
+        assert recon is None, 'Reconstructed chain is longer'
+
+
+def test_traceback_from_string_invalid():
+    """Test TracebackParseError is raised for invalid input."""
+    with pytest.raises(TracebackParseError, match='Could not find any frames'):
+        Traceback.from_string('Not a valid traceback')
+
+
+@pytest.mark.skipif(not has_column_positions, reason='Column positions require Python 3.11+')
+def test_get_code_position_edge_cases():
+    """Test _get_code_position edge cases for coverage."""
+    class FakeCode:
+        pass
+
+    result = _get_code_position(FakeCode(), 0)
+    assert result == (None, None, None, None)
+
+    code = compile('x = 1', '<test>', 'exec')
+    result = _get_code_position(code, -1)
+    assert result == (None, None, None, None)
+
+
+@pytest.mark.skipif(not has_column_positions, reason='Column positions require Python 3.11+')
+def test_linetable_functions_with_none():
+    """Test linetable creation functions handle None values correctly."""
+    if sys.implementation.name == 'pypy':
+        result = _make_pypy_linetable_with_positions(None, 10, 5)
+        assert isinstance(result, bytes)
+
+        result = _make_pypy_linetable_with_positions(5, None, 5)
+        assert isinstance(result, bytes)
+    else:
+        result = _make_linetable_with_positions(None, 10)
+        assert isinstance(result, bytes)
+
+        result = _make_linetable_with_positions(5, None)
+        assert isinstance(result, bytes)
+
+
+@pytest.mark.skipif(not has_column_positions, reason='Column positions require Python 3.11+')
+def test_traceback_maker_in_globals():
+    """
+    Test that __traceback_maker is properly defined in globals during reconstruction.
+
+    Without __traceback_maker in globals, LOAD_NAME would raise NameError at
+    tb_lasti=2 (column 6-23), instead of RAISE_VARARGS executing at tb_lasti=4
+    (column 0-23). This would capture column positions from the wrong instruction,
+    showing only '__traceback_maker' instead of the full 'raise __traceback_maker'
+    expression.
+    """
+
+    def cause_error():
+        result = 1 / 0  # Division at specific columns
+        return result
+
+    try:
+        cause_error()
+    except ZeroDivisionError:
+        original_tb = sys.exc_info()[2]
+
+        # Get original column info
+        tb_wrapper = Traceback(original_tb)
+        original_colno = tb_wrapper.tb_next.tb_colno
+        original_end_colno = tb_wrapper.tb_next.tb_end_colno
+
+        # These should be non-None if captured correctly
+        assert original_colno is not None, 'Should capture column start'
+        assert original_end_colno is not None, 'Should capture column end'
+
+        # Reconstruct traceback
+        reconstructed_tb = tb_wrapper.as_traceback()
+        assert reconstructed_tb.tb_next is not None
+
+        # Verify the code object has the correct column positions
+        code = reconstructed_tb.tb_next.tb_frame.f_code
+        if hasattr(code, 'co_positions'):
+            # Get positions for the RAISE_VARARGS instruction (should be last)
+            positions = list(code.co_positions())
+            last_pos = positions[-1]
+
+            # The last position should match our captured columns
+            assert last_pos[2] == original_colno, f'Column start mismatch: {last_pos[2]} != {original_colno}'
+            assert last_pos[3] == original_end_colno, f'Column end mismatch: {last_pos[3]} != {original_end_colno}'
+
+            # Critically: column start should be 0 (full expression), not 6 (just '__traceback_maker')
+            # If __traceback_maker wasn't in globals, we'd get column 6 from LOAD_NAME instruction
+            assert last_pos[2] != 6, 'Column positions from wrong instruction (LOAD_NAME instead of RAISE_VARARGS)'

@@ -1,4 +1,6 @@
 import os
+import pickle
+import sys
 from traceback import format_exception
 
 try:
@@ -6,9 +8,6 @@ try:
 except ImportError:
     # Python 2
     import copy_reg as copyreg
-
-import pickle
-import sys
 
 import pytest
 
@@ -28,10 +27,6 @@ def clear_dispatch_table():
 
 class CustomError(Exception):
     pass
-
-
-def strip_locations(tb_text):
-    return tb_text.replace('    ~~^~~\n', '').replace('    ^^^^^^^^^^^^^^^^^\n', '')
 
 
 @pytest.mark.parametrize('protocol', [None, *list(range(1, pickle.HIGHEST_PROTOCOL + 1))])
@@ -63,7 +58,7 @@ def test_install(clear_dispatch_table, how, protocol):
     else:
         raise AssertionError
 
-    expected_format_exception = strip_locations(''.join(format_exception(type(exc), exc, exc.__traceback__)))
+    expected_format_exception = ''.join(format_exception(type(exc), exc, exc.__traceback__))
 
     # Populate Exception.__dict__, which is used in some cases
     exc.x = 1
@@ -93,7 +88,8 @@ def test_install(clear_dispatch_table, how, protocol):
     if has_python311:
         assert exc.__notes__ == ['note 1', 'note 2']
 
-    assert expected_format_exception == strip_locations(''.join(format_exception(type(exc), exc, exc.__traceback__)))
+    actual_format_exception = ''.join(format_exception(type(exc), exc, exc.__traceback__))
+    assert expected_format_exception == actual_format_exception
 
 
 @tblib.pickling_support.install
