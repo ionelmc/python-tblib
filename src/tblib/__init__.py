@@ -158,26 +158,26 @@ class Traceback:
         Converts to a dictionary representation. You can serialize the result to JSON as it only has
         builtin objects like dicts, lists, ints or strings.
         """
-        if self.tb_next is None:
-            tb_next = None
-        else:
-            tb_next = self.tb_next.as_dict()
-
-        code = {
-            'co_filename': self.tb_frame.f_code.co_filename,
-            'co_name': self.tb_frame.f_code.co_name,
-        }
-        frame = {
-            'f_globals': self.tb_frame.f_globals,
-            'f_locals': self.tb_frame.f_locals,
-            'f_code': code,
-            'f_lineno': self.tb_frame.f_lineno,
-        }
-        return {
-            'tb_frame': frame,
-            'tb_lineno': self.tb_lineno,
-            'tb_next': tb_next,
-        }
+        result = {}
+        node = result
+        current = self
+        while True:
+            code = {
+                'co_filename': current.tb_frame.f_code.co_filename,
+                'co_name': current.tb_frame.f_code.co_name,
+            }
+            frame = {
+                'f_globals': current.tb_frame.f_globals,
+                'f_locals': current.tb_frame.f_locals,
+                'f_code': code,
+                'f_lineno': current.tb_frame.f_lineno,
+            }
+            node.update(tb_frame=frame, tb_lineno=current.tb_lineno, tb_next=None)
+            current = current.tb_next
+            if current is None:
+                return result
+            node['tb_next'] = {}
+            node = node['tb_next']
 
     to_dict = as_dict
 
@@ -186,26 +186,28 @@ class Traceback:
         """
         Creates an instance from a dictionary with the same structure as ``.as_dict()`` returns.
         """
-        if dct['tb_next']:
-            tb_next = cls.from_dict(dct['tb_next'])
-        else:
-            tb_next = None
+        nodes = [dct]
+        while dct['tb_next']:
+            dct = dct['tb_next']
+            nodes.append(dct)
 
-        code = _AttrDict(
-            co_filename=dct['tb_frame']['f_code']['co_filename'],
-            co_name=dct['tb_frame']['f_code']['co_name'],
-        )
-        frame = _AttrDict(
-            f_globals=dct['tb_frame']['f_globals'],
-            f_locals=dct['tb_frame'].get('f_locals', {}),
-            f_code=code,
-            f_lineno=dct['tb_frame']['f_lineno'],
-        )
-        tb = _AttrDict(
-            tb_frame=frame,
-            tb_lineno=dct['tb_lineno'],
-            tb_next=tb_next,
-        )
+        tb = None
+        for dct in reversed(nodes):
+            code = _AttrDict(
+                co_filename=dct['tb_frame']['f_code']['co_filename'],
+                co_name=dct['tb_frame']['f_code']['co_name'],
+            )
+            frame = _AttrDict(
+                f_globals=dct['tb_frame']['f_globals'],
+                f_locals=dct['tb_frame'].get('f_locals', {}),
+                f_code=code,
+                f_lineno=dct['tb_frame']['f_lineno'],
+            )
+            tb = _AttrDict(
+                tb_frame=frame,
+                tb_lineno=dct['tb_lineno'],
+                tb_next=tb,
+            )
         return cls(tb, get_locals=get_all_locals)
 
     @classmethod
