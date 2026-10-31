@@ -17,3 +17,5 @@ Authors
 * Oldřich Jedlička - https://github.com/oldium
 * Colin Watson - https://github.com/cjwatson
 * Jacob Tomlinson - https://github.com/jacobtomlinson
+
+* Shahadat Islam Koyel <179203101+ShahadatTest@users.noreply.github.com>
