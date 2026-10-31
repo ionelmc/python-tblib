@@ -543,3 +543,36 @@ def test_exception_group():
     assert isinstance(exc.exceptions[8], OSError)
     assert exc.exceptions[8].errno == 2
     assert str(exc.exceptions[8]) == real_oserror_str
+
+
+def test_exception_subclass_diamonds_are_visited_once():
+    class RootError(Exception):
+        pass
+
+    left = type('LeftError', (RootError,), {})
+    right = type('RightError', (RootError,), {})
+    leaf = type('LeafError', (left, right), {})
+    descendants = list(tblib.pickling_support._get_subclasses(RootError))
+    assert len(descendants) == 4
+    assert set(descendants) == {RootError, left, right, leaf}
+
+
+def test_global_install_registers_each_exception_type_once(monkeypatch, clear_dispatch_table):
+    class RootError(Exception):
+        pass
+
+    left = type('LeftError', (RootError,), {})
+    right = type('RightError', (RootError,), {})
+    leaf = type('LeafError', (left, right), {})
+    registrations = []
+    original_pickle = copyreg.pickle
+
+    def record(cls, reducer):
+        registrations.append(cls)
+        original_pickle(cls, reducer)
+
+    monkeypatch.setattr(copyreg, 'pickle', record)
+    tblib.pickling_support.install()
+    for cls in (RootError, left, right, leaf):
+        assert registrations.count(cls) == 1
+        assert copyreg.dispatch_table[cls] is tblib.pickling_support.pickle_exception

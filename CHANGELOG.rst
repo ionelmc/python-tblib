@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Unreleased
+~~~~~~~~~~
+
+* Visit exception subclasses only once across multiple-inheritance paths when installing pickle support.
+
 3.2.2 (2025-11-12)
 ~~~~~~~~~~~~~~~~~~
 

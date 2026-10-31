@@ -122,8 +122,12 @@ def pickle_exception(
 def _get_subclasses(cls):
     # Depth-first traversal of all direct and indirect subclasses of cls
     to_visit = [cls]
+    seen = set()
     while to_visit:
         this = to_visit.pop()
+        if this in seen:
+            continue
+        seen.add(this)
         yield this
         to_visit += list(this.__subclasses__())
 
