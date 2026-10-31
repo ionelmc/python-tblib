@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Unreleased
+~~~~~~~~~~
+
+* Avoid recursion errors when converting deep tracebacks to and from dictionaries.
+
 3.2.2 (2025-11-12)
 ~~~~~~~~~~~~~~~~~~
 
