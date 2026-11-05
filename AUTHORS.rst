@@ -17,3 +17,4 @@ Authors
 * Oldřich Jedlička - https://github.com/oldium
 * Colin Watson - https://github.com/cjwatson
 * Jacob Tomlinson - https://github.com/jacobtomlinson
+* fly1d - https://github.com/fly1d

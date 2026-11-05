@@ -57,6 +57,42 @@ def test_get_locals():
     assert Traceback.from_dict(value).tb_next.tb_frame.f_locals == {'my_variable': 1}
 
 
+def test_parse_syntax_error_traceback():
+    filename = '<tblib-syntax-error>'
+    source = 'first = 1\nsecond = 2\nif True print("invalid")\n'
+
+    try:
+        compile(source, filename, 'exec')
+    except SyntaxError as exc:
+        syntax_location = (exc.filename, exc.lineno)
+        outer_frames = [(frame.filename, frame.lineno, frame.name) for frame in traceback.extract_tb(exc.__traceback__)]
+        formatted = traceback.format_exc()
+    else:
+        raise AssertionError('The invalid source should raise SyntaxError')
+
+    assert syntax_location == (filename, 3)
+    assert outer_frames
+
+    parsed = Traceback.from_string(formatted)
+    parsed_frames = []
+    current = parsed
+    while current is not None:
+        code = current.tb_frame.f_code
+        parsed_frames.append((code.co_filename, current.tb_lineno, code.co_name))
+        current = current.tb_next
+
+    # The parser already includes the bare compiler location without a function name.
+    assert parsed_frames == [*outer_frames, (*syntax_location, None)]
+    serialized = parsed.as_dict()
+
+    reconstructed = traceback.extract_tb(parsed.as_traceback())
+    reconstructed_frames = [(frame.filename, frame.lineno, frame.name) for frame in reconstructed]
+
+    # Keep the exec stub's native name only where the input did not supply one.
+    assert reconstructed_frames == [*outer_frames, (*syntax_location, '<module>')]
+    assert parsed.as_dict() == serialized
+
+
 def test_parse_traceback():
     tb1 = Traceback.from_string(
         """

@@ -127,7 +127,7 @@ class Traceback:
                 co_firstlineno=current.tb_lineno,
                 co_argcount=0,
                 co_filename=f_code.co_filename,
-                co_name=f_code.co_name,
+                co_name=f_code.co_name if f_code.co_name is not None else stub.co_name,
                 co_freevars=(),
                 co_cellvars=(),
             )
