@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Unreleased
+~~~~~~~~~~
+
+* Fixed traceback reconstruction for parsed frames without a function name, such as locations in formatted ``SyntaxError`` output.
+
 3.2.2 (2025-11-12)
 ~~~~~~~~~~~~~~~~~~
 
