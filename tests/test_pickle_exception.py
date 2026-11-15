@@ -543,3 +543,43 @@ def test_exception_group():
     assert isinstance(exc.exceptions[8], OSError)
     assert exc.exceptions[8].errno == 2
     assert str(exc.exceptions[8]) == real_oserror_str
+
+
+@pytest.mark.skipif(not has_python311, reason='BaseExceptionGroup needs Python 3.11')
+@pytest.mark.parametrize('how', ['global', 'instance', 'class'])
+@pytest.mark.parametrize('protocol', [0, pickle.HIGHEST_PROTOCOL])
+def test_base_exception_group(clear_dispatch_table, how, protocol):
+    try:
+        raise KeyboardInterrupt('stop')
+    except KeyboardInterrupt as error:
+        interrupt = error
+
+    nested = ExceptionGroup('nested', [ValueError('task failed')])  # noqa: F821
+    group = BaseExceptionGroup('interrupted tasks', [interrupt, nested])  # noqa: F821
+    group.add_note('group note')
+    try:
+        raise group
+    except BaseException as error:
+        exc = error
+
+    assert type(exc) is BaseExceptionGroup  # noqa: F821
+    if how == 'global':
+        tblib.pickling_support.install()
+    elif how == 'instance':
+        tblib.pickling_support.install(exc)
+    else:
+        tblib.pickling_support.install(BaseExceptionGroup, KeyboardInterrupt, ExceptionGroup, ValueError)  # noqa: F821
+
+    restored = pickle.loads(pickle.dumps(exc, protocol=protocol))
+
+    assert type(restored) is BaseExceptionGroup  # noqa: F821
+    assert restored.message == 'interrupted tasks'
+    assert restored.__traceback__ is not None
+    assert restored.__notes__ == ['group note']
+    assert isinstance(restored.exceptions[0], KeyboardInterrupt)
+    assert restored.exceptions[0].args == ('stop',)
+    assert restored.exceptions[0].__traceback__ is not None
+    assert type(restored.exceptions[1]) is ExceptionGroup  # noqa: F821
+    assert restored.exceptions[1].message == 'nested'
+    assert isinstance(restored.exceptions[1].exceptions[0], ValueError)
+    assert restored.exceptions[1].exceptions[0].args == ('task failed',)
