@@ -7,7 +7,7 @@ from . import Frame
 from . import Traceback
 
 if sys.version_info < (3, 11):
-    ExceptionGroup = None
+    BaseExceptionGroup = None
 
 
 def unpickle_traceback(tb_frame, tb_lineno, tb_next):
@@ -82,7 +82,7 @@ def pickle_exception(
                 attrs['filename'] = obj.filename
             if obj.filename2 is not None:
                 attrs['filename2'] = obj.filename2
-        if ExceptionGroup is not None and isinstance(obj, ExceptionGroup):
+        if BaseExceptionGroup is not None and isinstance(obj, BaseExceptionGroup):
             args = (obj.message, obj.exceptions)
 
         return (

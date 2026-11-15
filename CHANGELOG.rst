@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Unreleased
+~~~~~~~~~~
+
+* Fixed unpickling of ``BaseExceptionGroup`` instances containing exceptions such as ``KeyboardInterrupt``.
+
 3.2.2 (2025-11-12)
 ~~~~~~~~~~~~~~~~~~
 
